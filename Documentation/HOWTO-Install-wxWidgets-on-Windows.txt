@@ -1,0 +1,39 @@
+
+
+HOWTO:  Install wxWidgets on your Windows computer.
+
+
+- If not already installed, install Visual C++ 2008 or higher, the express edition if free from Microsoft:-
+		http://www.microsoft.com/express/vc/
+
+- Get the latest copy of wxWidgets for Windows (at time of writing wxMSW 2.8.9) from:-
+		http://www.wxwidgets.org/downloads/
+
+- Install the source code (default install directory is C:\wxWidgets-2.8.9)
+
+- Add wxWindows environmental variable, this is done in XP by doing the following:-
+
+	* Open "Control Panel" -> "Performance & Maintenance" -> "System"
+
+	* From "System Properties" go to the "Advanced" tab
+
+	* Add to "System Variables":-  WXWIN   =   C:\wxWidgets-2.8.9
+
+- Compile wxWidgets from within VC++
+
+	*  Open Project:- C:\wxWidgets-2.8.9\build\msw\wx.sln
+
+	*  Compile solution in "Debug" mode
+
+	*  Change mode to 'Release'
+
+	*  Right click on each project within the 'Solution Explorer' and go to its 'Properties' 
+
+	*  From within the 'Property Pages' navigate to 'Configuration Properties" -> C/C++ -> 'Code Generation'
+
+	*  Change the 'Runtime Library' flag to Multi-threaded (\MT)
+
+	*  REMEMBER: This must be done for each of the 20 or so projects in wxWidgets
+
+	*  Compile solution in 'Release' mode
+

@@ -1,0 +1,26 @@
+
+
+HOWTO:  Install wxWidgets on your Mac OSX.
+
+
+- If not already installed, get the developers kit from Apple or install GCC and related developing tools using homebrew.
+
+- Get the latest copy of wxWidgets for MacOS (v2.9.3 or greater) from:-
+		http://www.wxwidgets.org/downloads/
+
+- Melt tar ball and install into a convenient directory ( eg, $HOME/Library/ ).
+
+- Then, from the xterm (or Terminal) run the following commands:-
+
+	cd ~/Library/wxWidgets-2.9.3/
+	mkdir debug
+	mkdir release
+	cd debug
+	../configure CC=gcc-4.2 CXX=g++-4.2 LD=g++-4.2 --enable-debug --enable-unicode --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk --with-macosx-version-min=10.6 CFLAGS="-arch i386" CXXFLAGS="-arch i386" CPPFLAGS="-arch i386" LDFLAGS="-arch i386" OBJCFLAGS="-arch i386" OBJCXXFLAGS="-arch i386" --prefix=$(pwd)
+	make
+	cd ../release
+	../configure CC=gcc-4.2 CXX=g++-4.2 LD=g++-4.2 --disable-shared --enable-unicode --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk --with-macosx-version-min=10.6 CFLAGS="-arch i386" CXXFLAGS="-arch i386" CPPFLAGS="-arch i386" LDFLAGS="-arch i386" OBJCFLAGS="-arch i386" OBJCXXFLAGS="-arch i386" --prefix=$(pwd)
+	make
+	cd ~
+	echo "export WXWIN=\"\$HOME/Library/wxMac-2.8.10\"" >> .bashrc
+	echo "test -r \$HOME/.bashrc && . \$HOME/.bashrc" >> .profile

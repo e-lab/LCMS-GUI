@@ -1,0 +1,27 @@
+
+
+HOWTO:  Install wxWidgets on your Mac OSX.
+
+
+- If not already installed, get the developers kit from Apple or install GCC and related developing tools using Fink.
+
+- Get the latest copy of wxWidgets for MacOS (wxMac) from:-
+		http://www.wxwidgets.org/downloads/
+
+- Melt tar ball and install into a convenient directory ( eg, $HOME/Library/ ).
+
+- Then, from the xterm (or Terminal) run the following commands:-
+
+	mkdir debug
+	mkdir release
+	cd debug
+	../configure --enable-debug --enable-unicode CFLAGS="-arch i386" CXXFLAGS="-arch i386" CPPFLAGS="-arch i386" LDFLAGS="-arch i386" OBJCFLAGS="-arch i386" OBJCXXFLAGS="-arch i386" --prefix=/opt/wxdebug
+	make
+	make install
+	cd ../release
+	../configure --disable-shared --enable-unicode CFLAGS="-arch i386" CXXFLAGS="-arch i386" CPPFLAGS="-arch i386" LDFLAGS="-arch i386" OBJCFLAGS="-arch i386" OBJCXXFLAGS="-arch i386" --prefix=/opt/wxrelease
+	make
+	make install
+	cd ~
+	echo "export WXWIN=\"/opt/wxdebug\"" >> .bashrc
+	echo "test -r \$HOME/.bashrc && . \$HOME/.bashrc" >> .profile
