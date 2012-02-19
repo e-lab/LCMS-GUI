@@ -6,7 +6,6 @@
  * ControlPanels.
  */
 #include "DeviceController.h"
-#include "DeviceCommand.h"
 #include "DeviceInterface.h"
 #include "CommandVariable.h"
 
@@ -32,8 +31,11 @@ void DeviceController::SetCommand (CommandVariable::CommandID commandID, int val
 {
 	(*variables) [commandID] = value;
 
-	DeviceCommand *command = new DeviceCommand (commandID, value);
-	xemDevice->GetQueue().Post (*command);
+	struct CommandVariable::command packet;
+	packet.commandID = commandID;
+	packet.commandValue = value;
+
+	xemDevice->GetQueue().Post(packet);
 }
 
 void DeviceController::GetCommand (CommandVariable::CommandID commandID, int &value)
@@ -48,19 +50,25 @@ int DeviceController::GetVariable (CommandVariable::CommandID commandID)
 
 void DeviceController::Initialize (wxString filename)
 {
-	DeviceCommand *command = new DeviceCommand (CommandVariable::DEV_INIT);
-	command->SetFileName (filename);
-	xemDevice->GetQueue().Post (*command);
+	struct CommandVariable::command packet;
+	packet.commandID = CommandVariable::DEV_INIT;
+	packet.filename = filename;
+
+	xemDevice->GetQueue().Post(packet);
 }
 
 void DeviceController::Start()
 {
-	DeviceCommand *command = new DeviceCommand (CommandVariable::DEV_START);
-	xemDevice->GetQueue().Post (*command);
+	struct CommandVariable::command packet;
+	packet.commandID = CommandVariable::DEV_START;
+
+	xemDevice->GetQueue().Post(packet);
 }
 
 void DeviceController::Stop()
 {
-	DeviceCommand *command = new DeviceCommand (CommandVariable::DEV_STOP);
-	xemDevice->GetQueue().Post (*command);
+	struct CommandVariable::command packet;
+	packet.commandID = CommandVariable::DEV_STOP;
+
+	xemDevice->GetQueue().Post(packet);
 }

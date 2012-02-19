@@ -6,7 +6,6 @@
 #include "CommandVariable.h"
 #include "okFrontPanelDLL.h"
 
-class DeviceCommand;
 class DeviceEvent;
 
 /**
@@ -52,7 +51,7 @@ public:
 	 *
 	 * @retval Command Queue
 	 */
-	SimpleQueue<DeviceCommand>& GetQueue ();
+	SimpleQueue<CommandVariable::command>& GetQueue ();
 
 	/**
 	 * Initialize the hardware device.
@@ -101,8 +100,8 @@ public:
 
 
 private:
-	SimpleQueue<DeviceCommand>	commandQueue;
-	DeviceCommand*		command;
+	SimpleQueue<CommandVariable::command>	commandQueue;
+
 	okCFrontPanel* 		xem;		//!< Pointer to the Opal Kelly library object.
 	okCPLL22150*		pll;		//!< Pointer to the Phased Locked Loop (pll) container object.
 	wxEvtHandler*		display;	//!< Pointer to the GraphicsPanel object being used to display data.

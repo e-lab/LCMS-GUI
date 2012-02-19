@@ -2,7 +2,6 @@
  * @file
  * Contains the only class that interacts with the hardware.
  */
-#include "DeviceCommand.h"
 #include "DeviceInterface.h"
 #include "DeviceEvent.h"
 
@@ -16,7 +15,6 @@ DeviceInterface::DeviceInterface (wxEvtHandler* displayTmp) : wxThread()
 
 	xem = (okCFrontPanel*) NULL;
 	pll = (okCPLL22150*) NULL;
-	command = (DeviceCommand*)  NULL;
 
 #ifdef __WXMAC__
 	Initialize (wxT ("Template.app/Contents/Resources/Template.bit"));
@@ -45,12 +43,14 @@ wxThread::ExitCode DeviceInterface::Entry()
 
 	while (1) {
 
-		// Process commands
-		if (wxMSGQUEUE_NO_ERROR == commandQueue.ReceiveNoWait (*command)) {
+		CommandVariable::command packet;
 
-			switch (command->GetID()) {
+		// Process commands
+		if (wxMSGQUEUE_NO_ERROR == commandQueue.ReceiveNoWait (packet)) {
+
+			switch (packet.commandID) {
 				case CommandVariable::DEV_INIT :
-					Initialize (command->GetFileName());
+					Initialize (packet.filename);
 					break;
 				case CommandVariable::DEV_START :
 					Start();
@@ -59,11 +59,9 @@ wxThread::ExitCode DeviceInterface::Entry()
 					Stop();
 					break;
 				default :
-					SetCommand (command->GetID(), command->GetValue());
+					SetCommand (packet.commandID, packet.commandValue);
 					break;
 			}
-			delete command;
-			command = (DeviceCommand*)  NULL;
 		}
 
 		// Get data from device
@@ -91,7 +89,7 @@ wxThread::ExitCode DeviceInterface::Entry()
 }
 
 
-SimpleQueue<DeviceCommand>& DeviceInterface::GetQueue ()
+SimpleQueue<CommandVariable::command>& DeviceInterface::GetQueue ()
 {
 	return commandQueue;
 }

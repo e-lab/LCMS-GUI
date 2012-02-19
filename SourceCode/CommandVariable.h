@@ -48,6 +48,11 @@ public:
 		SAVE_DATA
 	};
 
+	struct command {
+		CommandID	commandID;
+		int 		commandValue;
+		wxString	filename;
+	};
 };
 
 #endif /* DEVICE_VARIABLE_H */
