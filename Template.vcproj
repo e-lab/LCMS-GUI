@@ -192,10 +192,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SourceCode\DeviceCommand.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\SourceCode\DeviceEvent.cpp"
 				>
 			</File>
@@ -263,10 +259,6 @@
 			</File>
 			<File
 				RelativePath=".\SourceCode\ControlView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceCode\DeviceCommand.h"
 				>
 			</File>
 			<File

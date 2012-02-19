@@ -10,7 +10,6 @@ VPATH=SourceCode
 # The source files: regardless of where they reside in the source tree,
 # VPATH will locate them...
 SOURCE = \
-	DeviceCommand.cpp \
 	DeviceInterface.cpp \
 	DeviceController.cpp \
 	DeviceEvent.cpp \
