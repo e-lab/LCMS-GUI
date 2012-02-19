@@ -5,14 +5,14 @@
 
 #include "DeviceCommand.h"
 
-DeviceCommand::DeviceCommand(CommandVariable::CommandID name, int value)
+DeviceCommand::DeviceCommand (CommandVariable::CommandID name, int value)
 {
 	commandID = name;
 	commandValue = value;
 	filename = wxT ("");
 }
 
-DeviceCommand::DeviceCommand(CommandVariable::CommandID name)
+DeviceCommand::DeviceCommand (CommandVariable::CommandID name)
 {
 	commandID = name;
 	commandValue = 0;

@@ -6,9 +6,9 @@
 #include "DeviceInterface.h"
 #include "DeviceEvent.h"
 
-DeviceInterface::DeviceInterface (wxEvtHandler* displayTmp) : wxTimer()
+DeviceInterface::DeviceInterface (wxEvtHandler* displayTmp) : wxThread()
 {
-	controlPrevious = 0;
+	pollDevice = false;
 
 	display = displayTmp;
 
@@ -16,6 +16,7 @@ DeviceInterface::DeviceInterface (wxEvtHandler* displayTmp) : wxTimer()
 
 	xem = (okCFrontPanel*) NULL;
 	pll = (okCPLL22150*) NULL;
+	command = (DeviceCommand*)  NULL;
 
 #ifdef __WXMAC__
 	Initialize (wxT ("Template.app/Contents/Resources/Template.bit"));
@@ -38,6 +39,57 @@ DeviceInterface::~DeviceInterface()
 		pll = (okCPLL22150*) NULL;
 	}
 }
+
+wxThread::ExitCode DeviceInterface::Entry()
+{
+
+	while (1) {
+
+		// Process commands
+		if (wxMSGQUEUE_NO_ERROR == commandQueue.ReceiveNoWait (*command)) {
+
+			switch (command->GetID()) {
+				case CommandVariable::DEV_INIT :
+					Initialize (command->GetFileName());
+					break;
+				case CommandVariable::DEV_START :
+					Start();
+					break;
+				case CommandVariable::DEV_STOP:
+					Stop();
+					break;
+				default :
+					SetCommand (command->GetID(), command->GetValue());
+					break;
+			}
+			delete command;
+			command = (DeviceCommand*)  NULL;
+		}
+
+		// Get data from device
+		if (pollDevice && (NULL != xem)) {
+
+			// Poll the xem, asking if there is data to collect.
+			xem->UpdateWireOuts();
+			int length = (int) (2 * xem->GetWireOutValue (0x21));
+
+			if (length > 0) {
+				unsigned char *rawData = new unsigned char[length];
+
+				// PipeOut transfer
+				xem->ReadFromPipeOut (0xA0, (int) length, rawData);
+
+				// Raw data array from the pipe transfer is given to the rawEvent
+				rawEvent->SetRawData (rawData, length);
+
+				// Send a reference for the object rawEvent to display.
+				wxPostEvent (display, (*rawEvent));
+			}
+		}
+	}
+	return 0;
+}
+
 
 SimpleQueue<DeviceCommand>& DeviceInterface::GetQueue ()
 {
@@ -141,48 +193,8 @@ bool DeviceInterface::Initialize (wxString filename)
 
 		return (false);
 	}
-	//::wxLogMessage(wxT("FPGA configuration complete."));
 	return (true);
 
-}
-
-void DeviceInterface::Notify() {
-
-	// Poll the xem, asking if there is data to collect.
-	xem->UpdateWireOuts();
-	unsigned long control = xem->GetWireOutValue (0x20);
-
-	if ( (controlPrevious & 0x0003) != (control & 0x0003)) { // True when there is data to collect
-
-		rawEvent->SetVariable (CommandVariable::IMG_WIDTH, 80);
-		rawEvent->SetVariable (CommandVariable::IMG_HEIGHT, 60);
-
-		// Read the length value from wire 0x21;
-		int length = (int) (xem->GetWireOutValue (0x21) * 2);
-		unsigned char* rawData = new unsigned char[length];
-
-		//::wxLogMessage (wxT ("length:  %i"), length);
-		//::wxLogMessage(wxT("debug:  %i"), ((control & 0x7FFC) >> 2));
-		//::wxLogMessage(wxT("debug test:   %i%i%i%i"), ((control & 0x20) >> 5), ((control & 0x10) >> 4), ((control & 0x8) >> 3), ((control & 0x4) >> 2));
-		//::wxLogMessage (wxT ("debug full:   %i"), ( (control & 0x0004) >> 2));
-		//::wxLogMessage (wxT ("debug empty:  %i"), ( (control & 0x0008) >> 3));
-		//::wxLogMessage (wxT ("debug control:  %i"), ( (control & 0x0003)));
-
-		// Pipe transfer
-		xem->ReadFromPipeOut (0xA1, length, rawData);
-
-		// The array of raw data from the pipe transfer is given to the rawEvent
-		rawEvent->SetRawData (rawData, length);
-
-		// Send a reference for the object rawEvent to display.
-		wxPostEvent (display, (*rawEvent));
-
-		//controlPrevious = control;
-		//Stop();
-	}
-	controlPrevious = control;
-
-	//::wxLogMessage(wxT("End of Notify()  control:  %i"), (control & 0x01));
 }
 
 void DeviceInterface::Start() {
@@ -192,25 +204,24 @@ void DeviceInterface::Start() {
 	xem->SetWireInValue (0x00, 1, 0x0001);
 	xem->UpdateWireIns();
 
-	int milliseconds = 1;
-	wxTimer::Start (milliseconds);
+	pollDevice = true;
 }
 
 void DeviceInterface::Stop() {
+	pollDevice = false;
+
 	if (NULL == xem)
 		return;
 
 	xem->SetWireInValue (0x00, 0, 0x0001);
 	xem->UpdateWireIns();
-
-	wxTimer::Stop();
 }
 
-void DeviceInterface::SetCommand (CommandVariable::CommandID command, int value) {
+void DeviceInterface::SetCommand (CommandVariable::CommandID commandID, int value) {
 	if (NULL == xem)
 		return;
 
-	switch (command) {
+	switch (commandID) {
 		case CommandVariable::OCT_PD_BIAS :
 			xem->SetWireInValue (0x01, value, 0x00FF);
 			xem->UpdateWireIns();
@@ -230,17 +241,14 @@ void DeviceInterface::SetCommand (CommandVariable::CommandID command, int value)
 		case CommandVariable::OCT_EVENT_NUM :
 			xem->SetWireInValue (0x05, value, 0xFFFF);
 			xem->UpdateWireIns();
-			//::wxLogMessage (wxT ("Number of events %i"), value);
 			break;
 		case CommandVariable::OCT_TIME_OUT:
 			xem->SetWireInValue (0x06, value, 0xFFFF);
-			//xem->SetWireInValue (0x07, (pll->GetOutputFrequency (1) * 1000), 0xFFFF);  // Milliseconds
 			xem->SetWireInValue (0x07, (pll->GetOutputFrequency (1)), 0xFFFF); // Microseconds
 			xem->UpdateWireIns();
-			//::wxLogMessage (wxT ("Time Out %i"), value);
 			break;
 		case CommandVariable::SAVE_TYPE :
-			rawEvent->SetVariable (command, value);
+			rawEvent->SetVariable (commandID, value);
 			break;
 		default :
 			break;

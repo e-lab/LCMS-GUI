@@ -18,7 +18,7 @@ class DeviceEvent;
  * collected.  The public functions provide the rest of the application with
  * the only means of interaction with the device.
  */
-class DeviceInterface : wxTimer
+class DeviceInterface : public wxThread
 {
 public:
 	/**
@@ -40,6 +40,11 @@ public:
 	 * Destructor.
 	 */
 	~DeviceInterface ();
+
+	/**
+	 * Thread execution starts here.
+	 */
+	virtual void *Entry();
 
 	/**
 	 * Alows access to the message (command) queue so other threads can send commands
@@ -70,17 +75,6 @@ public:
 	bool Initialize (wxString);
 
 	/**
-	 * Poll the xem device for data.
-	 *
-	 * Called by the wxTimer inherited class.  The function will trigger and read
-	 * the wire outs of the xem device, if there is data to collect it will pipe
-	 * out the data and send the data array to the display object (via the RawData
-	 * object) to be processed and displayed.
-	 *
-	 */
-	void Notify();
-
-	/**
 	 * Start polling the device for data.
 	 *
 	 * Starts the timer and sets the frequency of the polling to the value in
@@ -98,7 +92,7 @@ public:
 	 * The new value for the command is sent to the device and then the device
 	 * is reset for the change in value to take effect.
 	 *
-	 * @param command
+	 * @param commandID
 	 *   Command name of type CommandID.
 	 * @param value
 	 *   Value to be sent to the device.
@@ -108,13 +102,15 @@ public:
 
 private:
 	SimpleQueue<DeviceCommand>	commandQueue;
+	DeviceCommand*		command;
 	okCFrontPanel* 		xem;		//!< Pointer to the Opal Kelly library object.
 	okCPLL22150*		pll;		//!< Pointer to the Phased Locked Loop (pll) container object.
 	wxEvtHandler*		display;	//!< Pointer to the GraphicsPanel object being used to display data.
 
 	DeviceEvent*		rawEvent;
 
-	unsigned long controlPrevious;		//!< Keeps the previous value of the 'control' variable to compare against.
+	bool 			pollDevice;
+
 };
 
 #endif /* DEVICE_INTERFACE_H */

@@ -6,51 +6,61 @@
  * ControlPanels.
  */
 #include "DeviceController.h"
+#include "DeviceCommand.h"
 #include "DeviceInterface.h"
 #include "CommandVariable.h"
 
 DeviceController::DeviceController (wxEvtHandler* display)
 {
-	xemDevice = new DeviceInterface (display);
 	variables = new std::map<int, int>();
+
+	xemDevice = new DeviceInterface (display);
+	xemDevice->Create();
+	xemDevice->Run();
 }
 
 DeviceController::~DeviceController()
 {
-	delete xemDevice;
-	xemDevice = (DeviceInterface*) NULL;
+//	delete xemDevice;
+//	xemDevice = (DeviceInterface*) NULL;
 
 	delete variables;
 	variables = NULL;
 }
 
-void DeviceController::SetCommand (CommandVariable::CommandID command, int value)
+void DeviceController::SetCommand (CommandVariable::CommandID commandID, int value)
 {
-	(*variables) [command] = value;
-	xemDevice->SetCommand (command, value);
+	(*variables) [commandID] = value;
+
+	DeviceCommand *command = new DeviceCommand (commandID, value);
+	xemDevice->GetQueue().Post (*command);
 }
 
-void DeviceController::GetCommand (CommandVariable::CommandID command, int &value)
+void DeviceController::GetCommand (CommandVariable::CommandID commandID, int &value)
 {
-	value = (*variables) [command];
+	value = (*variables) [commandID];
 }
 
-int DeviceController::GetVariable (CommandVariable::CommandID command)
+int DeviceController::GetVariable (CommandVariable::CommandID commandID)
 {
-	return (*variables) [command];
+	return (*variables) [commandID];
 }
 
 void DeviceController::Initialize (wxString filename)
 {
-	xemDevice->Initialize (filename);
+	DeviceCommand *command = new DeviceCommand (CommandVariable::DEV_INIT);
+	command->SetFileName (filename);
+	xemDevice->GetQueue().Post (*command);
 }
 
 void DeviceController::Start()
 {
-	xemDevice->Start();
+	DeviceCommand *command = new DeviceCommand (CommandVariable::DEV_START);
+	xemDevice->GetQueue().Post (*command);
 }
 
 void DeviceController::Stop()
 {
-	xemDevice->Stop();
+	DeviceCommand *command = new DeviceCommand (CommandVariable::DEV_STOP);
+	xemDevice->GetQueue().Post (*command);
 }
