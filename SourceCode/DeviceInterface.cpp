@@ -2,6 +2,7 @@
  * @file
  * Contains the only class that interacts with the hardware.
  */
+#include "DeviceCommand.h"
 #include "DeviceInterface.h"
 #include "DeviceEvent.h"
 

@@ -9,12 +9,14 @@ DeviceCommand::DeviceCommand(CommandVariable::CommandID name, int value)
 {
 	commandID = name;
 	commandValue = value;
+	filename = wxT ("");
 }
 
 DeviceCommand::DeviceCommand(CommandVariable::CommandID name)
 {
 	commandID = name;
 	commandValue = 0;
+	filename = wxT ("");
 }
 
 DeviceCommand::~DeviceCommand()
@@ -34,4 +36,14 @@ int DeviceCommand::GetValue()
 void DeviceCommand::SetValue (int value)
 {
 	commandValue = value;
+}
+
+wxString DeviceCommand::GetFileName ()
+{
+	return filename;
+}
+
+void DeviceCommand::SetFileName (wxString bitfile)
+{
+	filename = bitfile;
 }

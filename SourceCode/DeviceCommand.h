@@ -1,6 +1,7 @@
 #ifndef DEVICE_COMMAND_H
 #define DEVICE_COMMAND_H
 
+#include <wx/wx.h>
 #include "CommandVariable.h"
 
 
@@ -39,10 +40,26 @@ public:
 	 */
 	void SetValue (int);
 
+	/**
+	 * Set the path and filename of the bitfile used in the DeviceInterface Initialize function.
+	 *
+	 * @param filename
+	 *   Path and filename to the bitfile.
+	 */
+	void SetFileName (wxString);
+	/**
+	 * Get the path and filename of the bitfile used in the DeviceInterface Initialize function.
+	 *
+	 * @retval filename
+	 *   Path and filename to the bitfile.
+	 */
+	wxString GetFileName ();
+
 private:
 
 	CommandVariable::CommandID 	commandID;
 	int 				commandValue;
+	wxString 			filename;
 
 };
 

@@ -2,11 +2,11 @@
 #define DEVICE_INTERFACE_H
 
 #include <wx/wx.h>
-#include "DeviceCommand.h"
 #include "SimpleQueue.h"
 #include "CommandVariable.h"
 #include "okFrontPanelDLL.h"
 
+class DeviceCommand;
 class DeviceEvent;
 
 /**

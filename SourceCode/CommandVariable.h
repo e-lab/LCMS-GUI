@@ -19,6 +19,10 @@ public:
 	 * device.
 	 */
 	enum CommandID {
+		DEV_INIT,	//!< Initialize the hardware device.
+		DEV_START,	//!< Start polling the device for data.
+		DEV_STOP,	//!< Stop polling the device for data.
+
 		OCT_PD_BIAS,	//!< Corresponds to the hardware DAC Vout D.
 		OCT_VDDA,
 		OCT_VDDR,
