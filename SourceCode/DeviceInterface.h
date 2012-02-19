@@ -2,6 +2,8 @@
 #define DEVICE_INTERFACE_H
 
 #include <wx/wx.h>
+#include "DeviceCommand.h"
+#include "SimpleQueue.h"
 #include "CommandVariable.h"
 #include "okFrontPanelDLL.h"
 
@@ -37,7 +39,15 @@ public:
 	/**
 	 * Destructor.
 	 */
-	~DeviceInterface();
+	~DeviceInterface ();
+
+	/**
+	 * Alows access to the message (command) queue so other threads can send commands
+	 * to the device interface.
+	 *
+	 * @retval Command Queue
+	 */
+	SimpleQueue<DeviceCommand>& GetQueue ();
 
 	/**
 	 * Initialize the hardware device.
@@ -97,6 +107,7 @@ public:
 
 
 private:
+	SimpleQueue<DeviceCommand>	commandQueue;
 	okCFrontPanel* 		xem;		//!< Pointer to the Opal Kelly library object.
 	okCPLL22150*		pll;		//!< Pointer to the Phased Locked Loop (pll) container object.
 	wxEvtHandler*		display;	//!< Pointer to the GraphicsPanel object being used to display data.

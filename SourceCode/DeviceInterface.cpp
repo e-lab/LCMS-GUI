@@ -38,6 +38,11 @@ DeviceInterface::~DeviceInterface()
 	}
 }
 
+SimpleQueue<DeviceCommand>& DeviceInterface::GetQueue ()
+{
+	return commandQueue;
+}
+
 bool DeviceInterface::Initialize (wxString filename)
 {
 	Stop();

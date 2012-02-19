@@ -192,6 +192,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SourceCode\DeviceCommand.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceCode\DeviceEvent.cpp"
 				>
 			</File>
@@ -242,6 +246,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\SourceCode\SimpleQueue.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceCode\CommandVariable.h"
 				>
 			</File>
@@ -255,6 +263,10 @@
 			</File>
 			<File
 				RelativePath=".\SourceCode\ControlView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SourceCode\DeviceCommand.h"
 				>
 			</File>
 			<File
