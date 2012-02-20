@@ -5,7 +5,7 @@
 #include "DeviceInterface.h"
 #include "DeviceEvent.h"
 
-DeviceInterface::DeviceInterface (wxEvtHandler* displayTmp) : wxThread()
+DeviceInterface::DeviceInterface (wxEvtHandler* displayTmp) : wxThread(wxTHREAD_JOINABLE)
 {
 	pollDevice = false;
 
