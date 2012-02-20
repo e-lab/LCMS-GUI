@@ -20,7 +20,7 @@ Logo::Logo (wxWindow* owner) : wxPanel (owner)
 	//this->SetSize(320, 100);
 
 	// Full sized elab logo
-	bitmap = new wxBitmap (elab_logo);
+	bitmap = new wxBitmap (elab_new_logo);
 
 	// Sets the size of the logo from the size of the bitmap
 	SetSize (bitmap->GetWidth(), bitmap->GetHeight());
