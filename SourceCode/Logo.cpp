@@ -3,7 +3,8 @@
  * Contains the class used to displays the e-Lab logo.
  */
 #include "Logo.h"
-#include "elab_logo.xpm"
+//#include "elab_logo.xpm"
+#include "elab_new_logo.xpm"
 
 
 Logo::Logo (wxWindow* owner) : wxPanel (owner)
@@ -12,7 +13,7 @@ Logo::Logo (wxWindow* owner) : wxPanel (owner)
 	//this->SetBackgroundStyle (wxBG_STYLE_CUSTOM);
 
 	// Scaled elab logo
-	//wxBitmap logo_xpm(elab_logo);
+	//wxBitmap logo_xpm(elab_new_logo);
 	//wxImage image = logo_xpm.ConvertToImage();
 	//image.Rescale(240, 75);
 	//bitmap = new wxBitmap(image);
