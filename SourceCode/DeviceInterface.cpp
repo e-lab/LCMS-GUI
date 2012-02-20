@@ -41,6 +41,7 @@ DeviceInterface::~DeviceInterface()
 wxThread::ExitCode DeviceInterface::Entry()
 {
 
+	//while (!TestDestroy()) {
 	while (1) {
 
 		Command::packet packet;
@@ -85,7 +86,7 @@ wxThread::ExitCode DeviceInterface::Entry()
 			}
 		}
 	}
-	return 0;
+	return (wxThread::ExitCode) 0;
 }
 
 

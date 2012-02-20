@@ -20,6 +20,7 @@ DeviceController::DeviceController (wxEvtHandler* display)
 
 DeviceController::~DeviceController()
 {
+	//xemDevice->Wait();
 	delete xemDevice;
 	xemDevice = (DeviceInterface*) NULL;
 
