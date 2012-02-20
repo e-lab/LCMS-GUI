@@ -20,8 +20,8 @@ DeviceController::DeviceController (wxEvtHandler* display)
 
 DeviceController::~DeviceController()
 {
-//	delete xemDevice;
-//	xemDevice = (DeviceInterface*) NULL;
+	delete xemDevice;
+	xemDevice = (DeviceInterface*) NULL;
 
 	delete variables;
 	variables = NULL;
