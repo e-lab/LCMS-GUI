@@ -3,7 +3,7 @@
  * Contains the class that constructs the 'View' controls.
  */
 #include "ControlView.h"
-#include "CommandVariable.h"
+#include "Command.h"
 #include "DeviceController.h"
 
 ControlView::ControlView (wxWindow* owner, DeviceController* controller) : ControlPanel (owner)
@@ -102,17 +102,17 @@ void ControlView::OnSaveType (wxCommandEvent& event)
 
 void ControlView::ChangeSaveFrame ()
 {
-	xemDeviceCtrl->SetCommand (CommandVariable::SAVE_TYPE, 1);
+	xemDeviceCtrl->SetCommand (Command::SAVE_TYPE, 1);
 }
 
 void ControlView::ChangeSaveMovie ()
 {
-	xemDeviceCtrl->SetCommand (CommandVariable::SAVE_TYPE, 0);
+	xemDeviceCtrl->SetCommand (Command::SAVE_TYPE, 0);
 }
 
 void ControlView::ChangeEventNum (wxScrollEvent& event)
 {
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_EVENT_NUM, event.GetPosition());
+	xemDeviceCtrl->SetCommand (Command::OCT_EVENT_NUM, event.GetPosition());
 	SetTextEventNum ();
 }
 
@@ -126,7 +126,7 @@ void ControlView::SetTextEventNum ()
 
 void ControlView::ChangeTimeOut (wxSpinEvent& event)
 {
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_TIME_OUT, event.GetPosition());
+	xemDeviceCtrl->SetCommand (Command::OCT_TIME_OUT, event.GetPosition());
 }
 
 void ControlView::ResetControls (wxCommandEvent& event)
@@ -145,30 +145,30 @@ void ControlView::ResetSaveType ()
 {
 	saveFrame->SetValue (true);
 	ChangeSaveFrame ();
-	//xemDeviceCtrl->SetCommand (CommandVariable::SAVE_TYPE, 1);
+	//xemDeviceCtrl->SetCommand (Command::SAVE_TYPE, 1);
 }
 
 void ControlView::ResetTriggerOut ()
 {
 	sliderEvents->SetValue (defaultValueEvents);
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_EVENT_NUM, sliderEvents->GetValue());
+	xemDeviceCtrl->SetCommand (Command::OCT_EVENT_NUM, sliderEvents->GetValue());
 	SetTextEventNum ();
 
 	timeOut->SetValue (defaultValueTimeOut);
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_TIME_OUT, timeOut->GetValue());
+	xemDeviceCtrl->SetCommand (Command::OCT_TIME_OUT, timeOut->GetValue());
 }
 
 void ControlView::Start ()
 {
 	if (saveFrame->GetValue()) {
 		ChangeSaveFrame ();
-		//xemDeviceCtrl->SetCommand (CommandVariable::SAVE_TYPE, 1);
+		//xemDeviceCtrl->SetCommand (Command::SAVE_TYPE, 1);
 	} else {
 		ChangeSaveMovie();
-		//xemDeviceCtrl->SetCommand (CommandVariable::SAVE_TYPE, 0);
+		//xemDeviceCtrl->SetCommand (Command::SAVE_TYPE, 0);
 	}
 
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_EVENT_NUM, sliderEvents->GetValue());
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_TIME_OUT, timeOut->GetValue());
+	xemDeviceCtrl->SetCommand (Command::OCT_EVENT_NUM, sliderEvents->GetValue());
+	xemDeviceCtrl->SetCommand (Command::OCT_TIME_OUT, timeOut->GetValue());
 }
 

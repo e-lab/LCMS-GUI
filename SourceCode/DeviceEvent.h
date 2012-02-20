@@ -4,7 +4,7 @@
 #include <wx/wx.h>
 #include <map>
 
-#include "CommandVariable.h"
+#include "Command.h"
 
 extern const wxEventType DEVICE_EVENT;
 
@@ -63,7 +63,7 @@ public:
 	 * @param value
 	 *   Integer into which the 'variable' value is saved.
 	 */
-	void GetVariable (CommandVariable::CommandID, int&);
+	void GetVariable (Command::CommandID, int&);
 	/**
 	 * Retrieve the value of the variable.
 	 *
@@ -72,7 +72,7 @@ public:
 	 * @return
 	 *   Integer value of the 'variable'.
 	 */
-	int GetVariable (CommandVariable::CommandID);
+	int GetVariable (Command::CommandID);
 	/**
 	 * Set the value of the variable.
 	 *
@@ -81,7 +81,7 @@ public:
 	 * @param value
 	 *   Integer value of the variable.
 	 */
-	void SetVariable (CommandVariable::CommandID, int);
+	void SetVariable (Command::CommandID, int);
 
 	DECLARE_DYNAMIC_CLASS (DeviceEvent)
 

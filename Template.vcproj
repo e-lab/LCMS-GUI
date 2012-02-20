@@ -246,7 +246,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SourceCode\CommandVariable.h"
+				RelativePath=".\SourceCode\Command.h"
 				>
 			</File>
 			<File

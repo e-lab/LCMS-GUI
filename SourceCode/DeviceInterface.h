@@ -3,7 +3,7 @@
 
 #include <wx/wx.h>
 #include "SimpleQueue.h"
-#include "CommandVariable.h"
+#include "Command.h"
 #include "okFrontPanelDLL.h"
 
 class DeviceEvent;
@@ -51,7 +51,7 @@ public:
 	 *
 	 * @retval Command Queue
 	 */
-	SimpleQueue<CommandVariable::command>& GetQueue ();
+	SimpleQueue<Command::command>& GetQueue ();
 
 	/**
 	 * Initialize the hardware device.
@@ -96,11 +96,11 @@ public:
 	 * @param value
 	 *   Value to be sent to the device.
 	 */
-	void SetCommand (CommandVariable::CommandID, int);
+	void SetCommand (Command::CommandID, int);
 
 
 private:
-	SimpleQueue<CommandVariable::command>	commandQueue;
+	SimpleQueue<Command::command>	commandQueue;
 
 	okCFrontPanel* 		xem;		//!< Pointer to the Opal Kelly library object.
 	okCPLL22150*		pll;		//!< Pointer to the Phased Locked Loop (pll) container object.

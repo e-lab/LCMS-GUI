@@ -8,7 +8,7 @@
  * This header should be imported by any class which need to identify a
  * command to be sent or that has been sent to the device/hardware.
  */
-class CommandVariable
+class Command
 {
 public:
 	/**

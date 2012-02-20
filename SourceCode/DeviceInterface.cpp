@@ -43,19 +43,19 @@ wxThread::ExitCode DeviceInterface::Entry()
 
 	while (1) {
 
-		CommandVariable::command packet;
+		Command::command packet;
 
 		// Process commands
 		if (wxMSGQUEUE_NO_ERROR == commandQueue.ReceiveNoWait (packet)) {
 
 			switch (packet.commandID) {
-				case CommandVariable::DEV_INIT :
+				case Command::DEV_INIT :
 					Initialize (packet.filename);
 					break;
-				case CommandVariable::DEV_START :
+				case Command::DEV_START :
 					Start();
 					break;
-				case CommandVariable::DEV_STOP:
+				case Command::DEV_STOP:
 					Stop();
 					break;
 				default :
@@ -89,7 +89,7 @@ wxThread::ExitCode DeviceInterface::Entry()
 }
 
 
-SimpleQueue<CommandVariable::command>& DeviceInterface::GetQueue ()
+SimpleQueue<Command::command>& DeviceInterface::GetQueue ()
 {
 	return commandQueue;
 }
@@ -215,37 +215,37 @@ void DeviceInterface::Stop() {
 	xem->UpdateWireIns();
 }
 
-void DeviceInterface::SetCommand (CommandVariable::CommandID commandID, int value) {
+void DeviceInterface::SetCommand (Command::CommandID commandID, int value) {
 	if (NULL == xem)
 		return;
 
 	switch (commandID) {
-		case CommandVariable::OCT_PD_BIAS :
+		case Command::OCT_PD_BIAS :
 			xem->SetWireInValue (0x01, value, 0x00FF);
 			xem->UpdateWireIns();
 			break;
-		case CommandVariable::OCT_VDDA :
+		case Command::OCT_VDDA :
 			xem->SetWireInValue (0x02, value, 0x00FF);
 			xem->UpdateWireIns();
 			break;
-		case CommandVariable::OCT_VDDR :
+		case Command::OCT_VDDR :
 			xem->SetWireInValue (0x03, value, 0x00FF);
 			xem->UpdateWireIns();
 			break;
-		case CommandVariable::OCT_LPU :
+		case Command::OCT_LPU :
 			xem->SetWireInValue (0x04, value, 0x00FF);
 			xem->UpdateWireIns();
 			break;
-		case CommandVariable::OCT_EVENT_NUM :
+		case Command::OCT_EVENT_NUM :
 			xem->SetWireInValue (0x05, value, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case CommandVariable::OCT_TIME_OUT:
+		case Command::OCT_TIME_OUT:
 			xem->SetWireInValue (0x06, value, 0xFFFF);
 			xem->SetWireInValue (0x07, (pll->GetOutputFrequency (1)), 0xFFFF); // Microseconds
 			xem->UpdateWireIns();
 			break;
-		case CommandVariable::SAVE_TYPE :
+		case Command::SAVE_TYPE :
 			rawEvent->SetVariable (commandID, value);
 			break;
 		default :

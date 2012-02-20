@@ -72,14 +72,14 @@ GraphicsPlot::~GraphicsPlot()
 void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 {
 	// Clears previous data events from the continues save 'measurements' vector.
-	int saveType = rawEvent.GetVariable (CommandVariable::PA_SAVE_TYPE);
+	int saveType = rawEvent.GetVariable (Command::PA_SAVE_TYPE);
 
 	if ( (1 == saveType) // True when the "Save Type" radio button is set to "Continues".
-	                || ( (measurements.size() > 0) && (saveType != (measurements.at (0))->GetVariable (CommandVariable::PA_SAVE_TYPE)))
+	                || ( (measurements.size() > 0) && (saveType != (measurements.at (0))->GetVariable (Command::PA_SAVE_TYPE)))
 	                // True if there is a raw data event saved in the measurements vector AND if the first raw data event in the measurements vector
 	                // 	has a different PA_SAVE_TYPE to the current raw data event.  This will only be so for the first frame after the
 	                //	"Save Type" radio button is changed, thus preventing data events with different save types being in the same measurements.
-	                || (1 == rawEvent.GetVariable (CommandVariable::PA_FIRST_MEAS))) {
+	                || (1 == rawEvent.GetVariable (Command::PA_FIRST_MEAS))) {
 		// True if this is the first measurement after the 'start' button has been pressed.
 		while (measurements.size() > 0) {
 			delete (measurements.back());
@@ -111,10 +111,10 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 
 void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 {
-	int voltMinus = rawEvent.GetVariable (CommandVariable::PA_VOLT_M);
-	int voltPlus = rawEvent.GetVariable (CommandVariable::PA_VOLT_P);
-	int voltRef = rawEvent.GetVariable (CommandVariable::PA_VOLT_REF);
-	int capFlag = rawEvent.GetVariable (CommandVariable::PA_CAPACITANCE);
+	int voltMinus = rawEvent.GetVariable (Command::PA_VOLT_M);
+	int voltPlus = rawEvent.GetVariable (Command::PA_VOLT_P);
+	int voltRef = rawEvent.GetVariable (Command::PA_VOLT_REF);
+	int capFlag = rawEvent.GetVariable (Command::PA_CAPACITANCE);
 
 	double deltaVplus = ( (double) (voltPlus - voltRef)) * 3.3 / 255.0;
 	double deltaVminus = ( (double) (voltMinus - voltRef)) * 3.3 / 255.0;
@@ -160,10 +160,10 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 	rawData = NULL;
 }
 
-void GraphicsPlot::SetCommandString (CommandVariable::CommandID command, wxString string)
+void GraphicsPlot::SetCommandString (Command::CommandID command, wxString string)
 {
 	switch (command) {
-		case CommandVariable::SAVE_DATA:
+		case Command::SAVE_DATA:
 			SaveData (string);
 			break;
 		default :
@@ -182,7 +182,7 @@ void GraphicsPlot::SaveData (wxString outputFile)
 			fileName.SetExt (wxT ("dat"));
 		}
 
-		if (1 != (measurements.at (ii))->GetVariable (CommandVariable::PA_SAVE_TYPE)) {
+		if (1 != (measurements.at (ii))->GetVariable (Command::PA_SAVE_TYPE)) {
 			fileName.SetName (fileName.GetName() << wxT ("_") << ii);
 		}
 
@@ -214,11 +214,11 @@ void GraphicsPlot::SaveData (wxString outputFile)
 		delete[] time;
 		time = NULL;
 
-		int voltMinus = (*measurements.at (ii)).GetVariable (CommandVariable::PA_VOLT_M);
-		int voltPlus = (*measurements.at (ii)).GetVariable (CommandVariable::PA_VOLT_P);
-		int voltRef = (*measurements.at (ii)).GetVariable (CommandVariable::PA_VOLT_REF);
-		int voltPUP = (*measurements.at (ii)).GetVariable (CommandVariable::PA_VOLT_PUP);
-		int capFlag = (*measurements.at (ii)).GetVariable (CommandVariable::PA_CAPACITANCE);
+		int voltMinus = (*measurements.at (ii)).GetVariable (Command::PA_VOLT_M);
+		int voltPlus = (*measurements.at (ii)).GetVariable (Command::PA_VOLT_P);
+		int voltRef = (*measurements.at (ii)).GetVariable (Command::PA_VOLT_REF);
+		int voltPUP = (*measurements.at (ii)).GetVariable (Command::PA_VOLT_PUP);
+		int capFlag = (*measurements.at (ii)).GetVariable (Command::PA_CAPACITANCE);
 
 		fileOut.AddLine (wxString::Format (wxT ("# Bias Volt Minus:\t%.2f"), ( ( (double) voltMinus) * 3.3 / 255.0)));
 		fileOut.AddLine (wxString::Format (wxT ("# Bias Volt Plus :\t%.2f"), ( ( (double) voltPlus) * 3.3 / 255.0)));
@@ -231,7 +231,7 @@ void GraphicsPlot::SaveData (wxString outputFile)
 			fileOut.AddLine (wxString::Format (wxT ("# Capacitance: Low")));
 		}
 
-		//int missedCycles = (*measurements.at (ii)).GetVariable (CommandVariable::PA_MISSED_CYCLES);
+		//int missedCycles = (*measurements.at (ii)).GetVariable (Command::PA_MISSED_CYCLES);
 		//fileOut.AddLine (wxString::Format (wxT ("# Missed Cycles  :\t%i\n"), missedCycles));
 
 		for (int xx = 0; xx < length; xx++) {

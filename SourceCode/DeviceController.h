@@ -4,7 +4,7 @@
 #include <wx/wx.h>
 #include <map>
 
-#include "CommandVariable.h"
+#include "Command.h"
 
 class	DeviceInterface;
 
@@ -43,7 +43,7 @@ public:
 	 * @param value
 	 *   Integer value of the variable.
 	 */
-	void SetCommand (CommandVariable::CommandID, int);
+	void SetCommand (Command::CommandID, int);
 	/**
 	 * Retrieve the value of the variable.
 	 *
@@ -52,7 +52,7 @@ public:
 	 * @param value
 	 *   Integer into which the 'variable' value is saved.
 	 */
-	void GetCommand (CommandVariable::CommandID, int&);
+	void GetCommand (Command::CommandID, int&);
 	/**
 	 * Retrieve the value of the variable.
 	 *
@@ -61,7 +61,7 @@ public:
 	 * @return
 	 *   Integer value of the 'variable'.
 	 */
-	int GetVariable (CommandVariable::CommandID);
+	int GetVariable (Command::CommandID);
 
 
 	/**

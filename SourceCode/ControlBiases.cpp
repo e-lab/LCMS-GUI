@@ -3,7 +3,7 @@
  * Contains the class that constructs the bias controls.
  */
 #include "ControlBiases.h"
-#include "CommandVariable.h"
+#include "Command.h"
 #include "DeviceController.h"
 
 ControlBiases::ControlBiases (wxWindow* owner, DeviceController* controller) : ControlPanel (owner)
@@ -96,25 +96,25 @@ ControlBiases::~ControlBiases()
 
 void ControlBiases::OnSliderPBBias (wxScrollEvent& event)
 {
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_PD_BIAS, event.GetPosition());
+	xemDeviceCtrl->SetCommand (Command::OCT_PD_BIAS, event.GetPosition());
 	SetTextPBBias();
 }
 
 void ControlBiases::OnSliderVDDA (wxScrollEvent& event)
 {
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_VDDA, event.GetPosition());
+	xemDeviceCtrl->SetCommand (Command::OCT_VDDA, event.GetPosition());
 	SetTextVDDA();
 }
 
 void ControlBiases::OnSliderVDDR (wxScrollEvent& event)
 {
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_VDDR, event.GetPosition());
+	xemDeviceCtrl->SetCommand (Command::OCT_VDDR, event.GetPosition());
 	SetTextVDDR();
 }
 
 void ControlBiases::OnSliderLPU (wxScrollEvent& event)
 {
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_LPU, event.GetPosition());
+	xemDeviceCtrl->SetCommand (Command::OCT_LPU, event.GetPosition());
 	SetTextLPU();
 }
 
@@ -127,19 +127,19 @@ void ControlBiases::ResetBiasValues()
 {
 	sliderPBBias->SetValue (defaultValuePBBias);
 	SetTextPBBias();
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_PD_BIAS, sliderPBBias->GetValue());
+	xemDeviceCtrl->SetCommand (Command::OCT_PD_BIAS, sliderPBBias->GetValue());
 
 	sliderVDDA->SetValue (defaultValueVDDA);
 	SetTextVDDA();
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_VDDA, sliderVDDA->GetValue());
+	xemDeviceCtrl->SetCommand (Command::OCT_VDDA, sliderVDDA->GetValue());
 
 	sliderVDDR->SetValue (defaultValueVDDR);
 	SetTextVDDR();
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_VDDR, sliderVDDR->GetValue());
+	xemDeviceCtrl->SetCommand (Command::OCT_VDDR, sliderVDDR->GetValue());
 
 	sliderLPU->SetValue (defaultValueLPU);
 	SetTextLPU();
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_LPU, sliderLPU->GetValue());
+	xemDeviceCtrl->SetCommand (Command::OCT_LPU, sliderLPU->GetValue());
 }
 
 void ControlBiases::SetTextPBBias()
@@ -184,9 +184,9 @@ void ControlBiases::SetTextLPU()
 
 void ControlBiases::Start()
 {
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_PD_BIAS, sliderPBBias->GetValue());
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_VDDA, sliderVDDA->GetValue());
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_VDDR, sliderVDDR->GetValue());
-	xemDeviceCtrl->SetCommand (CommandVariable::OCT_LPU, sliderLPU->GetValue());
+	xemDeviceCtrl->SetCommand (Command::OCT_PD_BIAS, sliderPBBias->GetValue());
+	xemDeviceCtrl->SetCommand (Command::OCT_VDDA, sliderVDDA->GetValue());
+	xemDeviceCtrl->SetCommand (Command::OCT_VDDR, sliderVDDR->GetValue());
+	xemDeviceCtrl->SetCommand (Command::OCT_LPU, sliderLPU->GetValue());
 
 }

@@ -67,17 +67,17 @@ void DeviceEvent::SetRawData (unsigned char* data, int& dataLength)
 	rawData = data;
 }
 
-void DeviceEvent::GetVariable (CommandVariable::CommandID variable, int& value)
+void DeviceEvent::GetVariable (Command::CommandID variable, int& value)
 {
 	value = (*variables) [variable];
 }
 
-int DeviceEvent::GetVariable (CommandVariable::CommandID variable)
+int DeviceEvent::GetVariable (Command::CommandID variable)
 {
 	return (*variables) [variable];
 }
 
-void DeviceEvent::SetVariable (CommandVariable::CommandID variable, int value)
+void DeviceEvent::SetVariable (Command::CommandID variable, int value)
 {
 	(*variables) [variable] = value;
 }

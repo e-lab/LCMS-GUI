@@ -3,7 +3,7 @@
 
 #include <wx/wx.h>
 #include "DeviceEvent.h"
-#include "CommandVariable.h"
+#include "Command.h"
 
 /**
  * Abstract class providing an inherited interface to derived class.
@@ -43,7 +43,7 @@ public:
 	 * @param command
 	 * @param string
 	 */
-	virtual void SetCommandString (CommandVariable::CommandID, wxString) {};
+	virtual void SetCommandString (Command::CommandID, wxString) {};
 };
 
 #endif /* GRAPHICS_PANEL_H */

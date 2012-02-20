@@ -61,7 +61,7 @@ GraphicsImage::~GraphicsImage()
 
 void GraphicsImage::OnDeviceEvent (DeviceEvent& rawEvent)
 {
-	int saveType = rawEvent.GetVariable (CommandVariable::SAVE_TYPE);
+	int saveType = rawEvent.GetVariable (Command::SAVE_TYPE);
 	if (1 == saveType) {
 		while (movie.size() > 0) {
 			delete (movie.back());
@@ -76,8 +76,8 @@ void GraphicsImage::OnDeviceEvent (DeviceEvent& rawEvent)
 
 void GraphicsImage::UnpackEvent (DeviceEvent& rawEvent)
 {
-	int width = rawEvent.GetVariable (CommandVariable::IMG_WIDTH);
-	int height = rawEvent.GetVariable (CommandVariable::IMG_HEIGHT);
+	int width = rawEvent.GetVariable (Command::IMG_WIDTH);
+	int height = rawEvent.GetVariable (Command::IMG_HEIGHT);
 
 	if (0 == width || 0 == height) {
 		return;
@@ -131,10 +131,10 @@ void GraphicsImage::UnpackEvent (DeviceEvent& rawEvent)
 	canvas->Refresh (true, NULL); // Causes the image panel to be repainted.
 }
 
-void GraphicsImage::SetCommandString (CommandVariable::CommandID command, wxString string)
+void GraphicsImage::SetCommandString (Command::CommandID command, wxString string)
 {
 	switch (command) {
-		case CommandVariable::SAVE_DATA:
+		case Command::SAVE_DATA:
 			SaveData (string);
 			break;
 		default :

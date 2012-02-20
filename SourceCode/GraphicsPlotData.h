@@ -11,7 +11,6 @@
 #include <math.h>
 
 #include "GraphicsPanel.h"
-#include "CommandVariable.h"
 #include "mathplot.h"
 
 

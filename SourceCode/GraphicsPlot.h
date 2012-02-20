@@ -11,7 +11,7 @@
 #include <math.h>
 
 #include "GraphicsPanel.h"
-#include "CommandVariable.h"
+#include "Command.h"
 #include "mathplot.h"
 
 #include "GraphicsPlotData.h"
@@ -72,7 +72,7 @@ public:
 	 * @param string
 	 *   String containing information.
 	 */
-	void SetCommandString (CommandVariable::CommandID, wxString);
+	void SetCommandString (Command::CommandID, wxString);
 
 private:
 

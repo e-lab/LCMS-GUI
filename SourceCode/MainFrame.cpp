@@ -94,7 +94,7 @@ void MainFrame::OnSave (wxCommandEvent& event)
 		return;
 	}
 
-	display->SetCommandString (CommandVariable::SAVE_DATA, saveLocation.GetPath());
+	display->SetCommandString (Command::SAVE_DATA, saveLocation.GetPath());
 }
 
 void MainFrame::Configuration (wxCommandEvent & event)

@@ -10,7 +10,7 @@
 #include <fstream>
 
 #include "GraphicsPanel.h"
-#include "CommandVariable.h"
+#include "Command.h"
 
 
 class DeviceEvent;
@@ -70,7 +70,7 @@ public:
 	 * @param string
 	 *   String containing information.
 	 */
-	void SetCommandString (CommandVariable::CommandID, wxString);
+	void SetCommandString (Command::CommandID, wxString);
 
 private:
 	GraphicsImageCanvas*	canvas;
