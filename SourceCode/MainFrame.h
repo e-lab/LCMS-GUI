@@ -139,7 +139,7 @@ private:
 	/**
 	 * Create an icon to be displayed in top-left hand corner.
 	 *
-	 * The yale_icon.xpm image will be used to make this icon.
+	 * The (yale/purdue)_icon.xpm image will be used to make this icon.
 	 */
 	void SetIconResource();
 	/**

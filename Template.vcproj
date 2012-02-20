@@ -318,6 +318,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SourceCode\purdue_icon.xpm"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceCode\yale_icon.xpm"
 				>
 			</File>
