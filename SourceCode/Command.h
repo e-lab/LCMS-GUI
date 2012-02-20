@@ -48,7 +48,7 @@ public:
 		SAVE_DATA
 	};
 
-	struct command {
+	struct packet {
 		CommandID	commandID;
 		int 		commandValue;
 		wxString	filename;

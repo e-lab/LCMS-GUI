@@ -51,7 +51,7 @@ public:
 	 *
 	 * @retval Command Queue
 	 */
-	SimpleQueue<Command::command>& GetQueue ();
+	SimpleQueue<Command::packet>& GetQueue ();
 
 	/**
 	 * Initialize the hardware device.
@@ -100,7 +100,7 @@ public:
 
 
 private:
-	SimpleQueue<Command::command>	commandQueue;
+	SimpleQueue<Command::packet>	commandQueue;
 
 	okCFrontPanel* 		xem;		//!< Pointer to the Opal Kelly library object.
 	okCPLL22150*		pll;		//!< Pointer to the Phased Locked Loop (pll) container object.

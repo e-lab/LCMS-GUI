@@ -43,7 +43,7 @@ wxThread::ExitCode DeviceInterface::Entry()
 
 	while (1) {
 
-		Command::command packet;
+		Command::packet packet;
 
 		// Process commands
 		if (wxMSGQUEUE_NO_ERROR == commandQueue.ReceiveNoWait (packet)) {
@@ -89,7 +89,7 @@ wxThread::ExitCode DeviceInterface::Entry()
 }
 
 
-SimpleQueue<Command::command>& DeviceInterface::GetQueue ()
+SimpleQueue<Command::packet>& DeviceInterface::GetQueue ()
 {
 	return commandQueue;
 }

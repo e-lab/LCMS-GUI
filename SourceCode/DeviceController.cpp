@@ -31,7 +31,7 @@ void DeviceController::SetCommand (Command::CommandID commandID, int value)
 {
 	(*variables) [commandID] = value;
 
-	struct Command::command packet;
+	struct Command::packet packet;
 	packet.commandID = commandID;
 	packet.commandValue = value;
 
@@ -50,7 +50,7 @@ int DeviceController::GetVariable (Command::CommandID commandID)
 
 void DeviceController::Initialize (wxString filename)
 {
-	struct Command::command packet;
+	struct Command::packet packet;
 	packet.commandID = Command::DEV_INIT;
 	packet.filename = filename;
 
@@ -59,7 +59,7 @@ void DeviceController::Initialize (wxString filename)
 
 void DeviceController::Start()
 {
-	struct Command::command packet;
+	struct Command::packet packet;
 	packet.commandID = Command::DEV_START;
 
 	xemDevice->GetQueue().Post(packet);
@@ -67,7 +67,7 @@ void DeviceController::Start()
 
 void DeviceController::Stop()
 {
-	struct Command::command packet;
+	struct Command::packet packet;
 	packet.commandID = Command::DEV_STOP;
 
 	xemDevice->GetQueue().Post(packet);
