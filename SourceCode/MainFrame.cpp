@@ -9,6 +9,7 @@
 
 #include "DeviceController.h"
 
+#include "ControlProtocol.h"
 #include "ControlBiases.h"
 #include "ControlView.h"
 #include "Logging.h"
@@ -37,6 +38,8 @@ MainFrame::MainFrame (const wxString& title, const wxSize& size) : wxFrame (NULL
 	// Create control panel
 	CreateControls (panelMain);
 
+	//((MathPlotPanel *)display)->SetMPProtocol(protocol);
+
 
 	sizerMain->Add (controls, 0, wxEXPAND | wxALL, 5);
 	sizerMain->Add (graphics, 1, wxEXPAND | wxALIGN_CENTER | wxALL, 20);
@@ -48,6 +51,8 @@ MainFrame::MainFrame (const wxString& title, const wxSize& size) : wxFrame (NULL
 	Connect (ON_STOP, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler (MainFrame::OnStop));
 
 	Connect (wxID_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnSave));
+	Connect (SAVE_CONFIG, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnSaveProtocol));
+	Connect (RELOAD_CONFIGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnReloadConfigs));
 	Connect (CONFIGURATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::Configuration));
 	Connect (wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnQuit));
 	Connect (wxID_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnAbout));
@@ -125,6 +130,33 @@ void MainFrame::OnAbout (wxCommandEvent& event)
 	wxMessageBox (msg, wxT ("About Application"), wxOK | wxICON_INFORMATION, this);
 }
 
+void MainFrame::OnSaveProtocol (wxCommandEvent& event)
+{
+	// Ask for a protocol configuration filename from the user.
+	wxFileDialog saveLocation (this, wxT ("Choose a config file save location."),
+	                           wxT (""), wxT ("LCMS-Protocol"),
+	                           wxT ("LCMS Protocol Configuration Files (*.cfg)|*.cfg|All files (*.*)|*.*"),
+	                           wxFD_SAVE | wxOVERWRITE_PROMPT);
+
+	if (saveLocation.ShowModal() == wxID_CANCEL) {
+		return;
+	}
+
+	protocol->SaveCurrentConfig (saveLocation.GetPath());
+}
+
+void MainFrame::OnReloadConfigs (wxCommandEvent& event)
+{
+	// Ask for the protocol configuration save directory from the user.
+	wxDirDialog saveDirectory (this, wxT ("Select the protocol configuration directory."), wxGetCwd());
+
+	if (saveDirectory.ShowModal() == wxID_CANCEL) {
+		return;
+	}
+
+	protocol->LoadConfigFiles (saveDirectory.GetPath());
+}
+
 void MainFrame::SetIconResource()
 {
 	//wxIcon icon (yale_icon);
@@ -137,6 +169,9 @@ void MainFrame::CreateMenuBar()
 	wxMenu *fileMenu = new wxMenu;
 	wxMenu *helpMenu = new wxMenu;
 
+	fileMenu->Append (SAVE_CONFIG, wxT ("&Save Protocol"), wxT ("Save the protocol configuration file"));
+	fileMenu->Append (RELOAD_CONFIGS, wxT ("&Reload Protocols"), wxT ("Reload the protocol configuration files"));
+	fileMenu->AppendSeparator();
 	fileMenu->Append (wxID_SAVE, wxT ("&Save.."), wxT ("Save currently displayed data"));
 	fileMenu->Append (CONFIGURATION, wxT ("&Config.."), wxT ("Load the XEM configuration bit file"));
 	fileMenu->AppendSeparator();
@@ -159,8 +194,12 @@ void MainFrame::CreateControls (wxPanel* panelMain)
 	// Tabbed command panels
 	wxBookCtrl* book = new wxBookCtrl (controls, BOOKCTRL);
 
+	protocol = new ControlProtocol (book, xemDeviceCtrl);
+	book->AddPage (protocol, wxT ("Protocol"), true);
+	controlBook.push_back (protocol);
+
 	ControlBiases* octBiases = new ControlBiases (book, xemDeviceCtrl);
-	book->AddPage (octBiases, wxT ("Biases"), true);
+	book->AddPage (octBiases, wxT ("Biases"));
 	controlBook.push_back (octBiases);
 
 	ControlView* view = new ControlView (book, xemDeviceCtrl);

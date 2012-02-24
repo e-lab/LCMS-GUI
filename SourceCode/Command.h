@@ -47,7 +47,16 @@ public:
 		//PA_TIME_OUT,	//!<  Change the "Collection Time" time out.
 		//PA_FREQUENCY	//!<  Change "Clock" frequency settings.
 
-		SAVE_DATA
+		SAVE_DATA,
+
+		// ControlProtocol
+		LCMS_SELECTPROTOCOL,
+		PC5_PEAK_1_HEIGHT,	//!<  Change the peak 1 height.
+		PC5_PEAK_2_HEIGHT,	//!<  Change the peak 2 height.
+		PC5_LEAD_TIME,		//!<  Change the lead time.
+		PC5_INTERVAL,		//!<  Change the measurement interval.
+		PC5_PEAK_1_DUR,		//!<  Change the peak 1 duration.
+		PC5_PEAK_2_DUR,		//!<  Change the peak 2 duration.
 	};
 
 	struct packet {

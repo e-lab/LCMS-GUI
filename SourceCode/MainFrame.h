@@ -8,15 +8,20 @@
 #include <vector>
 #include <iostream>
 
+class	ControlProtocol;
 class	ControlPanel;
 class	GraphicsPanel;
 class	DeviceController;
 
 /** Declare MainFrame event IDs.  These are arbitrary but must be unique. */
-const int BOOKCTRL =		100;
-const int CONFIGURATION =	101;
-const int ON_START =		102;
-const int ON_STOP =		103;
+enum {
+	BOOKCTRL = 100,
+	CONFIGURATION,
+	ON_START,
+	ON_STOP,
+	SAVE_CONFIG,
+	RELOAD_CONFIGS,
+};
 
 /**
  * Frame in which the application is constructed.
@@ -62,7 +67,8 @@ private:
 	/**
 	 * Vector saves PanelControl objects.
 	 */
-	std::vector<ControlPanel*> controlBook;
+	std::vector<ControlPanel*>	controlBook;
+	ControlProtocol*		protocol;
 
 
 	/**
@@ -135,6 +141,8 @@ private:
 	 *   Reference to a wxCommandEvent.
 	 */
 	void OnAbout (wxCommandEvent&);
+	void OnSaveProtocol (wxCommandEvent&);
+	void OnReloadConfigs (wxCommandEvent&);
 
 	/**
 	 * Create an icon to be displayed in top-left hand corner.
