@@ -184,6 +184,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\SourceCode\ControlProtocol.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceCode\ControlBiases.cpp"
 				>
 			</File>
@@ -247,6 +251,10 @@
 			</File>
 			<File
 				RelativePath=".\SourceCode\Command.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SourceCode\ControlProtocol.h"
 				>
 			</File>
 			<File

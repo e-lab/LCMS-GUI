@@ -19,6 +19,7 @@ SOURCE = \
 	Logo.cpp \
 	MainFrame.cpp \
 	Logging.cpp \
+	ControlProtocol.cpp \
 	ControlBiases.cpp \
 	ControlView.cpp \
 	main.cpp \
