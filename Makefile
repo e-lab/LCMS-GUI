@@ -13,8 +13,6 @@ SOURCE = \
 	DeviceInterface.cpp \
 	DeviceController.cpp \
 	DeviceEvent.cpp \
-	GraphicsImage.cpp \
-	GraphicsImageCanvas.cpp \
 	GraphicsInformation.cpp \
 	Logo.cpp \
 	MainFrame.cpp \
@@ -23,11 +21,10 @@ SOURCE = \
 	ControlBiases.cpp \
 	ControlView.cpp \
 	main.cpp \
-	okFrontPanelDLL.cpp
-
-	#GraphicsPlot.cpp \
+	GraphicsPlot.cpp \
 	GraphicsPlotData.cpp \
 	mathplot.cpp \
+	okFrontPanelDLL.cpp
 
 # Build a Dependency list and an Object list, by replacing the .cpp
 # extension to .d for dependency files, and .o for object files.

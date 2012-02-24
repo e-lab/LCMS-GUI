@@ -208,11 +208,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SourceCode\GraphicsImage.cpp"
+				RelativePath=".\SourceCode\GraphicsPlot.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\SourceCode\GraphicsImageCanvas.cpp"
+				RelativePath=".\SourceCode\GraphicsPlotData.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SourceCode\mathplot.cpp"
 				>
 			</File>
 			<File
@@ -282,11 +286,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SourceCode\GraphicsImage.h"
+				RelativePath=".\SourceCode\GraphicsPlot.h"
 				>
 			</File>
 			<File
-				RelativePath=".\SourceCode\GraphicsImageCanvas.h"
+				RelativePath=".\SourceCode\GraphicsPlotData.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SourceCode\mathplot.h"
 				>
 			</File>
 			<File

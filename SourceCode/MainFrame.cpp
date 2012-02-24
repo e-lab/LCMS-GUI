@@ -13,8 +13,7 @@
 #include "ControlView.h"
 #include "Logging.h"
 
-#include "GraphicsImage.h"
-//#include "GraphicsPlot.h"
+#include "GraphicsPlot.h"
 
 
 MainFrame::MainFrame (const wxString& title, const wxSize& size) : wxFrame (NULL, wxID_ANY, title, wxDefaultPosition, size)
@@ -198,11 +197,8 @@ void MainFrame::CreateGraphics (wxPanel* panelMain)
 	graphics = new wxPanel (panelMain);
 	wxSizer* graphicsSizer = new wxBoxSizer (wxVERTICAL);
 
-	// Create the image panel used to display the data
-	GraphicsImage* graphicsPanel = new GraphicsImage (graphics);
-
 	// Create the plot panel used to display the data
-	//GraphicsPlot* graphicsPanel = new GraphicsPlot (graphics);
+	GraphicsPlot* graphicsPanel = new GraphicsPlot (graphics);
 
 	graphicsSizer->Add (graphicsPanel, 1, wxEXPAND | wxALIGN_CENTER);
 	display = graphicsPanel;
