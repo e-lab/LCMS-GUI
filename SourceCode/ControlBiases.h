@@ -1,5 +1,5 @@
-#ifndef PANEL_OCT_BIASES_H
-#define PANEL_OCT_BIASES_H
+#ifndef CONTROL_BIASES_H
+#define CONTROL_BIASES_H
 
 #include <wx/wx.h>
 #include "ControlPanel.h"
@@ -7,14 +7,23 @@
 class	DeviceController;
 
 /** Declare ControlBiases event IDs.  These are arbitrary but must be unique. */
-const int SLIDER_PD_BIAS =		700;
-const int SLIDER_VDDA =			701;
-const int SLIDER_VDDR =			702;
-const int SLIDER_LPU =			703;
-const int RESET_OCT_BIASES =		704;
+enum {
+	RESET_BIASES = 500,
+	Int_gbt,
+	Int_Vbn,
+	Int_Vbp,
+	Post_gbt,
+	Post_Vbn,
+	Post_Vbp,
+	OBuff_gbt,
+	OBuff_Vbn,
+	OBuff_Vbp,
+	Vref,
+	V_Cmd_Offset,
+};
 
 /**
- * Constructs Bias controls.
+ * Constructs PC3 bias controls.
  *
  * This class is initialized within MainFrame and it is responsible for
  * constructing the graphical components used to control the biases in
@@ -26,8 +35,8 @@ public:
 	/**
 	 * Constructor.
 	 *
-	 * The constructor initializes all controls (sliders, buttons, etc) contained
-	 * within the panel and defines its layout.
+	 * The constructor initializes all controls (sliders, buttons, etc)
+	 * contained within the panel and defines its layout.
 	 *
 	 * @param owner
 	 *   Pointer to the parent wxWindow derived class.
@@ -40,61 +49,26 @@ public:
 	 */
 	~ControlBiases();
 
-	/**
-	 * Change the PBBias.
-	 *
-	 * Handles the event which is generated when a 'PBBias' slider is
-	 * moved.  The change in position will be sent to the xem device
-	 * and the sliders label updated.  This value controls in hardware
-	 * the Vout D for the DAC.
-	 *
-	 * @param event
-	 *   Reference to a wxScrollEvent.
-	 */
-	void OnSliderPBBias (wxScrollEvent&);
-	/**
-	 * Change the VDDA.
-	 *
-	 * Handles the event which is generated when the 'VDDA' slider is
-	 * moved.  This change in position will be sent to the xem device
-	 * and the sliders label updated.
-	 *
-	 * @param event
-	 *   Reference to a wxScrollEvent.
-	 */
-	void OnSliderVDDA (wxScrollEvent&);
-	/**
-	 * Change the VDDR.
-	 *
-	 * Handles the event which is generated when the 'VDDR' slider is
-	 * moved.  This change in position will be sent to the xem device
-	 * and the sliders label updated.
-	 *
-	 * @param event
-	 *   Reference to a wxScrollEvent.
-	 */
-	void OnSliderVDDR (wxScrollEvent&);
-	/**
-	 * Change the LPU.
-	 *
-	 * Handles the event which is generated when the 'LPU' slider is
-	 * moved.  This change in position will be sent to the xem device
-	 * and the sliders label updated.  This value controls in hardware
-	 * the Vout A for the DAC.
-
-	 *
-	 * @param event
-	 *   Reference to a wxScrollEvent.
-	 */
-	void OnSliderLPU (wxScrollEvent&);
+	void OnSliderInt_gbt (wxScrollEvent& evt);
+	void OnSliderInt_Vbn (wxScrollEvent& evt);
+	void OnSliderInt_Vbp (wxScrollEvent& evt);
+	void OnSliderPost_gbt (wxScrollEvent& evt);
+	void OnSliderPost_Vbn (wxScrollEvent& evt);
+	void OnSliderPost_Vbp (wxScrollEvent& evt);
+	void OnSliderOBuff_gbt (wxScrollEvent& evt);
+	void OnSliderOBuff_Vbn (wxScrollEvent& evt);
+	void OnSliderOBuff_Vbp (wxScrollEvent& evt);
+	void OnSliderVref (wxScrollEvent& evt);
+	void OnSliderV_Cmd_Offset (wxScrollEvent& evt);
 
 	/**
 	 * Reset the controls.
 	 *
-	 * Handles all the events which are generated if a 'Reset' button in this
-	 * class is pressed.  If more then one 'Reset' button, the event ID is used
-	 * to identify from which button it come from and then the necessary function
-	 * is called to reset the control values or default state.
+	 * Handles all the events which are generated if a 'Reset' button in
+	 * this class is pressed.  If more then one 'Reset' button, the event
+	 * ID is use to identify from which button it come from and then the
+	 * necessary function is called to reset the control values or
+	 * default state.
 	 *
 	 * @param event
 	 *   Reference to a wxCommandEvent.
@@ -103,58 +77,61 @@ public:
 	/**
 	 * Reset all sliders and text labels to the default values.
 	 */
-	void ResetBiasValues();
 
-	/**
-	 * Set the PBBias text label to the current slider value.
-	 */
-	void SetTextPBBias();
-	/**
-	 * Set the VDDA text label to the current slider value.
-	 */
-	void SetTextVDDA();
-	/**
-	 * Set the VDDR text label to the current slider value.
-	 */
-	void SetTextVDDR();
-	/**
-	 * Set the LPU text label to the current slider value.
-	 */
-	void SetTextLPU();
-
-	/**
-	 * Send all current control values to the device.
-	 */
-	void Start();
+	void Reset (void);
 
 private:
 	DeviceController*	xemDeviceCtrl;
 
-	int			maxValuePBBias;
-	int			defaultValuePBBias;
-	float			maxVoltagePBBias;
-	wxSlider*		sliderPBBias;
-	wxStaticText*		textPBBias;
+	int			maxValueSlider;
+	int			minValueSlider;
+	float			maxVoltageSlider;
 
-	int			maxValueVDDA;
-	int			defaultValueVDDA;
-	float			maxVoltageVDDA;
-	wxSlider*		sliderVDDA;
-	wxStaticText*		textVDDA;
+	int		defaultValueInt_gbt;
+	wxSlider*	sliderInt_gbt;
+	wxStaticText*	textInt_gbt;
 
-	int			maxValueVDDR;
-	int			defaultValueVDDR;
-	float			maxVoltageVDDR;
-	wxSlider*		sliderVDDR;
-	wxStaticText*		textVDDR;
+	int		defaultValueInt_Vbn;
+	wxSlider*	sliderInt_Vbn;
+	wxStaticText*	textInt_Vbn;
 
-	int			maxValueLPU;
-	int			defaultValueLPU;
-	float			maxVoltageLPU;
-	wxSlider*		sliderLPU;
-	wxStaticText*		textLPU;
+	int		defaultValueInt_Vbp;
+	wxSlider*	sliderInt_Vbp;
+	wxStaticText*	textInt_Vbp;
+
+	int		defaultValuePost_gbt;
+	wxSlider*	sliderPost_gbt;
+	wxStaticText*	textPost_gbt;
+
+	int		defaultValuePost_Vbn;
+	wxSlider*	sliderPost_Vbn;
+	wxStaticText*	textPost_Vbn;
+
+	int		defaultValuePost_Vbp;
+	wxSlider*	sliderPost_Vbp;
+	wxStaticText*	textPost_Vbp;
+
+	int		defaultValueOBuff_gbt;
+	wxSlider*	sliderOBuff_gbt;
+	wxStaticText*	textOBuff_gbt;
+
+	int		defaultValueOBuff_Vbn;
+	wxSlider*	sliderOBuff_Vbn;
+	wxStaticText*	textOBuff_Vbn;
+
+	int		defaultValueOBuff_Vbp;
+	wxSlider*	sliderOBuff_Vbp;
+	wxStaticText*	textOBuff_Vbp;
+
+	int		defaultValueVref;
+	wxSlider*	sliderVref;
+	wxStaticText*	textVref;
+
+	int		defaultValueV_Cmd_Offset;
+	wxSlider*	sliderV_Cmd_Offset;
+	wxStaticText*	textV_Cmd_Offset;
 
 };
 
 
-#endif /* PANEL_OCT_BIASES_H */
+#endif /* CONTROL_BIASES_H */

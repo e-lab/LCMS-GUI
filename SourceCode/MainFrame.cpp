@@ -198,9 +198,9 @@ void MainFrame::CreateControls (wxPanel* panelMain)
 	book->AddPage (protocol, wxT ("Protocol"), true);
 	controlBook.push_back (protocol);
 
-	ControlBiases* octBiases = new ControlBiases (book, xemDeviceCtrl);
-	book->AddPage (octBiases, wxT ("Biases"));
-	controlBook.push_back (octBiases);
+	ControlBiases* biases = new ControlBiases (book, xemDeviceCtrl);
+	book->AddPage (biases, wxT ("Biases"));
+	controlBook.push_back (biases);
 
 	ControlView* view = new ControlView (book, xemDeviceCtrl);
 	book->AddPage (view, wxT ("Image View"));

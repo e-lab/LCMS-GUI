@@ -57,6 +57,19 @@ public:
 		PC5_INTERVAL,		//!<  Change the measurement interval.
 		PC5_PEAK_1_DUR,		//!<  Change the peak 1 duration.
 		PC5_PEAK_2_DUR,		//!<  Change the peak 2 duration.
+
+		// ControlBiases
+		LCMS_INT_GBT,
+		LCMS_INT_VBN,
+		LCMS_INT_VBP,
+		LCMS_POST_GBT,
+		LCMS_POST_VBN,
+		LCMS_POST_VBP,
+		LCMS_OBUFF_GBT,
+		LCMS_OBUFF_VBN,
+		LCMS_OBUFF_VBP,
+		LCMS_VREF,
+		PC5_V_CMD_OFFSET,
 	};
 
 	struct packet {
