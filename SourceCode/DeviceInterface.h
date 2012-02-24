@@ -96,7 +96,7 @@ public:
 	 * @param value
 	 *   Value to be sent to the device.
 	 */
-	void SetCommand (Command::CommandID, int);
+	void SetCommand (Command::packet);
 
 
 private:

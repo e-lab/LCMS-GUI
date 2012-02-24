@@ -60,7 +60,7 @@ wxThread::ExitCode DeviceInterface::Entry()
 					Stop();
 					break;
 				default :
-					SetCommand (packet.commandID, packet.commandValue);
+					SetCommand (packet);
 					break;
 			}
 		}
@@ -216,38 +216,38 @@ void DeviceInterface::Stop() {
 	xem->UpdateWireIns();
 }
 
-void DeviceInterface::SetCommand (Command::CommandID commandID, int value) {
+void DeviceInterface::SetCommand (Command::packet packet) {
 	if (NULL == xem)
 		return;
 
-	switch (commandID) {
+	switch (packet.commandID) {
 		case Command::OCT_PD_BIAS :
-			xem->SetWireInValue (0x01, value, 0x00FF);
+			xem->SetWireInValue (0x01, packet.commandValue, 0x00FF);
 			xem->UpdateWireIns();
 			break;
 		case Command::OCT_VDDA :
-			xem->SetWireInValue (0x02, value, 0x00FF);
+			xem->SetWireInValue (0x02, packet.commandValue, 0x00FF);
 			xem->UpdateWireIns();
 			break;
 		case Command::OCT_VDDR :
-			xem->SetWireInValue (0x03, value, 0x00FF);
+			xem->SetWireInValue (0x03, packet.commandValue, 0x00FF);
 			xem->UpdateWireIns();
 			break;
 		case Command::OCT_LPU :
-			xem->SetWireInValue (0x04, value, 0x00FF);
+			xem->SetWireInValue (0x04, packet.commandValue, 0x00FF);
 			xem->UpdateWireIns();
 			break;
 		case Command::OCT_EVENT_NUM :
-			xem->SetWireInValue (0x05, value, 0xFFFF);
+			xem->SetWireInValue (0x05, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
 		case Command::OCT_TIME_OUT:
-			xem->SetWireInValue (0x06, value, 0xFFFF);
+			xem->SetWireInValue (0x06, packet.commandValue, 0xFFFF);
 			xem->SetWireInValue (0x07, (pll->GetOutputFrequency (1)), 0xFFFF); // Microseconds
 			xem->UpdateWireIns();
 			break;
 		case Command::SAVE_TYPE :
-			rawEvent->SetVariable (commandID, value);
+			rawEvent->SetVariable (packet.commandID, packet.commandValue);
 			break;
 		default :
 			break;
