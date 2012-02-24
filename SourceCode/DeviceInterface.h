@@ -97,6 +97,10 @@ public:
 	 *   Value to be sent to the device.
 	 */
 	void SetCommand (Command::packet);
+	/**
+	 * Send/Recive data to the device.
+	 */
+	void TransferData();
 
 
 private:
@@ -109,6 +113,10 @@ private:
 	DeviceEvent*		rawEvent;
 
 	bool 			pollDevice;
+
+	// PipeIn data buffer
+	int rawDataInLength;
+	unsigned char* rawDataIn;
 
 };
 

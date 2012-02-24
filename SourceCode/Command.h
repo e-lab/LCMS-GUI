@@ -23,6 +23,8 @@ public:
 		DEV_START,	//!< Start polling the device for data.
 		DEV_STOP,	//!< Stop polling the device for data.
 
+		PROFILE,	//!< Contains profile array, commandValue is its length.
+
 		OCT_PD_BIAS,	//!< Corresponds to the hardware DAC Vout D.
 		OCT_VDDA,
 		OCT_VDDR,
@@ -52,6 +54,7 @@ public:
 		CommandID	commandID;
 		int 		commandValue;
 		wxString	filename;
+		unsigned char*	profile;
 	};
 };
 

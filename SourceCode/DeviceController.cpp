@@ -28,6 +28,16 @@ DeviceController::~DeviceController()
 	variables = NULL;
 }
 
+void DeviceController::SetProfile (unsigned char *profile, int length)
+{
+	struct Command::packet packet;
+	packet.commandID = Command::PROFILE;
+	packet.commandValue = length;
+	packet.profile = profile;
+
+	xemDevice->GetQueue().Post (packet);
+}
+
 void DeviceController::SetCommand (Command::CommandID commandID, int value)
 {
 	(*variables) [commandID] = value;

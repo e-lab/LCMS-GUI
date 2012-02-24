@@ -36,6 +36,15 @@ public:
 	~DeviceController();
 
 	/**
+	 * Send profile array to DeviceInterface.
+	 *
+	 * @param profile
+	 *   Profile array.
+	 * @param value
+	 *   Integer value of the variable.
+	 */
+	void SetProfile (unsigned char *, int);
+	/**
 	 * Set the value of the variable.
 	 *
 	 * @param variable

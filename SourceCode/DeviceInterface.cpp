@@ -22,6 +22,11 @@ DeviceInterface::DeviceInterface (wxEvtHandler* displayTmp) : wxThread (wxTHREAD
 
 	display = displayTmp;
 
+	rawDataInLength = 2;
+	rawDataIn = new unsigned char[rawDataInLength];
+	rawDataIn[0] = 0;
+	rawDataIn[1] = 0;
+
 	rawEvent = new DeviceEvent();
 
 	xem = (okCFrontPanel*) NULL;
@@ -36,6 +41,10 @@ DeviceInterface::DeviceInterface (wxEvtHandler* displayTmp) : wxThread (wxTHREAD
 
 DeviceInterface::~DeviceInterface()
 {
+
+	delete[] rawDataIn;
+	rawDataIn = NULL;
+
 	delete rawEvent;
 	rawEvent = (DeviceEvent*) NULL;
 
@@ -76,25 +85,10 @@ wxThread::ExitCode DeviceInterface::Entry()
 			}
 		}
 
-		// Get data from device
+		// Transfer data to/from device
 		if (pollDevice && (NULL != xem)) {
+			TransferData();
 
-			// Poll the xem, asking if there is data to collect.
-			xem->UpdateWireOuts();
-			int length = (int) (2 * xem->GetWireOutValue (0x21));
-
-			if (length > 0) {
-				unsigned char *rawData = new unsigned char[length];
-
-				// PipeOut transfer
-				xem->ReadFromPipeOut (0xA0, (int) length, rawData);
-
-				// Raw data array from the pipe transfer is given to the rawEvent
-				rawEvent->SetRawData (rawData, length);
-
-				// Send a reference for the object rawEvent to display.
-				wxPostEvent (display, (*rawEvent));
-			}
 		}
 	}
 	return (wxThread::ExitCode) 0;
@@ -232,6 +226,11 @@ void DeviceInterface::SetCommand (Command::packet packet) {
 		return;
 
 	switch (packet.commandID) {
+		case Command::PROFILE:
+			delete[] rawDataIn;
+			rawDataIn = packet.profile;
+			rawDataInLength = packet.commandValue;
+			break;
 		case Command::OCT_PD_BIAS :
 			xem->SetWireInValue (0x01, packet.commandValue, 0x00FF);
 			xem->UpdateWireIns();
@@ -262,5 +261,54 @@ void DeviceInterface::SetCommand (Command::packet packet) {
 			break;
 		default :
 			break;
+	}
+}
+
+void DeviceInterface::TransferData () {
+
+	int rawDataInPtrLength = rawDataInLength;
+	unsigned char* rawDataInPtr = &rawDataIn[0];
+
+	while (0 != rawDataInPtrLength) {
+		/* Send in data
+		 *
+		 * Read inAvailable (wireOut 0x20) which provides the current
+		 * rx buffer size.  This size is the max # of data words that
+		 * can currently be sent to device.  Send in no more then
+		 * inAvailable data words via pipeIn (0x80).
+		 */
+		xem->UpdateWireOuts();
+		unsigned long inAvailable = xem->GetWireOutValue (0x20);
+
+		if (inAvailable >= ( (unsigned long) rawDataInPtrLength)) {
+
+			// PipeIn transfer
+			xem->WriteToPipeIn (0x80, (2*rawDataInPtrLength), rawDataInPtr);
+			rawDataInPtrLength = 0;
+		} else {
+
+			// PipeIn transfer
+			xem->WriteToPipeIn (0x80, (2*inAvailable), rawDataInPtr);
+			rawDataInPtrLength = rawDataInPtrLength - ( (int) inAvailable);
+			rawDataInPtr = &rawDataInPtr[2*inAvailable];
+		}
+
+
+		// Poll the xem, asking if there is data to collect.
+		xem->UpdateWireOuts();
+		int outAvailable = (int) (2 * xem->GetWireOutValue (0x21));
+
+		if (outAvailable > 0) {
+			unsigned char *rawData = new unsigned char[outAvailable];
+
+			// PipeOut transfer
+			xem->ReadFromPipeOut (0xA0, (int) outAvailable, rawData);
+
+			// Raw data array from the pipe transfer is given to the rawEvent
+			rawEvent->SetRawData (rawData, outAvailable);
+
+			// Send a reference for the object rawEvent to display.
+			wxPostEvent (display, (*rawEvent));
+		}
 	}
 }
