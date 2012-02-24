@@ -21,7 +21,7 @@ MainFrame::MainFrame (const wxString& title, const wxSize& size) : wxFrame (NULL
 {
 	SetIconResource();
 	CreateStatusBar (1);
-	SetStatusText (wxT ("Template"));
+	SetStatusText (wxT ("LCMS"));
 	CreateMenuBar();
 
 	// Make the MainFrame panel and sizer

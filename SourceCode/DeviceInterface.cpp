@@ -17,9 +17,9 @@ DeviceInterface::DeviceInterface (wxEvtHandler* displayTmp) : wxThread(wxTHREAD_
 	pll = (okCPLL22150*) NULL;
 
 #ifdef __WXMAC__
-	Initialize (wxT ("Template.app/Contents/Resources/Template.bit"));
+	Initialize (wxT ("LCMS.app/Contents/Resources/LCMS.bit"));
 #else
-	Initialize (wxT ("Template.bit"));
+	Initialize (wxT ("LCMS.bit"));
 #endif
 }
 
@@ -110,7 +110,7 @@ bool DeviceInterface::Initialize (wxString filename)
 
 	// Load the FrontPanel Library.
 #ifdef __WXMAC__
-	wxString libfilename = wxT ("./Template.app/Contents/Resources/libokFrontPanel.dylib");
+	wxString libfilename = wxT ("./LCMS.app/Contents/Resources/libokFrontPanel.dylib");
 	if (FALSE == okFrontPanelDLL_LoadLib ( (char*) libfilename.char_str())) {
 #else
 	if (FALSE == okFrontPanelDLL_LoadLib ( (char*) NULL)) {

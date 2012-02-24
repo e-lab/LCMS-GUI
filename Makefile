@@ -34,7 +34,7 @@ SOURCE = \
 OBJECTS = $(patsubst %.cpp, $(CFG)/%.o, ${SOURCE})
 
 # Your final binary
-TARGET=Template
+TARGET=LCMS
 
 # What compiler to use for generating dependencies: it will be invoked with -MM
 #CXXDEP = g++
