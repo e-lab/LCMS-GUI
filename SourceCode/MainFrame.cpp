@@ -38,7 +38,7 @@ MainFrame::MainFrame (const wxString& title, const wxSize& size) : wxFrame (NULL
 	// Create control panel
 	CreateControls (panelMain);
 
-	//((MathPlotPanel *)display)->SetMPProtocol(protocol);
+	//((GraphicsPlot *)display)->SetMPProtocol(protocol);
 
 
 	sizerMain->Add (controls, 0, wxEXPAND | wxALL, 5);
