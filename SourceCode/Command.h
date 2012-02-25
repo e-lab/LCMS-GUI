@@ -70,6 +70,12 @@ public:
 		LCMS_OBUFF_VBP,
 		LCMS_VREF,
 		PC5_V_CMD_OFFSET,
+
+		// ControlConfiguration
+		LCMS_CAPSELECT,
+		LCMS_POSTGAINSELECT,
+		LCMS_BYPASSPOST,
+		LCMS_CHANNEL_SEL,
 	};
 
 	struct packet {

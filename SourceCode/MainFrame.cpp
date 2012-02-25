@@ -11,6 +11,7 @@
 
 #include "ControlProtocol.h"
 #include "ControlBiases.h"
+#include "ControlConfig.h"
 #include "ControlView.h"
 #include "Logging.h"
 
@@ -201,6 +202,12 @@ void MainFrame::CreateControls (wxPanel* panelMain)
 	ControlBiases* biases = new ControlBiases (book, xemDeviceCtrl);
 	book->AddPage (biases, wxT ("Biases"));
 	controlBook.push_back (biases);
+
+	ControlConfig* configuration = new ControlConfig (book, xemDeviceCtrl);
+	book->AddPage (configuration, wxT ("Config"));
+	configuration->SetGraphicsPlot ( (GraphicsPlot *) display);
+	controlBook.push_back (configuration);
+
 
 	ControlView* view = new ControlView (book, xemDeviceCtrl);
 	book->AddPage (view, wxT ("Image View"));

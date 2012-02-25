@@ -192,6 +192,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SourceCode\ControlConfig.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceCode\ControlView.cpp"
 				>
 			</File>
@@ -258,6 +262,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SourceCode\ControlPanel.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceCode\ControlProtocol.h"
 				>
 			</File>
@@ -266,7 +274,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SourceCode\ControlPanel.h"
+				RelativePath=".\SourceCode\ControlConfig.h"
 				>
 			</File>
 			<File

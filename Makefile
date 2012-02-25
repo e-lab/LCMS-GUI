@@ -19,6 +19,7 @@ SOURCE = \
 	Logging.cpp \
 	ControlProtocol.cpp \
 	ControlBiases.cpp \
+	ControlConfig.cpp \
 	ControlView.cpp \
 	main.cpp \
 	GraphicsPlot.cpp \
