@@ -4,8 +4,8 @@
  */
 #include "MainFrame.h"
 #include "Logo.h"
-//#include "yale_icon.xpm"
-#include "purdue_icon.xpm"
+#include "yale_icon.xpm"
+//#include "purdue_icon.xpm"
 
 #include "DeviceController.h"
 
@@ -159,8 +159,8 @@ void MainFrame::OnReloadConfigs (wxCommandEvent& event)
 
 void MainFrame::SetIconResource()
 {
-	//wxIcon icon (yale_icon);
-	wxIcon icon (purdue_icon);
+	wxIcon icon (yale_icon);
+	//wxIcon icon (purdue_icon);
 	SetIcon (icon);
 }
 
