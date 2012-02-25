@@ -200,10 +200,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SourceCode\ControlView.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\SourceCode\DeviceEvent.cpp"
 				>
 			</File>
@@ -283,10 +279,6 @@
 			</File>
 			<File
 				RelativePath=".\SourceCode\ControlSyncConfig.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceCode\ControlView.h"
 				>
 			</File>
 			<File

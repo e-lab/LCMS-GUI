@@ -13,7 +13,6 @@
 #include "ControlBiases.h"
 #include "ControlConfig.h"
 #include "ControlSyncConfig.h"
-#include "ControlView.h"
 #include "Logging.h"
 
 #include "GraphicsPlot.h"
@@ -212,10 +211,6 @@ void MainFrame::CreateControls (wxPanel* panelMain)
 	ControlSyncConfig* syncConfig = new ControlSyncConfig (book, xemDeviceCtrl);
 	book->AddPage (syncConfig, wxT ("Sync Conf"));
 	controlBook.push_back (syncConfig);
-
-	ControlView* view = new ControlView (book, xemDeviceCtrl);
-	book->AddPage (view, wxT ("Image View"));
-	controlBook.push_back (view);
 
 	Logging* logging = new Logging (book);
 	book->AddPage (logging, wxT ("Logging"));

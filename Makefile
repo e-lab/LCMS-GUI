@@ -21,7 +21,6 @@ SOURCE = \
 	ControlBiases.cpp \
 	ControlConfig.cpp \
 	ControlSyncConfig.cpp \
-	ControlView.cpp \
 	main.cpp \
 	GraphicsPlot.cpp \
 	GraphicsPlotData.cpp \
