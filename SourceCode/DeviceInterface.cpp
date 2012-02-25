@@ -67,7 +67,7 @@ wxThread::ExitCode DeviceInterface::Entry()
 		Command::packet packet;
 
 		// Process commands
-		if (wxMSGQUEUE_NO_ERROR == commandQueue.ReceiveNoWait (packet)) {
+		while (wxMSGQUEUE_NO_ERROR == commandQueue.ReceiveNoWait (packet)) {
 
 			switch (packet.commandID) {
 				case Command::DEV_INIT :
