@@ -10,9 +10,23 @@
 #include "GraphicsPlot.h"
 #include "DeviceEvent.h"
 
+#ifdef _DEBUG
+    #include <crtdbg.h>
+    #define DEBUG_NEW new(_NORMAL_BLOCK ,__FILE__, __LINE__)
+    #define new DEBUG_NEW
+#else
+    #define DEBUG_NEW new
+#endif
 
 GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 {
+	continuousLength = 0;
+	for(int i=0; i<30000;i++)
+	{
+		continuousSpectrum[i]=0;
+		continuousTime[i]=0;
+	}
+
 	wxBoxSizer* sizerPlot = new wxBoxSizer (wxVERTICAL);
 
 	plot = new mpWindow (this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
@@ -27,13 +41,14 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	plot->SetScaleY (100);
 	plot->SetPos (0.03, 1);
 
+
 	xScale = new mpScaleX;
 	yScale = new mpScaleY;
 
 	plot->AddLayer (xScale);
 	plot->AddLayer (yScale);
 
-	xScale->SetName (wxT ("Time"));
+	xScale->SetName (wxT ("Time (ms)"));
 	yScale->SetName (wxT ("Current (nA)"));
 
 	mypen = new wxPen (wxT ("RED"), 1, wxSOLID);
@@ -71,7 +86,7 @@ GraphicsPlot::~GraphicsPlot()
 
 void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 {
-	// Clears previous data events from the continues save 'measurements' vector.
+	// Clears previous data events from the continuous save 'measurements' vector.
 	int saveType = rawEvent.GetVariable (Command::PA_SAVE_TYPE);
 
 	if ( (1 == saveType) // True when the "Save Type" radio button is set to "Continues".
@@ -98,10 +113,14 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	delete[] rawCount;
 	rawCount = NULL;
 
+	//create a subset of the data to plot, based on the plot size on the screen in pixels
+//	MinMaxDec(&ct[0], &cs[0], &cl);
 	// Ownership of the 'time' and 'spectrum' arrays have been passed to
 	// the GraphicsPlotData object, therefore, the arrays memory will be
 	// freed by GraphicsPlotData.
-	layer->SetData (&time[0], &spectrum[0], length);
+//	layer->SetData (&time[0], &spectrum[0], length);
+	layer->SetData (&ct[0], &cs[0], continuousLength);
+//	layer->SetData (continuousTime, continuousSpectrum, continuousLength);
 	layer->SetPen (*mypen);
 	layer->SetContinuity (true);
 
@@ -111,25 +130,43 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 
 void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 {
-	int voltMinus = rawEvent.GetVariable (Command::PA_VOLT_M);
-	int voltPlus = rawEvent.GetVariable (Command::PA_VOLT_P);
-	int voltRef = rawEvent.GetVariable (Command::PA_VOLT_REF);
-	int capFlag = rawEvent.GetVariable (Command::PA_CAPACITANCE);
+//	int voltMinus = rawEvent.GetVariable (Command::PA_VOLT_M);  //whose code is this?
+//	int voltPlus = rawEvent.GetVariable (Command::PA_VOLT_P);
+//	int voltRef = rawEvent.GetVariable (Command::PA_VOLT_REF);
+//	int capFlag = rawEvent.GetVariable (Command::PA_CAPACITANCE);
 
-	double deltaVplus = ( (double) (voltPlus - voltRef)) * 3.3 / 255.0;
-	double deltaVminus = ( (double) (voltMinus - voltRef)) * 3.3 / 255.0;
+//	double deltaVplus = ( (double) (voltPlus - voltRef)) * 3.3 / 255.0;
+//	double deltaVminus = ( (double) (voltMinus - voltRef)) * 3.3 / 255.0;
+	double dt = double(rawEvent.GetVariable(Command::LCMS_VOLTAGESAMPLINGRATE)/1000.0);
+	double capSel = double(rawEvent.GetVariable(Command::LCMS_CAPSELECT));
+	double C;
+	if (capSel=0) // 100 fF
+		C=1E-12;
+	else	//1 pF
+		C=1E-15;
+
 
 	int rawLength; // Length of the rawData array.
 	unsigned char* rawData = rawEvent.GetRawData (rawLength);
 
-	length = (rawLength / 4);
+	length = (rawLength / 2);
 	rawCount = new int[length];
 	spectrum = new float[length];
 	time = new float[length];
 
-	for (int i = 0; i < length; i++) {
+	int prevContinuousLength = continuousLength;
+	//need array bound check here
+	if ((length + prevContinuousLength) > 30000) {
+		prevContinuousLength = 0;  //maybe something more clever later
+		continuousLength = 0;
+	}
+	continuousLength = continuousLength + length;
 
-		double raw_count = (double) ( ( (rawData[i * 4 + 1] & 0x7F) << 24) + ( (rawData[i * 4] & 0xFF)  << 16) + ( (rawData[i * 4 + 3] & 0xFF) << 8) + (rawData[i * 4 + 2] & 0xFF));
+	cs = new float[continuousLength];
+	ct = new float[continuousLength];
+
+	for (int i = 0; i < length; i++) {
+		double raw_count = (double) (  (rawData[i * 2 + 1] & 0xFF) << 8) + (rawData[i * 2] & 0xFF);
 		rawCount[i] = (int) raw_count;
 
 		//if ( i < 10) {
@@ -138,24 +175,22 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 		//	::wxLogMessage(wxT("Raw Data 2:  %i"), (int) ( (rawData[i * 4 + 3])));
 		//	::wxLogMessage(wxT("Raw Data 3:  %i"), (int) ( (rawData[i * 4])));
 		//	::wxLogMessage(wxT("Raw Data 4:  %i"), (int) ( (rawData[i * 4 + 1])));
-		//}
-
-		double delta = deltaVplus;
-
-		if (1 == ( (rawData[i * 4 + 1] & 0x80) >> 7)) {
-			delta = deltaVminus;
-		}
-
-		spectrum[i] = delta * ( ( (40 * pow (10.0, 6)) / raw_count) * pow (10.0, -12)); // Capacitance High
-
-		if (0 == capFlag) {
-			spectrum[i] = delta * ( ( (40 * pow (10.0, 6)) / raw_count) * pow (10.0, -13)); // Capacitance Low
-		}
-
-		time[i] = i;
+		//}	
+		spectrum[i] = ( ( (float) raw_count) / (float) 65535) * 3.3f;		
+		time[i] = (float) i * dt;  // Constant time
+		
+		continuousSpectrum[i+prevContinuousLength]=spectrum[i];
+		continuousTime[i+prevContinuousLength] = time[i]+continuousTime[prevContinuousLength-1]+dt;
+	}
+	for (int i =0; i < continuousLength; i++)
+	{
+		cs[i] = continuousSpectrum[i];
+		ct[i] = continuousTime[i];
 	}
 
 	delete[] rawData;
+	delete[] spectrum;
+	delete[] time;
 
 	rawData = NULL;
 }
@@ -169,6 +204,79 @@ void GraphicsPlot::SetCommandString (Command::CommandID command, wxString string
 		default :
 			break;
 	}
+}
+
+//this function performs a min-max decimation filter on the continuous data to get a subset of the data to display on the plot
+void GraphicsPlot::MinMaxDec(float* ct, float* cs, int* cl)
+{
+	int screen_x_size = plot->GetScrX();	//the plot is x pixels wide
+	*cl=2*screen_x_size;
+	cs = new float[*cl];
+	ct = new float[*cl];
+
+	if (continuousLength < screen_x_size)	//the amount of data points is less than pixels on the screen, so we can display every point
+	{
+		// plotting everything		
+		for (int i =0; i < continuousLength; i++)
+		{
+			cs[i] = continuousSpectrum[i];
+			ct[i] = continuousTime[i];
+		}
+		for(int i = continuousLength; i< *cl; i++)
+		{
+			cs[i]=0;
+			ct[i]=0;
+		}
+		*cl=continuousLength;
+	}
+	else //need to subsample to speed up rendering, using max-min decimation
+	{
+		int chunk_size=continuousLength/screen_x_size;
+		if (*cl % screen_x_size != 0)
+			chunk_size++;	//round up to the nearest interval
+		for (int i=0; i<*cl; i++)
+		{
+			//find max and min of each chunk
+			int lower_lim=i*chunk_size;
+			int upper_lim=(i*chunk_size)+chunk_size-1;
+			float* vals = new float[1];
+			float* data_to_process = &continuousTime[lower_lim];
+			min_max_in_order(data_to_process,(upper_lim-lower_lim),vals);
+			cs[2*i]=vals[0];
+			cs[2*i+1]=vals[1];
+			ct[2*i]=continuousTime[lower_lim];
+			ct[2*i+1]=continuousTime[lower_lim];
+			delete[] vals;
+		}		
+	}
+}
+
+void GraphicsPlot::min_max_in_order(float* data,int data_length,float* result)
+{
+
+	float min = data[0];
+	float max = data[0];
+	int min_num = 0;
+	int max_num = 0;
+//	int result[1];
+	for (int i=1; i<=data_length; i++)
+	{
+		if(data[i] > max) {
+			max = data[i];
+			max_num = i;
+		}
+		if(data[i] < min) {
+			min = data[i];
+			min_num = i;
+		}
+	}
+	result[0]=max;
+	result[1]=min;
+	if (min_num < max_num) {
+		result[0]=min;
+		result[1]=max;
+	}
+//	return result;
 }
 
 void GraphicsPlot::SaveData (wxString outputFile)

@@ -81,6 +81,12 @@ private:
 	float* time;
 	int length;	//!<  Length of both the spectrum and time arrays.
 
+	float continuousSpectrum[30000];
+	float continuousTime[30000];
+	int continuousLength;
+
+	float *cs;
+	float *ct;
 
 	mpWindow*		plot;
 	GraphicsInformation*	information;
@@ -110,6 +116,26 @@ private:
 	 *   Reference to the raw data object.
 	 */
 	void UnpackEvent (DeviceEvent&);
+
+	/**
+	 * Performs a min-max decimation filter on the raw data based on the size of the 
+	 * display in order to reduce the number of points to plot while maintaining 
+	 * important features of the plot.
+	 * @param ct
+	 *	output time spectrum
+	 * @param cs
+	 * output data spectrum
+	 * @ param cl
+	 * output spectrum length
+	 *
+	 */
+	void MinMaxDec(float* ct, float* cs, int* cl);
+
+	/** 
+	* returns the min and max in the order they occurred
+	*/
+
+	void min_max_in_order(float* data, int data_length, float* result);
 
 	/**
 	 * Save currently displayed data.

@@ -7,6 +7,14 @@
  */
 #include "GraphicsInformation.h"
 
+#ifdef _DEBUG
+    #include <crtdbg.h>
+    #define DEBUG_NEW new(_NORMAL_BLOCK ,__FILE__, __LINE__)
+    #define new DEBUG_NEW
+#else
+    #define DEBUG_NEW new
+#endif
+
 // This will display the state and other information.
 GraphicsInformation::GraphicsInformation (wxWindow* owner) : wxPanel (owner)
 {

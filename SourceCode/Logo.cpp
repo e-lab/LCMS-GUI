@@ -6,6 +6,13 @@
 //#include "elab_logo.xpm"
 #include "elab_new_logo.xpm"
 
+#ifdef _DEBUG
+    #include <crtdbg.h>
+    #define DEBUG_NEW new(_NORMAL_BLOCK ,__FILE__, __LINE__)
+    #define new DEBUG_NEW
+#else
+    #define DEBUG_NEW new
+#endif
 
 Logo::Logo (wxWindow* owner) : wxPanel (owner)
 {
