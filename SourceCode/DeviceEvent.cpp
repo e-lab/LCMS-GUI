@@ -6,11 +6,11 @@
 #include "DeviceEvent.h"
 
 #ifdef _DEBUG
-    #include <crtdbg.h>
-    #define DEBUG_NEW new(_NORMAL_BLOCK ,__FILE__, __LINE__)
-    #define new DEBUG_NEW
+#include <crtdbg.h>
+#define DEBUG_NEW new(_NORMAL_BLOCK ,__FILE__, __LINE__)
+#define new DEBUG_NEW
 #else
-    #define DEBUG_NEW new
+#define DEBUG_NEW new
 #endif
 
 IMPLEMENT_DYNAMIC_CLASS (DeviceEvent, wxEvent)

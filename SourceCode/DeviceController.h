@@ -37,8 +37,8 @@ public:
 
 	/** Build the profile array based on protocol variables
 	 */
-	void BuildProfile(void);
-	void BuildProfile(int PC5_LEAD_TIME, int PC5_PEAK_1_DUR, int PC5_PEAK_1_HEIGHT, int PC5_PEAK_2_DUR, int PC5_PEAK_2_HEIGHT, int PC5_INTERVAL, int PC5_V_CMD_OFFSET, int LCMS_VOLTAGESAMPLINGRATE);
+	void BuildProfile (void);
+	void BuildProfile (int PC5_LEAD_TIME, int PC5_PEAK_1_DUR, int PC5_PEAK_1_HEIGHT, int PC5_PEAK_2_DUR, int PC5_PEAK_2_HEIGHT, int PC5_INTERVAL, int PC5_V_CMD_OFFSET, int LCMS_VOLTAGESAMPLINGRATE);
 	/**
 	 * Send profile array to DeviceInterface.
 	 *

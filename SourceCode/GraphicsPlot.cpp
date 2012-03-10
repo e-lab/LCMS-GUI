@@ -11,18 +11,17 @@
 #include "DeviceEvent.h"
 
 #ifdef _DEBUG
-    #include <crtdbg.h>
-    #define DEBUG_NEW new(_NORMAL_BLOCK ,__FILE__, __LINE__)
-    #define new DEBUG_NEW
+#include <crtdbg.h>
+#define DEBUG_NEW new(_NORMAL_BLOCK ,__FILE__, __LINE__)
+#define new DEBUG_NEW
 #else
-    #define DEBUG_NEW new
+#define DEBUG_NEW new
 #endif
 
 GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 {
 	continuousLength = 0;
-	for(int i=0; i<30000;i++)
-	{
+	for (int i=0; i<30000;i++) {
 		continuousSpectrum[i]=0;
 		continuousTime[i]=0;
 	}
@@ -137,8 +136,8 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 
 //	double deltaVplus = ( (double) (voltPlus - voltRef)) * 3.3 / 255.0;
 //	double deltaVminus = ( (double) (voltMinus - voltRef)) * 3.3 / 255.0;
-	double dt = double(rawEvent.GetVariable(Command::LCMS_VOLTAGESAMPLINGRATE)/1000.0);
-	double capSel = double(rawEvent.GetVariable(Command::LCMS_CAPSELECT));
+	double dt = double (rawEvent.GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE) /1000.0);
+	double capSel = double (rawEvent.GetVariable (Command::LCMS_CAPSELECT));
 	double C;
 	if (capSel=0) // 100 fF
 		C=1E-12;
@@ -156,7 +155,7 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 
 	int prevContinuousLength = continuousLength;
 	//need array bound check here
-	if ((length + prevContinuousLength) > 30000) {
+	if ( (length + prevContinuousLength) > 30000) {
 		prevContinuousLength = 0;  //maybe something more clever later
 		continuousLength = 0;
 	}
@@ -166,7 +165,7 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 	ct = new float[continuousLength];
 
 	for (int i = 0; i < length; i++) {
-		double raw_count = (double) (  (rawData[i * 2 + 1] & 0xFF) << 8) + (rawData[i * 2] & 0xFF);
+		double raw_count = (double) ( (rawData[i * 2 + 1] & 0xFF) << 8) + (rawData[i * 2] & 0xFF);
 		rawCount[i] = (int) raw_count;
 
 		//if ( i < 10) {
@@ -175,15 +174,14 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 		//	::wxLogMessage(wxT("Raw Data 2:  %i"), (int) ( (rawData[i * 4 + 3])));
 		//	::wxLogMessage(wxT("Raw Data 3:  %i"), (int) ( (rawData[i * 4])));
 		//	::wxLogMessage(wxT("Raw Data 4:  %i"), (int) ( (rawData[i * 4 + 1])));
-		//}	
-		spectrum[i] = ( ( (float) raw_count) / (float) 65535) * 3.3f;		
+		//}
+		spectrum[i] = ( ( (float) raw_count) / (float) 65535) * 3.3f;
 		time[i] = (float) i * dt;  // Constant time
-		
+
 		continuousSpectrum[i+prevContinuousLength]=spectrum[i];
 		continuousTime[i+prevContinuousLength] = time[i]+continuousTime[prevContinuousLength-1]+dt;
 	}
-	for (int i =0; i < continuousLength; i++)
-	{
+	for (int i =0; i < continuousLength; i++) {
 		cs[i] = continuousSpectrum[i];
 		ct[i] = continuousTime[i];
 	}
@@ -207,51 +205,45 @@ void GraphicsPlot::SetCommandString (Command::CommandID command, wxString string
 }
 
 //this function performs a min-max decimation filter on the continuous data to get a subset of the data to display on the plot
-void GraphicsPlot::MinMaxDec(float* ct, float* cs, int* cl)
+void GraphicsPlot::MinMaxDec (float* ct, float* cs, int* cl)
 {
 	int screen_x_size = plot->GetScrX();	//the plot is x pixels wide
 	*cl=2*screen_x_size;
 	cs = new float[*cl];
 	ct = new float[*cl];
 
-	if (continuousLength < screen_x_size)	//the amount of data points is less than pixels on the screen, so we can display every point
-	{
-		// plotting everything		
-		for (int i =0; i < continuousLength; i++)
-		{
+	if (continuousLength < screen_x_size) {	//the amount of data points is less than pixels on the screen, so we can display every point
+		// plotting everything
+		for (int i =0; i < continuousLength; i++) {
 			cs[i] = continuousSpectrum[i];
 			ct[i] = continuousTime[i];
 		}
-		for(int i = continuousLength; i< *cl; i++)
-		{
+		for (int i = continuousLength; i< *cl; i++) {
 			cs[i]=0;
 			ct[i]=0;
 		}
 		*cl=continuousLength;
-	}
-	else //need to subsample to speed up rendering, using max-min decimation
-	{
+	} else { //need to subsample to speed up rendering, using max-min decimation
 		int chunk_size=continuousLength/screen_x_size;
 		if (*cl % screen_x_size != 0)
 			chunk_size++;	//round up to the nearest interval
-		for (int i=0; i<*cl; i++)
-		{
+		for (int i=0; i<*cl; i++) {
 			//find max and min of each chunk
 			int lower_lim=i*chunk_size;
-			int upper_lim=(i*chunk_size)+chunk_size-1;
+			int upper_lim= (i*chunk_size) +chunk_size-1;
 			float* vals = new float[1];
 			float* data_to_process = &continuousTime[lower_lim];
-			min_max_in_order(data_to_process,(upper_lim-lower_lim),vals);
+			min_max_in_order (data_to_process, (upper_lim-lower_lim),vals);
 			cs[2*i]=vals[0];
 			cs[2*i+1]=vals[1];
 			ct[2*i]=continuousTime[lower_lim];
 			ct[2*i+1]=continuousTime[lower_lim];
 			delete[] vals;
-		}		
+		}
 	}
 }
 
-void GraphicsPlot::min_max_in_order(float* data,int data_length,float* result)
+void GraphicsPlot::min_max_in_order (float* data,int data_length,float* result)
 {
 
 	float min = data[0];
@@ -259,13 +251,12 @@ void GraphicsPlot::min_max_in_order(float* data,int data_length,float* result)
 	int min_num = 0;
 	int max_num = 0;
 //	int result[1];
-	for (int i=1; i<=data_length; i++)
-	{
-		if(data[i] > max) {
+	for (int i=1; i<=data_length; i++) {
+		if (data[i] > max) {
 			max = data[i];
 			max_num = i;
 		}
-		if(data[i] < min) {
+		if (data[i] < min) {
 			min = data[i];
 			min_num = i;
 		}

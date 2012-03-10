@@ -8,11 +8,11 @@
 // When debugging changes all calls to "new" to be calls to "DEBUG_NEW" allowing for memory leaks to
 // give you the file name and line number where it occurred.
 #ifdef _DEBUG
-    #include <crtdbg.h>
-    #define DEBUG_NEW new(_NORMAL_BLOCK ,__FILE__, __LINE__)
-    #define new DEBUG_NEW
+#include <crtdbg.h>
+#define DEBUG_NEW new(_NORMAL_BLOCK ,__FILE__, __LINE__)
+#define new DEBUG_NEW
 #else
-    #define DEBUG_NEW new
+#define DEBUG_NEW new
 #endif
 
 
@@ -170,7 +170,7 @@ bool DeviceInterface::Initialize (wxString filename)
 		//the vco frequency is produced by dividing the reference frequency (fixed at 48MHz for the XEM3001) by Q and multiplying by P.
 		//Cypress specifies the VCO frequency should be kept between 250kHz and 400MHz for reliable operation (from FrontPanel User's Manual)
 		//the valid range for P is 8 to 2055, the valid range for Q is 2 to 129
-		//each divider (there are two available) can be sourced from the reference 48MHz or from the VCO 
+		//each divider (there are two available) can be sourced from the reference 48MHz or from the VCO
 		//the valid range from each divider is 4 to 127, the divider outputs are then used to generate the resulting output signal
 		//each output can be disabled or enabled independantly
 
@@ -185,12 +185,12 @@ bool DeviceInterface::Initialize (wxString filename)
 		// Set output 0 to 100 MHz and output1 to 40 MHz.
 		pll->SetReference (48.0f, false);
 		pll->SetVCOParameters (400, 48); //48*400/48=400 MHz
-		pll->SetDiv1 (okCPLL22150::DivSrc_VCO, 4);  //set the source of divider#1 to the VCO (400MHZ), and the divider value to 4 
-		pll->SetOutputSource (0, okCPLL22150::ClkSrc_Div1ByN);  //sets output 1 to the clocksource, divides the output by 4, results in 100MHz 		
+		pll->SetDiv1 (okCPLL22150::DivSrc_VCO, 4);  //set the source of divider#1 to the VCO (400MHZ), and the divider value to 4
+		pll->SetOutputSource (0, okCPLL22150::ClkSrc_Div1ByN);  //sets output 1 to the clocksource, divides the output by 4, results in 100MHz
 		pll->SetOutputEnable (0, true);
-		pll->SetDiv2 (okCPLL22150::DivSrc_VCO, 20);  //set the source of divider#2 to the VCO (400MHZ), and the divider value to 20 
-		pll->SetOutputSource (1, okCPLL22150::ClkSrc_Div2ByN);  //sets output 1 to the clocksource, divides the output by 20, results in 20MHz 		
-	    pll->SetOutputEnable(1, true);
+		pll->SetDiv2 (okCPLL22150::DivSrc_VCO, 20);  //set the source of divider#2 to the VCO (400MHZ), and the divider value to 20
+		pll->SetOutputSource (1, okCPLL22150::ClkSrc_Div2ByN);  //sets output 1 to the clocksource, divides the output by 20, results in 20MHz
+		pll->SetOutputEnable (1, true);
 		//::wxLogMessage(wxT("Pll frequence:  %f"), pll->GetOutputFrequency(0));
 		//::wxLogMessage(wxT("Pll frequence:  %f"), pll->GetOutputFrequency(1));
 
@@ -248,7 +248,7 @@ void DeviceInterface::Stop() {
 	if (NULL == xem)
 		return;
 
-	xem->SetWireInValue(0x11, 0, 0x1);  //say stop, it would be nice to wait for the end of the profile first
+	xem->SetWireInValue (0x11, 0, 0x1); //say stop, it would be nice to wait for the end of the profile first
 	xem->UpdateWireIns(); //say stop
 	//might also need a reset
 
@@ -274,101 +274,101 @@ void DeviceInterface::SetCommand (Command::packet packet) {
 			rawEvent->SetVariable (packet.commandID, packet.commandValue);
 			break;
 
-		/////need to add all of the variables here...painfull -- 
-		// ControlProtocol  --maybe the protocol shouldn't be set on the device interface level, this level should just have a pointer to the data so the send buffer routine has it
-		/*
-		case Command::LCMS_SELECTPROTOCOL :
-			xem->UpdateWireIns();
-			break;
-		*/
-		/*case Command::PC5_PEAK_1_HEIGHT :
-			xem->UpdateWireIns();
-			break;
-		case Command::PC5_PEAK_2_HEIGHT :
-			xem->UpdateWireIns();
-			break;
-		case Command::PC5_LEAD_TIME :
-			xem->UpdateWireIns();
-			break;
-		case Command::PC5_INTERVAL : 
-			xem->UpdateWireIns();
-			break;
-		case Command::PC5_PEAK_1_DUR : 
-			xem->UpdateWireIns();
-			break;
-		case Command::PC5_PEAK_2_DUR : 
-			xem->UpdateWireIns();
-			break;
-		*/
+			/////need to add all of the variables here...painfull --
+			// ControlProtocol  --maybe the protocol shouldn't be set on the device interface level, this level should just have a pointer to the data so the send buffer routine has it
+			/*
+			case Command::LCMS_SELECTPROTOCOL :
+				xem->UpdateWireIns();
+				break;
+			*/
+			/*case Command::PC5_PEAK_1_HEIGHT :
+				xem->UpdateWireIns();
+				break;
+			case Command::PC5_PEAK_2_HEIGHT :
+				xem->UpdateWireIns();
+				break;
+			case Command::PC5_LEAD_TIME :
+				xem->UpdateWireIns();
+				break;
+			case Command::PC5_INTERVAL :
+				xem->UpdateWireIns();
+				break;
+			case Command::PC5_PEAK_1_DUR :
+				xem->UpdateWireIns();
+				break;
+			case Command::PC5_PEAK_2_DUR :
+				xem->UpdateWireIns();
+				break;
+			*/
 
-		// ControlBiases
-		case Command::LCMS_INT_GBT : 
+			// ControlBiases
+		case Command::LCMS_INT_GBT :
 			xem->SetWireInValue (0x02, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_INT_VBN : 
+		case Command::LCMS_INT_VBN :
 			xem->SetWireInValue (0x03, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_INT_VBP : 
+		case Command::LCMS_INT_VBP :
 			xem->SetWireInValue (0x04, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_POST_GBT : 
+		case Command::LCMS_POST_GBT :
 			xem->SetWireInValue (0x05, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_POST_VBN : 
+		case Command::LCMS_POST_VBN :
 			xem->SetWireInValue (0x06, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_POST_VBP : 
+		case Command::LCMS_POST_VBP :
 			xem->SetWireInValue (0x07, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_OBUFF_GBT : 
+		case Command::LCMS_OBUFF_GBT :
 			xem->SetWireInValue (0x08, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_OBUFF_VBN : 
+		case Command::LCMS_OBUFF_VBN :
 			xem->SetWireInValue (0x09, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_OBUFF_VBP : 
+		case Command::LCMS_OBUFF_VBP :
 			xem->SetWireInValue (0x0A, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_VREF : 
+		case Command::LCMS_VREF :
 			xem->SetWireInValue (0x0B, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
-			
-			break;
-		//case Command::PC5_V_CMD_OFFSET :   //this is controlled by the profile generator in software, not the fpga
-		//	xem->SetWireInValue (0x0B, packet.commandValue, 0xFFFF);
-		//	xem->UpdateWireIns();
-		//	break;
 
-		// ControlConfiguration
-		case Command::LCMS_CAPSELECT : 
+			break;
+			//case Command::PC5_V_CMD_OFFSET :   //this is controlled by the profile generator in software, not the fpga
+			//	xem->SetWireInValue (0x0B, packet.commandValue, 0xFFFF);
+			//	xem->UpdateWireIns();
+			//	break;
+
+			// ControlConfiguration
+		case Command::LCMS_CAPSELECT :
 			xem->SetWireInValue (0x01, packet.commandValue<<5, 0x0020);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_POSTGAINSELECT : 
+		case Command::LCMS_POSTGAINSELECT :
 			xem->SetWireInValue (0x01, packet.commandValue<<6, 0x0040);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_BYPASSPOST : 
+		case Command::LCMS_BYPASSPOST :
 			xem->SetWireInValue (0x01, packet.commandValue<<7, 0x0080);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_CHANNEL_SEL : 
+		case Command::LCMS_CHANNEL_SEL :
 			switch (packet.commandValue) {
 				case 1:
 					xem->SetWireInValue (0x01, 0x0000, 0x001E);
 					break;
 				case 2:
 					xem->SetWireInValue (0x01, 0x0002, 0x001E);
-					break;			
+					break;
 				case 3:
 					xem->SetWireInValue (0x01, 0x0004, 0x001E);
 					break;
@@ -418,37 +418,37 @@ void DeviceInterface::SetCommand (Command::packet packet) {
 			xem->UpdateWireIns();
 			break;
 
-		// ControlSyncConfig
-		case Command::LCMS_BYPASS_LPF : 
+			// ControlSyncConfig
+		case Command::LCMS_BYPASS_LPF :
 			xem->SetWireInValue (0x01, packet.commandValue<<8, 0x100);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_VOLTAGESAMPLINGRATE : 
-			xem->SetWireInValue (0x10, packet.commandValue, 0xFFFF); 
+		case Command::LCMS_VOLTAGESAMPLINGRATE :
+			xem->SetWireInValue (0x10, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_RESETPERIOD : 
+		case Command::LCMS_RESETPERIOD :
 			xem->SetWireInValue (0x0D, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_INT_RESET_DURATION : 
+		case Command::LCMS_INT_RESET_DURATION :
 			xem->SetWireInValue (0x0E, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_POST_RESET_DURATION : 
+		case Command::LCMS_POST_RESET_DURATION :
 			xem->SetWireInValue (0x0F, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_CDS_TIME1 : 
+		case Command::LCMS_CDS_TIME1 :
 			xem->SetWireInValue (0x12, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
-		case Command::LCMS_CDS_TIME2 : 
+		case Command::LCMS_CDS_TIME2 :
 			xem->SetWireInValue (0x13, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
 			break;
 
-		// Default case
+			// Default case
 		default :
 			break;
 	}
@@ -473,8 +473,7 @@ void DeviceInterface::TransferData () {
 		xem->UpdateWireOuts();
 		unsigned long inAvailable = xem->GetWireOutValue (0x20);
 		::wxLogMessage (wxT ("free profile buffer size: %i"), inAvailable);
-		if (inAvailable >= 1023)
-		{
+		if (inAvailable >= 1023) {
 			::wxLogMessage (wxT ("profile buffer underrun! (ignore this if immediately after start)\n"));
 		}
 
@@ -483,7 +482,7 @@ void DeviceInterface::TransferData () {
 			// PipeIn transfer
 			xem->WriteToPipeIn (0x80, (2*rawDataInPtrLength), rawDataInPtr);
 			rawDataInPtrLength = 0;
-			xem->SetWireInValue(0x11, 0x1, 0x1);  //say start
+			xem->SetWireInValue (0x11, 0x1, 0x1); //say start
 			xem->UpdateWireIns(); //say start
 		} else {
 
@@ -491,7 +490,7 @@ void DeviceInterface::TransferData () {
 			xem->WriteToPipeIn (0x80, (2*inAvailable), rawDataInPtr);
 			rawDataInPtrLength = rawDataInPtrLength - ( (int) inAvailable);
 			rawDataInPtr = &rawDataInPtr[2*inAvailable];
-			xem->SetWireInValue(0x11, 0x1, 0x1); //say start (might be unecessary)
+			xem->SetWireInValue (0x11, 0x1, 0x1); //say start (might be unecessary)
 			xem->UpdateWireIns(); //say start
 		}
 
@@ -500,8 +499,7 @@ void DeviceInterface::TransferData () {
 		xem->UpdateWireOuts();
 		int outAvailable = (int) (2 * xem->GetWireOutValue (0x21));
 		::wxLogMessage (wxT ("measurement data to collect: %i"), outAvailable/2);
-		if (outAvailable >= 2038) // not *2 here
-		{
+		if (outAvailable >= 2038) { // not *2 here
 			::wxLogMessage (wxT ("measurement buffer overrun!\n"));
 		}
 		if (outAvailable > 0) {

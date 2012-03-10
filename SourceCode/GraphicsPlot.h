@@ -118,8 +118,8 @@ private:
 	void UnpackEvent (DeviceEvent&);
 
 	/**
-	 * Performs a min-max decimation filter on the raw data based on the size of the 
-	 * display in order to reduce the number of points to plot while maintaining 
+	 * Performs a min-max decimation filter on the raw data based on the size of the
+	 * display in order to reduce the number of points to plot while maintaining
 	 * important features of the plot.
 	 * @param ct
 	 *	output time spectrum
@@ -129,13 +129,13 @@ private:
 	 * output spectrum length
 	 *
 	 */
-	void MinMaxDec(float* ct, float* cs, int* cl);
+	void MinMaxDec (float* ct, float* cs, int* cl);
 
-	/** 
+	/**
 	* returns the min and max in the order they occurred
 	*/
 
-	void min_max_in_order(float* data, int data_length, float* result);
+	void min_max_in_order (float* data, int data_length, float* result);
 
 	/**
 	 * Save currently displayed data.
