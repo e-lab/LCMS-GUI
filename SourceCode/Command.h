@@ -24,15 +24,6 @@ public:
 		DEV_STOP,	//!< Stop polling the device for data.
 
 		PROFILE,	//!< Contains profile array, commandValue is its length.
-
-		OCT_PD_BIAS,	//!< Corresponds to the hardware DAC Vout D.
-		OCT_VDDA,
-		OCT_VDDR,
-		OCT_LPU,	//!< Corresponds to the hardware DAC Vout A.
-		OCT_TIME_OUT,	//!< Corresponds to measurement time out.
-		OCT_EVENT_NUM,	//!< Corresponds to how many events to record.
-		IMG_WIDTH,
-		IMG_HEIGHT,
 		SAVE_TYPE,
 
 		PA_VOLT_M,		//!<  Change the Voltage Minus value.

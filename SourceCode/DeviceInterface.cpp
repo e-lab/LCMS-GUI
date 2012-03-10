@@ -270,35 +270,9 @@ void DeviceInterface::SetCommand (Command::packet packet) {
 			rawDataIn = packet.profile;
 			rawDataInLength = packet.commandValue;
 			break;
-	/*	case Command::OCT_PD_BIAS :
-			xem->SetWireInValue (0x01, packet.commandValue, 0x00FF);
-			xem->UpdateWireIns();
-			break;
-		case Command::OCT_VDDA :
-			xem->SetWireInValue (0x02, packet.commandValue, 0x00FF);
-			xem->UpdateWireIns();
-			break;
-		case Command::OCT_VDDR :
-			xem->SetWireInValue (0x03, packet.commandValue, 0x00FF);
-			xem->UpdateWireIns();
-			break;
-		case Command::OCT_LPU :
-			xem->SetWireInValue (0x04, packet.commandValue, 0x00FF);
-			xem->UpdateWireIns();
-			break;
-		case Command::OCT_EVENT_NUM :
-			xem->SetWireInValue (0x05, packet.commandValue, 0xFFFF);
-			xem->UpdateWireIns();
-			break;
-		case Command::OCT_TIME_OUT:
-			xem->SetWireInValue (0x06, packet.commandValue, 0xFFFF);
-			xem->SetWireInValue (0x07, (pll->GetOutputFrequency (1)), 0xFFFF); // Microseconds
-			xem->UpdateWireIns();
-			break; */
 		case Command::SAVE_TYPE :
 			rawEvent->SetVariable (packet.commandID, packet.commandValue);
 			break;
-
 
 		/////need to add all of the variables here...painfull -- 
 		// ControlProtocol  --maybe the protocol shouldn't be set on the device interface level, this level should just have a pointer to the data so the send buffer routine has it
