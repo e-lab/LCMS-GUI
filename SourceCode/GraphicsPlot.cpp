@@ -139,7 +139,7 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 	double dt = double (rawEvent.GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE) /1000.0);
 	double capSel = double (rawEvent.GetVariable (Command::LCMS_CAPSELECT));
 	double C;
-	if (capSel=0) // 100 fF
+	if (0 == capSel) // 100 fF
 		C=1E-12;
 	else	//1 pF
 		C=1E-15;
