@@ -77,7 +77,6 @@ void DeviceController::BuildProfile ()
 
 	long int transfer_profile_length =length;
 	unsigned char* transfer_profile = new unsigned char[ (transfer_profile_length*2) ];
-	unsigned char* transfer_profile_ptr = &transfer_profile[0];
 	//char str[100];
 	for (int xx = 0; xx < transfer_profile_length; xx++) {
 		int value = (int) profile_array[xx];
