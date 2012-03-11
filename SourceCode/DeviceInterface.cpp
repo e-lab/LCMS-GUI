@@ -468,8 +468,7 @@ void DeviceInterface::TransferData () {
 	int rawDataInPtrLength = rawDataInLength;
 	unsigned char* rawDataInPtr = &rawDataIn[0];
 
-
-	while (0 != rawDataInPtrLength) {
+	while (1) {
 		/* Send in data
 		 *
 		 * Read inAvailable (wireOut 0x20) which provides the current
@@ -478,23 +477,61 @@ void DeviceInterface::TransferData () {
 		 * inAvailable data words via pipeIn (0x80).
 		 */
 		xem->UpdateWireOuts();
-		unsigned long inAvailable = xem->GetWireOutValue (0x20);
+		int inAvailable = (int) (2 * xem->GetWireOutValue (0x20));
+
 		::wxLogMessage (wxT ("free profile buffer size: %i"), inAvailable);
-		if (inAvailable >= 1023) {
+		if (inAvailable >= 2046) {
 			::wxLogMessage (wxT ("profile buffer underrun! (ignore this if immediately after start)\n"));
 		}
 
-		if (inAvailable >= ( (unsigned long) rawDataInPtrLength)) {
+		if (inAvailable < rawDataInPtrLength) {
 
-			// PipeIn transfer
-			xem->WriteToPipeIn (0x80, (2*rawDataInPtrLength), rawDataInPtr);
-			rawDataInPtrLength = 0;
+			// PipeIn transfer a chunk of the profile to device.
+			xem->WriteToPipeIn (0x80, inAvailable, rawDataInPtr);
+			rawDataInPtrLength = rawDataInPtrLength - inAvailable;
+			rawDataInPtr = &rawDataInPtr[inAvailable];
 		} else {
 
-			// PipeIn transfer
-			xem->WriteToPipeIn (0x80, (2*inAvailable), rawDataInPtr);
-			rawDataInPtrLength = rawDataInPtrLength - ( (int) inAvailable);
-			rawDataInPtr = &rawDataInPtr[2*inAvailable];
+			Command::packet packet;
+			if (wxMSGQUEUE_NO_ERROR == commandQueue.ReceiveNoWait (packet)) {
+				// Since there's a command to process, send only the current profile.
+				xem->WriteToPipeIn (0x80, rawDataInPtrLength, rawDataInPtr);
+				rawDataInPtrLength = 0;
+
+				// Collect last of the data from current profile.
+				xem->UpdateWireOuts();
+				int outAvailable = (int) (2 * xem->GetWireOutValue (0x21));
+				while (outAvailable > 0) {
+					unsigned char *rawData = new unsigned char[outAvailable];
+					xem->ReadFromPipeOut (0xA0, outAvailable, rawData);
+					rawEvent->SetRawData (rawData, outAvailable);
+					wxPostEvent (display, (*rawEvent));
+
+					xem->UpdateWireOuts();
+					outAvailable = (int) (2 * xem->GetWireOutValue (0x21));
+				}
+
+				// Process command & break transfer.
+				ProcessCommand (packet);
+				break;
+			} else {
+				// With no command to process, rap round profile.
+				unsigned char rapProfile[inAvailable];
+
+				for (int xx = 0; xx < rawDataInPtrLength; xx++) {
+					rapProfile[xx] = rawDataInPtr[xx];
+				}
+
+				int newProfileLength = inAvailable-rawDataInPtrLength;
+
+				for (int xx = 0; xx < newProfileLength; xx++) {
+					rapProfile[rawDataInPtrLength + xx] = rawDataIn[xx];
+				}
+
+				xem->WriteToPipeIn (0x80, inAvailable, &rapProfile[0]);
+				rawDataInPtrLength = rawDataInLength - newProfileLength;
+				rawDataInPtr = &rawDataIn[newProfileLength];
+			}
 		}
 
 
