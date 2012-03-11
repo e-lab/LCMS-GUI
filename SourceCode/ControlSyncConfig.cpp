@@ -254,7 +254,10 @@ void ControlSyncConfig::OnChoiceVoltageSamplingRate (wxCommandEvent& evt)
 	}
 	::wxLogMessage (wxT ("OnChoiceVoltageSamplingRate out value:  %i"), out_value);
 	xemDeviceCtrl->SetCommand (Command::LCMS_VOLTAGESAMPLINGRATE,out_value);
-	xemDeviceCtrl->BuildProfile (xemDeviceCtrl->GetVariable (Command::PC5_LEAD_TIME),xemDeviceCtrl->GetVariable (Command::PC5_PEAK_1_DUR),xemDeviceCtrl->GetVariable (Command::PC5_PEAK_1_HEIGHT),xemDeviceCtrl->GetVariable (Command::PC5_PEAK_2_DUR),xemDeviceCtrl->GetVariable (Command::PC5_PEAK_2_HEIGHT),xemDeviceCtrl->GetVariable (Command::PC5_INTERVAL),xemDeviceCtrl->GetVariable (Command::PC5_V_CMD_OFFSET),xemDeviceCtrl->GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE)); //this causes some problems because the profile update and the new sampling rate aren't sent at the same time, maybe put a stop first
+
+	//this causes some problems because the profile update and the new
+	//sampling rate aren't sent at the same time, maybe put a stop first
+	xemDeviceCtrl->BuildProfile ();
 }
 
 

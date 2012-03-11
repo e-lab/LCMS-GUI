@@ -36,8 +36,17 @@ DeviceController::~DeviceController()
 	variables = NULL;
 }
 
-void DeviceController::BuildProfile (int PC5_LEAD_TIME, int PC5_PEAK_1_DUR, int PC5_PEAK_1_HEIGHT, int PC5_PEAK_2_DUR, int PC5_PEAK_2_HEIGHT, int PC5_INTERVAL, int PC5_V_CMD_OFFSET, int LCMS_VOLTAGESAMPLINGRATE)
+void DeviceController::BuildProfile ()
 {
+	int PC5_LEAD_TIME               = GetVariable (Command::PC5_LEAD_TIME);
+	int PC5_PEAK_1_DUR              = GetVariable (Command::PC5_PEAK_1_DUR);
+	int PC5_PEAK_1_HEIGHT           = GetVariable (Command::PC5_PEAK_1_HEIGHT);
+	int PC5_PEAK_2_DUR              = GetVariable (Command::PC5_PEAK_2_DUR);
+	int PC5_PEAK_2_HEIGHT           = GetVariable (Command::PC5_PEAK_2_HEIGHT);
+	int PC5_INTERVAL                = GetVariable (Command::PC5_INTERVAL);
+	int PC5_V_CMD_OFFSET            = GetVariable (Command::PC5_V_CMD_OFFSET);
+	int LCMS_VOLTAGESAMPLINGRATE	= GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE);
+
 	double scaling = ( (double) (1000.0 / LCMS_VOLTAGESAMPLINGRATE));
 	float *profile_array;
 	int length = PC5_INTERVAL * scaling;

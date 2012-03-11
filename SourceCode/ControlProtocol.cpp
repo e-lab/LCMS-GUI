@@ -122,7 +122,7 @@ void ControlProtocol::ChangeProtocolValue (wxSpinEvent& evt)
 			break;
 	}
 
-	xemDeviceCtrl->BuildProfile (xemDeviceCtrl->GetVariable (Command::PC5_LEAD_TIME),xemDeviceCtrl->GetVariable (Command::PC5_PEAK_1_DUR),xemDeviceCtrl->GetVariable (Command::PC5_PEAK_1_HEIGHT),xemDeviceCtrl->GetVariable (Command::PC5_PEAK_2_DUR),xemDeviceCtrl->GetVariable (Command::PC5_PEAK_2_HEIGHT),xemDeviceCtrl->GetVariable (Command::PC5_INTERVAL),xemDeviceCtrl->GetVariable (Command::PC5_V_CMD_OFFSET),xemDeviceCtrl->GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE));
+	xemDeviceCtrl->BuildProfile ();
 }
 
 
@@ -301,5 +301,5 @@ void ControlProtocol::Start()
 	SetPeak1Duration (peak1Duration->GetValue());
 	SetPeak2Duration (peak2Duration->GetValue());
 	SetInterval (interval->GetValue());
-	xemDeviceCtrl->BuildProfile (xemDeviceCtrl->GetVariable (Command::PC5_LEAD_TIME),xemDeviceCtrl->GetVariable (Command::PC5_PEAK_1_DUR),xemDeviceCtrl->GetVariable (Command::PC5_PEAK_1_HEIGHT),xemDeviceCtrl->GetVariable (Command::PC5_PEAK_2_DUR),xemDeviceCtrl->GetVariable (Command::PC5_PEAK_2_HEIGHT),xemDeviceCtrl->GetVariable (Command::PC5_INTERVAL),xemDeviceCtrl->GetVariable (Command::PC5_V_CMD_OFFSET),xemDeviceCtrl->GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE));
+	xemDeviceCtrl->BuildProfile ();
 }
