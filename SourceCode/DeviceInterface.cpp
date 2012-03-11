@@ -226,6 +226,9 @@ void DeviceInterface::Start() {
 	::wxLogMessage (wxT ("cleared all buffers\n"));
 
 	pollDevice = true;
+
+	xem->SetWireInValue (0x11, 0x1, 0x1); //say start
+	xem->UpdateWireIns(); //say start
 }
 
 void DeviceInterface::Stop() {
@@ -486,16 +489,12 @@ void DeviceInterface::TransferData () {
 			// PipeIn transfer
 			xem->WriteToPipeIn (0x80, (2*rawDataInPtrLength), rawDataInPtr);
 			rawDataInPtrLength = 0;
-			xem->SetWireInValue (0x11, 0x1, 0x1); //say start
-			xem->UpdateWireIns(); //say start
 		} else {
 
 			// PipeIn transfer
 			xem->WriteToPipeIn (0x80, (2*inAvailable), rawDataInPtr);
 			rawDataInPtrLength = rawDataInPtrLength - ( (int) inAvailable);
 			rawDataInPtr = &rawDataInPtr[2*inAvailable];
-			xem->SetWireInValue (0x11, 0x1, 0x1); //say start (might be unecessary)
-			xem->UpdateWireIns(); //say start
 		}
 
 
