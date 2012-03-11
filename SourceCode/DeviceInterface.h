@@ -98,6 +98,10 @@ public:
 	 */
 	void SetCommand (Command::packet);
 	/**
+	 * Process command packet.
+	 */
+	void ProcessCommand (Command::packet);
+	/**
 	 * Send/Recive data to the device.
 	 */
 	void TransferData();

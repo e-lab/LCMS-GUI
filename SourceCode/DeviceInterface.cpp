@@ -69,21 +69,7 @@ wxThread::ExitCode DeviceInterface::Entry()
 
 		// Process commands
 		while (wxMSGQUEUE_NO_ERROR == commandQueue.ReceiveNoWait (packet)) {
-
-			switch (packet.commandID) {
-				case Command::DEV_INIT :
-					Initialize (packet.filename);
-					break;
-				case Command::DEV_START :
-					Start();
-					break;
-				case Command::DEV_STOP:
-					Stop();
-					break;
-				default :
-					SetCommand (packet);
-					break;
-			}
+			ProcessCommand (packet);
 		}
 
 		// Transfer data to/from device
@@ -450,6 +436,24 @@ void DeviceInterface::SetCommand (Command::packet packet) {
 
 			// Default case
 		default :
+			break;
+	}
+}
+
+void DeviceInterface::ProcessCommand (Command::packet packet) {
+
+	switch (packet.commandID) {
+		case Command::DEV_INIT :
+			Initialize (packet.filename);
+			break;
+		case Command::DEV_START :
+			Start();
+			break;
+		case Command::DEV_STOP:
+			Stop();
+			break;
+		default :
+			SetCommand (packet);
 			break;
 	}
 }
