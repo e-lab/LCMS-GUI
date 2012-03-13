@@ -516,7 +516,7 @@ void DeviceInterface::TransferData () {
 				break;
 			} else {
 				// With no command to process, rap round profile.
-				unsigned char rapProfile[inAvailable];
+				unsigned char *rapProfile = new unsigned char[inAvailable];
 
 				for (int xx = 0; xx < rawDataInPtrLength; xx++) {
 					rapProfile[xx] = rawDataInPtr[xx];
@@ -531,6 +531,9 @@ void DeviceInterface::TransferData () {
 				xem->WriteToPipeIn (0x80, inAvailable, &rapProfile[0]);
 				rawDataInPtrLength = rawDataInLength - newProfileLength;
 				rawDataInPtr = &rawDataIn[newProfileLength];
+
+				delete[] rapProfile;
+				rapProfile = NULL;
 			}
 		}
 
