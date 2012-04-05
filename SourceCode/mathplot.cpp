@@ -19,8 +19,6 @@
 #include <wx/window.h>
 //#include <wx/wxprec.h>
 
-
-
 // Comment out for release operation:
 // (Added by J.L.Blanco, Aug 2007)
 // #define MATHPLOT_DO_LOGGING
@@ -1603,7 +1601,6 @@ void mpWindow::ZoomOutX()
     UpdateAll();
 }
 
-
 void mpWindow::ZoomInY()
 {
     m_scaleY = m_scaleY * zoomIncrementalFactor;
@@ -1801,7 +1798,7 @@ void mpWindow::DelAllLayers( bool alsoDeleteObject, bool refreshDisplay)
 	while ( m_layers.size()>0 )
     {
 		// Also delete the object?
-		//if (alsoDeleteObject) delete m_layers[0];
+		if (alsoDeleteObject) delete m_layers[0];
 		m_layers.erase( m_layers.begin() ); // this deleted the reference only
     }
 	if (refreshDisplay)  UpdateAll();
