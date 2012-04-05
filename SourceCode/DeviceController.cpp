@@ -87,9 +87,10 @@ void DeviceController::BuildProfile ()
 		//::wxLogMessage (wxT ("profile[%i]=%i"), xx, value);
 	}
 
+	//SetProfile()
 	struct Command::packet packet;
 	packet.commandID = Command::PROFILE;
-	packet.commandValue = transfer_profile_length;
+	packet.commandValue = transfer_profile_length*2;
 	packet.profile = transfer_profile;
 
 	xemDevice->GetQueue().Post (packet);
