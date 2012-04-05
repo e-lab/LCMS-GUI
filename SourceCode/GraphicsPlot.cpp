@@ -36,9 +36,9 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 
 	plot->EnableDoubleBuffer (true);
 
-	plot->SetScaleX (5000);
-	plot->SetScaleY (100);
-	plot->SetPos (0.03, 1);
+	plot->SetScaleX (1);
+	plot->SetScaleY (1);
+//	plot->SetPos (0.03, 1);
 
 
 	xScale = new mpScaleX;
@@ -47,8 +47,9 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	plot->AddLayer (xScale);
 	plot->AddLayer (yScale);
 
+	plot->Fit(-200, 3200, -0.3, 3.3, NULL, NULL);  //sets the view from -200 to 3200 ms and -.3 to 3.3 V 
 	xScale->SetName (wxT ("Time (ms)"));
-	yScale->SetName (wxT ("Current (nA)"));
+	yScale->SetName (wxT ("Voltage (V)"));
 
 	mypen = new wxPen (wxT ("RED"), 1, wxSOLID);
 
