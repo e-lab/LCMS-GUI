@@ -81,8 +81,8 @@ private:
 	float* time;
 	int length;	//!<  Length of both the spectrum and time arrays.
 
-	float continuousSpectrum[30000];
-	float continuousTime[30000];
+	float continuousSpectrum[30000]; //3 seconds at 10khz
+	float continuousTime[30000];	  //3 seconds at 10khz
 	int continuousLength;
 
 	float *cs;
@@ -104,6 +104,9 @@ private:
 	 * make a measurements.
 	 */
 	std::vector<DeviceEvent*> measurements;
+
+	std::vector<std::vector<float>> continuousSpectrum_v;
+	std::vector<std::vector<float>> continuousTime_v;
 
 	/**
 	 * Translate raw data to a usable form.

@@ -101,7 +101,7 @@ void MainFrame::OnSave (wxCommandEvent& event)
 	// Ask for a data filename from the user.
 	wxFileDialog saveLocation (this, wxT ("Choose a save location"),
 	                           wxT (""), wxT ("collected-data"),
-	                           wxT ("Application Data Files (*.dat)|*.dat|All files (*.*)|*.*"),
+	                           wxT ("Application Data Files (*.txt)|*.txt|All files (*.*)|*.*"),
 	                           wxFD_SAVE | wxOVERWRITE_PROMPT);
 
 	if (saveLocation.ShowModal() == wxID_CANCEL) {

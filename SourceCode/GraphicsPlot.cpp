@@ -89,7 +89,8 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	// Clears previous data events from the continuous save 'measurements' vector.
 	int saveType = rawEvent.GetVariable (Command::PA_SAVE_TYPE);
 
-	if ( (1 == saveType) // True when the "Save Type" radio button is set to "Continues".
+//	if ( (1 == saveType) // True when the "Save Type" radio button is set to "Continues".
+	if ( ( 0 == saveType) //for now always do this code, since we do not have a "Save Type" radio button
 	                || ( (measurements.size() > 0) && (saveType != (measurements.at (0))->GetVariable (Command::PA_SAVE_TYPE)))
 	                // True if there is a raw data event saved in the measurements vector AND if the first raw data event in the measurements vector
 	                // 	has a different PA_SAVE_TYPE to the current raw data event.  This will only be so for the first frame after the
@@ -157,6 +158,25 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 	int prevContinuousLength = continuousLength;
 	//need array bound check here
 	if ( (length + prevContinuousLength) > 30000) {
+		//measurements_continuous.push_back(rawEvent.Clone()); //store this complete buffer in measurements_continuous
+		std::vector<float> continuousTime_v_inner;
+		std::vector<float> continuousSpectrum_v_inner;
+		for (int i = 0; i < continuousLength; i++) {
+			//if any processing is needed, do it before the push so that it is included when saving to a file
+			int a = continuousTime_v.size();
+			if (a > 0) {
+				int b = continuousTime_v.at(a-1).size();
+				float last_time = continuousTime_v.at(a-1).at(b-1);
+			continuousTime_v_inner.push_back(continuousTime[i]+last_time);
+			}
+			else 
+				continuousTime_v_inner.push_back(continuousTime[i]);
+			continuousSpectrum_v_inner.push_back(continuousSpectrum[i]);
+		}
+		
+		continuousTime_v.push_back(continuousTime_v_inner);
+		continuousSpectrum_v.push_back(continuousSpectrum_v_inner);
+
 		prevContinuousLength = 0;  //maybe something more clever later
 		continuousLength = 0;
 	}
@@ -246,7 +266,6 @@ void GraphicsPlot::MinMaxDec (float* ct, float* cs, int* cl)
 
 void GraphicsPlot::min_max_in_order (float* data,int data_length,float* result)
 {
-
 	float min = data[0];
 	float max = data[0];
 	int min_num = 0;
@@ -272,6 +291,81 @@ void GraphicsPlot::min_max_in_order (float* data,int data_length,float* result)
 }
 
 void GraphicsPlot::SaveData (wxString outputFile)
+{
+	unsigned int ii = 0;
+	unsigned int ms = measurements.size();
+	unsigned int mcs = continuousTime_v.size()+1;
+	int a = continuousLength;
+
+	wxFileName fileName = wxFileName (outputFile);
+
+	if (!fileName.HasExt()) {
+		fileName.SetExt (wxT (".txt"));
+	}
+	
+	if (fileName.FileExists()) {
+		::wxMessageBox (wxT ("A file with the current save name already exists.\n\n"
+							 "File Name:  ") + fileName.GetFullName(),
+						wxT ("Save Aborted"));
+
+		return;
+	}
+
+	wxTextFile fileOut;
+
+	if (!fileOut.Create (fileName.GetFullPath())) {
+		::wxMessageBox (wxT ("The file could not be created.\n"),
+						wxT ("File Creation Failed"));
+		return;
+	}
+
+	wxString timeStamp = wxT ("# ");
+
+	timeStamp << wxNow();
+	fileOut.AddLine (timeStamp);
+	fileOut.AddLine(wxString::Format( wxT("time (ms)\tADC (V)")));
+
+	float last_time = 0;
+
+	if(mcs > 0) 
+	{
+		///unpack the vector of vectors and print it to files, one file per outer vector
+		int a = continuousTime_v.size();
+		for (int i=0; i<a; i++) {
+			//make a new file
+			int b = continuousTime_v.at(i).size();
+			for (int j=0; j<b; j++) {
+				fileOut.AddLine(wxString::Format( wxT("%f \t %f"), continuousTime_v.at(i).at(j),continuousSpectrum_v.at(i).at(j)));   ///don't forget to add the inner time array to the outter last time
+			//	continuousTime_v.at(i).pop_back();
+			//	continuousSpectrum_v.at(i).pop_back();
+			}
+			//continuousTime_v.pop_back();
+			//continuousSpectrum_v.pop_back();		
+		}
+		fileOut.Write();
+		//fileOut.Close();
+
+		if (a > 0) {
+			int b = continuousTime_v.at(a-1).size();
+			last_time = continuousTime_v.at(a-1).at(b-1);
+		}
+	}
+
+	if (measurements.size() == 0) {
+		wxMessageBox( wxT("No measurements to record") );
+		return;
+	}
+	
+	for (int xx = 0; xx < continuousLength; xx++) {
+		fileOut.AddLine(wxString::Format( wxT("%f \t %f"), continuousTime[xx]+last_time,continuousSpectrum[xx]));  //don't forget to add the time to the previous last time
+	}
+
+	fileOut.Write();
+	fileOut.Close();	
+}
+
+
+/*void GraphicsPlot::SaveData_old (wxString outputFile)	
 {
 	unsigned int ii = 0;
 
@@ -347,3 +441,4 @@ void GraphicsPlot::SaveData (wxString outputFile)
 		ii++;
 	}
 }
+*/
