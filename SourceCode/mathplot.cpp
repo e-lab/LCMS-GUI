@@ -1798,7 +1798,7 @@ void mpWindow::DelAllLayers( bool alsoDeleteObject, bool refreshDisplay)
 	while ( m_layers.size()>0 )
     {
 		// Also delete the object?
-		if (alsoDeleteObject) delete m_layers[0];
+//		if (alsoDeleteObject) delete m_layers[0];
 		m_layers.erase( m_layers.begin() ); // this deleted the reference only
     }
 	if (refreshDisplay)  UpdateAll();
