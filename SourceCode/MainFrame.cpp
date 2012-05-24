@@ -30,7 +30,7 @@ MainFrame::MainFrame (const wxString& title, const wxSize& size) : wxFrame (NULL
 {
 	SetIconResource();
 	CreateStatusBar (1);
-	SetStatusText (wxT ("LCMS"));
+	SetStatusText (wxT ("LCMS2012 XEM6010"));
 	CreateMenuBar();
 
 	// Make the MainFrame panel and sizer
@@ -135,8 +135,8 @@ void MainFrame::OnQuit (wxCommandEvent& event)
 void MainFrame::OnAbout (wxCommandEvent& event)
 {
 	wxString msg;
-	msg.Printf (wxT ("About.\n") wxT ("Welcome to the control program.\n"));
-	wxMessageBox (msg, wxT ("About Application"), wxOK | wxICON_INFORMATION, this);
+	msg.Printf (wxT ("About.\n") wxT ("Welcome to the LCMS 2012 XEM6010 control program.\n"));
+	wxMessageBox (msg, wxT ("About LCMS 2012 XEM 6010 control program"), wxOK | wxICON_INFORMATION, this);
 }
 
 void MainFrame::OnSaveProtocol (wxCommandEvent& event)
@@ -182,7 +182,7 @@ void MainFrame::CreateMenuBar()
 	fileMenu->Append (RELOAD_CONFIGS, wxT ("&Reload Protocols"), wxT ("Reload the protocol configuration files"));
 	fileMenu->AppendSeparator();
 	fileMenu->Append (wxID_SAVE, wxT ("&Save.."), wxT ("Save currently displayed data"));
-	fileMenu->Append (CONFIGURATION, wxT ("&Config.."), wxT ("Load the XEM configuration bit file"));
+	fileMenu->Append (CONFIGURATION, wxT ("&Config FPGA.."), wxT ("Load the XEM configuration bit file"));
 	fileMenu->AppendSeparator();
 	fileMenu->Append (wxID_EXIT, wxT ("E&xit\tAlt-X"), wxT ("Quit this program"));
 

@@ -30,13 +30,13 @@ DeviceInterface::DeviceInterface (wxEvtHandler* displayTmp) : wxThread (wxTHREAD
 	rawEvent = new DeviceEvent();
 
 	xem = (okCFrontPanel*) NULL;
-	pll = (okCPLL22150*) NULL;
+	pll = (okCPLL22393*) NULL;
 
 #ifdef __WXMAC__
 	Initialize (wxT ("LCMS.app/Contents/Resources/LCMS.bit"));
 #else
 	//Initialize (wxT ("LCMS.bit"));
-	Initialize (wxT ("xem6001_template.bit"));
+	Initialize (wxT ("LCMS2012_xem6010_top.bit"));
 #endif
 }
 
@@ -55,7 +55,7 @@ DeviceInterface::~DeviceInterface()
 	}
 	if (NULL != pll) {
 		delete pll;
-		pll = (okCPLL22150*) NULL;
+		pll = (okCPLL22393*) NULL;
 	}
 }
 
@@ -97,7 +97,7 @@ bool DeviceInterface::Initialize (wxString filename)
 	}
 	if (NULL != pll) {
 		delete pll;
-		pll = (okCPLL22150*) NULL;
+		pll = (okCPLL22393*) NULL;
 	}
 
 	// Load the FrontPanel Library.
@@ -136,56 +136,37 @@ bool DeviceInterface::Initialize (wxString filename)
 		                wxT ("Initialization Failed"));
 
 		return (false);*/
-	if (xem->GetBoardModel() != okCFrontPanel::brdXEM6001) {
+	if (xem->GetBoardModel() != okCFrontPanel::brdXEM6010LX150) {
 		delete xem;
 		xem = (okCFrontPanel*) NULL;
 
-		::wxMessageBox (wxT ("The XEM board was not of a type \"XEM6001\"\n"
+		::wxMessageBox (wxT ("The XEM board was not of a type \"XEM6010\"\n"
 		                     "and thus could not be initialized.\n"),
 		                wxT ("Initialization Failed"));
 		return (false);
 
 
 	} else {
-		pll = new okCPLL22150;
-
-		// Set clk output 1 to 160 MHz.
-		// This value cannot be changed without a corresponding
-		// change within the FPGA bit file.
-
-		//the vco frequency is produced by dividing the reference frequency (fixed at 48MHz for the XEM3001) by Q and multiplying by P.
-		//Cypress specifies the VCO frequency should be kept between 250kHz and 400MHz for reliable operation (from FrontPanel User's Manual)
-		//the valid range for P is 8 to 2055, the valid range for Q is 2 to 129
-		//each divider (there are two available) can be sourced from the reference 48MHz or from the VCO
-		//the valid range from each divider is 4 to 127, the divider outputs are then used to generate the resulting output signal
-		//each output can be disabled or enabled independantly
-
-
-		//pll->SetReference (48.0f, false);
-		//pll->SetVCOParameters (160, 24); //(P,Q); result: 48/24*160 = 320 MHz
-		//pll->SetDiv1 (okCPLL22150::DivSrc_VCO, 4);  //set the source of divider#1 to the VCO (320MHZ), and the divider value to 4 (but we won't use the 4  here)
-		//pll->SetOutputSource (1, okCPLL22150::ClkSrc_Div1By2);  //sets output 1 to the clocksource, divides the output by 2, results in 160MHz (would use clkcSrc_Div1ByN to use the 4 instead)
-		//pll->SetOutputEnable (1, true);  //enable output 1
-		//::wxLogMessage(wxT("Pll frequence:  %f"), pll->GetOutputFrequency(1));
+		pll = new okCPLL22393;
 
 		// Set output 0 to 100 MHz and output1 to 40 MHz.
-		pll->SetReference (48.0f, false);
-		pll->SetVCOParameters (400, 48); //48*400/48=400 MHz
-		pll->SetDiv1 (okCPLL22150::DivSrc_VCO, 4);  //set the source of divider#1 to the VCO (400MHZ), and the divider value to 4
-		pll->SetOutputSource (0, okCPLL22150::ClkSrc_Div1ByN);  //sets output 1 to the clocksource, divides the output by 4, results in 100MHz
+		pll->SetReference (48.0f);
+		pll->SetPLLParameters (0, 400, 48); //48*400/48=400 MHz
+		pll->SetOutputSource (0, okCPLL22393::ClkSrc_PLL0_0);
+		pll->SetOutputDivider (0, 4); //48*400/48/4=100 MHz
 		pll->SetOutputEnable (0, true);
-		pll->SetDiv2 (okCPLL22150::DivSrc_VCO, 20);  //set the source of divider#2 to the VCO (400MHZ), and the divider value to 20
-		pll->SetOutputSource (1, okCPLL22150::ClkSrc_Div2ByN);  //sets output 1 to the clocksource, divides the output by 20, results in 20MHz
-		pll->SetOutputEnable (1, true);
+		pll->SetOutputSource(1, okCPLL22393::ClkSrc_PLL0_0);
+	    pll->SetOutputDivider(1, 20); //48*400/48/20 = 20 MHz
+	    pll->SetOutputEnable(1, true);
 		//::wxLogMessage(wxT("Pll frequence:  %f"), pll->GetOutputFrequency(0));
 		//::wxLogMessage(wxT("Pll frequence:  %f"), pll->GetOutputFrequency(1));
 
 
-		if (okCFrontPanel::NoError != xem->SetPLL22150Configuration (*pll)) {
+		if (okCFrontPanel::NoError != xem->SetPLL22393Configuration (*pll)) {
 			delete xem;
 			xem = (okCFrontPanel*) NULL;
 			delete pll;
-			pll = (okCPLL22150*) NULL;
+			pll = (okCPLL22393*) NULL;
 			::wxMessageBox (wxT ("The PLL could not be set.\n"),
 			                wxT ("Initialization Failed"));
 
@@ -198,7 +179,7 @@ bool DeviceInterface::Initialize (wxString filename)
 		delete xem;
 		xem = (okCFrontPanel*) NULL;
 		delete pll;
-		pll = (okCPLL22150*) NULL;
+		pll = (okCPLL22393*) NULL;
 		::wxMessageBox (wxT ("An error occurred when trying to loading the XEM\n"
 		                     "configuration (bitstream) bit file."),
 		                wxT ("Initialization Failed"));

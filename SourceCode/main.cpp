@@ -36,7 +36,7 @@ IMPLEMENT_APP (ELabApp)
 bool ELabApp::OnInit()
 {
 	// Create the main application window
-	MainFrame *frame = new MainFrame (wxT ("Control Utility"), wxSize (910,700));
+	MainFrame *frame = new MainFrame (wxT ("LCMS 2012 XEM6010 Control Utility"), wxSize (910,700));
 
 	frame->Show (true);
 	return true;
