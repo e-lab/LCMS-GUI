@@ -23,6 +23,7 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	spectrumBuffer = new SimpleCircularBuffer<float>(30000);
 	timeBuffer = new SimpleCircularBuffer<float>(30000);
 	lengthBuffer = 0;
+	lastTime = 0;
 
 	wxBoxSizer* sizerPlot = new wxBoxSizer (wxVERTICAL);
 
@@ -228,9 +229,10 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 
 			
 
-		time[i] = (float) i * dt;  // Constant time
+		time[i] = lastTime + ((float) i * dt);  // Constant time
 		timeBuffer->PushToBuffer(time[i]);
 	}
+	lastTime = time[length];
 
 	delete[] rawData;
 	delete[] spectrum;
