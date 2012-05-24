@@ -16,6 +16,7 @@
 
 #include "GraphicsPlotData.h"
 #include "GraphicsInformation.h"
+#include "SimpleCircularBuffer.h"
 
 class DeviceEvent;
 
@@ -81,14 +82,6 @@ private:
 	float* time;
 	int length;	//!<  Length of both the spectrum and time arrays.
 
-	float continuousSpectrum[30000]; //3 seconds at 10khz
-	float continuousTime[30000];	  //3 seconds at 10khz
-	int continuousLength;
-
-	float *cs;
-	float *ct;
-
-	
 	mpWindow*		plot;
 	GraphicsInformation*	information;
 	GraphicsPlotData*	layer;
@@ -98,6 +91,10 @@ private:
 
 	wxPen*			mypen;
 
+	SimpleCircularBuffer<float> *spectrumBuffer;
+	SimpleCircularBuffer<float> *timeBuffer;
+	int			lengthBuffer;
+
 	/**
 	 * Vector for raw events.
 	 *
@@ -105,9 +102,6 @@ private:
 	 * make a measurement.
 	 */
 	std::vector<DeviceEvent*> measurements;
-
-	std::vector<std::vector<float>> continuousSpectrum_v;
-	std::vector<std::vector<float>> continuousTime_v;
 
 	/**
 	 * Translate raw data to a usable form.
@@ -120,26 +114,6 @@ private:
 	 *   Reference to the raw data object.
 	 */
 	void UnpackEvent (DeviceEvent&);
-
-	/**
-	 * Performs a min-max decimation filter on the raw data based on the size of the
-	 * display in order to reduce the number of points to plot while maintaining
-	 * important features of the plot.
-	 * @param ct
-	 *	output time spectrum
-	 * @param cs
-	 * output data spectrum
-	 * @ param cl
-	 * output spectrum length
-	 *
-	 */
-	void MinMaxDec (float* ct, float* cs, int* cl);
-
-	/**
-	* returns the min and max in the order they occurred
-	*/
-
-	void min_max_in_order (float* data, int data_length, float* result);
 
 	/**
 	 * Save currently displayed data.
