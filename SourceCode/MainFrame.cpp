@@ -58,6 +58,7 @@ MainFrame::MainFrame (const wxString& title, const wxSize& size) : wxFrame (NULL
 	// Connect events to event handlers
 	Connect (ON_START, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler (MainFrame::OnStart));
 	Connect (ON_STOP, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler (MainFrame::OnStop));
+	Connect (ON_CLEAR, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler (MainFrame::OnClear));
 
 	Connect (wxID_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnSave));
 	Connect (SAVE_CONFIG, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnSaveProtocol));
@@ -109,6 +110,12 @@ void MainFrame::OnSave (wxCommandEvent& event)
 	}
 
 	display->SetCommandString (Command::SAVE_DATA, saveLocation.GetPath());
+}
+
+void MainFrame::OnClear(wxCommandEvent &  event)
+{
+	xemDeviceCtrl->Stop();
+	display->SetCommandString (Command::CLEAR, wxT("1"));
 }
 
 void MainFrame::Configuration (wxCommandEvent & event)
@@ -226,13 +233,15 @@ void MainFrame::CreateControls (wxPanel* panelMain)
 	controlSizer->Add (book, 1, wxALL | wxEXPAND, 5);
 
 
-	// Start and Stop buttons
+	// Start, Stop, and Clear buttons
 	wxPanel* buttons = new wxPanel (controls);
 	wxSizer* sizerButtons = new wxBoxSizer (wxHORIZONTAL);
 	wxButton* startButton = new wxButton (buttons, ON_START, wxT ("Start"));
 	wxButton* stopButton = new wxButton (buttons, ON_STOP, wxT ("Stop"));
+	wxButton* clearButton = new wxButton (buttons, ON_CLEAR, wxT("Clear"));
 	sizerButtons->Add (startButton, 0, wxRIGHT | wxBOTTOM, 25);
 	sizerButtons->Add (stopButton, 0, wxLEFT | wxBOTTOM, 25);
+	sizerButtons->Add (clearButton, 0, wxLEFT | wxBOTTOM, 25);
 	buttons->SetSizerAndFit (sizerButtons);
 
 	controlSizer->Add (buttons, 0, wxTOP | wxALIGN_CENTER, 20);

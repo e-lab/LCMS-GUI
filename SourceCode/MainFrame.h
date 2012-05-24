@@ -19,6 +19,7 @@ enum {
 	CONFIGURATION,
 	ON_START,
 	ON_STOP,
+	ON_CLEAR,
 	SAVE_CONFIG,
 	RELOAD_CONFIGS,
 };
@@ -107,6 +108,13 @@ private:
 	 *   Reference to a wxCommandEvent.
 	 */
 	void OnSave (wxCommandEvent&);
+
+	/**
+	 * Clears the recorded data from the device so it is not saved to a file 
+	 * the next time the user chooses to save.  useful for choosing what to save
+	 *
+	 */
+	void OnClear(wxCommandEvent&);
 	/**
 	 * Configure and initialize the xem device.
 	 *

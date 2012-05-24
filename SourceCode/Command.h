@@ -38,7 +38,8 @@ public:
 		//PA_TIME_OUT,	//!<  Change the "Collection Time" time out.
 		//PA_FREQUENCY	//!<  Change "Clock" frequency settings.
 
-		SAVE_DATA,
+		SAVE_DATA,			//!<  write the data to a file.
+		CLEAR,				//!<  discard the recorded data
 
 		// ControlProtocol
 		LCMS_SELECTPROTOCOL,

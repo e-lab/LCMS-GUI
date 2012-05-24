@@ -174,10 +174,11 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 			if (a > 0) {
 				int b = continuousTime_v.at(a-1).size();
 				float last_time = continuousTime_v.at(a-1).at(b-1);
-			continuousTime_v_inner.push_back(continuousTime[i]+last_time);
+				continuousTime_v_inner.push_back(continuousTime[i]+last_time);
 			}
-			else 
+			else  {
 				continuousTime_v_inner.push_back(continuousTime[i]);
+			}
 			continuousSpectrum_v_inner.push_back(continuousSpectrum[i]);
 		}
 		
@@ -258,6 +259,8 @@ void GraphicsPlot::SetCommandString (Command::CommandID command, wxString string
 		case Command::SAVE_DATA:
 			SaveData (string);
 			break;
+		case Command::CLEAR :
+			Clear();
 		default :
 			break;
 	}
@@ -328,6 +331,27 @@ void GraphicsPlot::min_max_in_order (float* data,int data_length,float* result)
 //	return result;
 }
 
+void GraphicsPlot::Clear(void)
+{
+	int a = continuousTime_v.size();
+	for (int i=0; i<a; i++) {
+		continuousTime_v.at(i).pop_back();
+		continuousSpectrum_v.at(i).pop_back();		
+	}
+	while (continuousTime_v.size() > 0) {
+		continuousTime_v.pop_back();
+		continuousSpectrum_v.pop_back();
+	}
+
+	while (measurements.size() > 0) {
+		delete (measurements.back());
+		measurements.pop_back();
+	}
+
+	continuousLength=0;
+	continuousTime[continuousLength]=0;
+}
+
 void GraphicsPlot::SaveData (wxString outputFile)
 {
 	unsigned int ii = 0;
@@ -374,11 +398,10 @@ void GraphicsPlot::SaveData (wxString outputFile)
 			int b = continuousTime_v.at(i).size();
 			for (int j=0; j<b; j++) {
 				fileOut.AddLine(wxString::Format( wxT("%f \t %f"), continuousTime_v.at(i).at(j),continuousSpectrum_v.at(i).at(j)));   ///don't forget to add the inner time array to the outter last time
-			//	continuousTime_v.at(i).pop_back();
-			//	continuousSpectrum_v.at(i).pop_back();
+			//	fileOut.Write(&continuousTime_v.at(i), continuousTime_v.at(i).size());
 			}
-			//continuousTime_v.pop_back();
-			//continuousSpectrum_v.pop_back();		
+			continuousTime_v.at(i).pop_back();
+			continuousSpectrum_v.at(i).pop_back();		
 		}
 		fileOut.Write();
 		//fileOut.Close();
@@ -388,6 +411,10 @@ void GraphicsPlot::SaveData (wxString outputFile)
 			last_time = continuousTime_v.at(a-1).at(b-1);
 		}
 	}
+		while (continuousTime_v.size() > 0) {
+			continuousTime_v.pop_back();
+			continuousSpectrum_v.pop_back();
+		}
 
 	if (measurements.size() == 0) {
 		wxMessageBox( wxT("No measurements to record") );
@@ -397,6 +424,15 @@ void GraphicsPlot::SaveData (wxString outputFile)
 	for (int xx = 0; xx < continuousLength; xx++) {
 		fileOut.AddLine(wxString::Format( wxT("%f \t %f"), continuousTime[xx]+last_time,continuousSpectrum[xx]));  //don't forget to add the time to the previous last time
 	}
+
+	while (measurements.size() > 0) {
+		delete (measurements.back());
+		measurements.pop_back();
+	}
+
+	continuousLength=0;
+	continuousTime[continuousLength]=0;
+	last_time=0;
 
 	fileOut.Write();
 	fileOut.Close();	

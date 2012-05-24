@@ -101,7 +101,7 @@ private:
 	 * Vector for raw events.
 	 *
 	 * This vector is used to save multiple image data events which will be used to
-	 * make a measurements.
+	 * make a measurement.
 	 */
 	std::vector<DeviceEvent*> measurements;
 
@@ -150,6 +150,7 @@ private:
 	 *   Path and file name for data file.
 	 */
 	void SaveData (wxString);
+	void Clear(void);
 
 
 };
