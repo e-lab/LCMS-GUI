@@ -184,10 +184,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\SourceCode\ControlProtocol.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\SourceCode\ControlBiases.cpp"
 				>
 			</File>
@@ -196,7 +192,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SourceCode\ControlProtocol.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceCode\ControlSyncConfig.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SourceCode\DeviceController.cpp"
 				>
 			</File>
 			<File
@@ -208,7 +212,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SourceCode\DeviceController.cpp"
+				RelativePath=".\SourceCode\GraphicsInformation.cpp"
 				>
 			</File>
 			<File
@@ -217,14 +221,6 @@
 			</File>
 			<File
 				RelativePath=".\SourceCode\GraphicsPlotData.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceCode\mathplot.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceCode\GraphicsInformation.cpp"
 				>
 			</File>
 			<File
@@ -244,6 +240,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SourceCode\mathplot.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceCode\okFrontPanelDLL.cpp"
 				>
 			</File>
@@ -254,19 +254,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\SourceCode\SimpleQueue.h"
-				>
-			</File>
-			<File
 				RelativePath=".\SourceCode\Command.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceCode\ControlPanel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceCode\ControlProtocol.h"
 				>
 			</File>
 			<File
@@ -278,7 +266,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SourceCode\ControlPanel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SourceCode\ControlProtocol.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceCode\ControlSyncConfig.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SourceCode\DeviceController.h"
 				>
 			</File>
 			<File
@@ -290,7 +290,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SourceCode\DeviceController.h"
+				RelativePath=".\SourceCode\GraphicsInformation.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SourceCode\GraphicsPanel.h"
 				>
 			</File>
 			<File
@@ -299,18 +303,6 @@
 			</File>
 			<File
 				RelativePath=".\SourceCode\GraphicsPlotData.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceCode\mathplot.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceCode\GraphicsInformation.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SourceCode\GraphicsPanel.h"
 				>
 			</File>
 			<File
@@ -330,7 +322,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SourceCode\mathplot.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceCode\okFrontPanelDLL.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SourceCode\SimpleQueue.h"
 				>
 			</File>
 		</Filter>
