@@ -41,6 +41,10 @@ public:
 	 *   Pointer to the first element of the raw data array.
 	 */
 	unsigned char* GetRawData (int&) const;
+
+	void GetInAvailable(int&) const;
+
+	void GetOutAvailable(int&) const;
 	/**
 	 * Set the data array for this event.
 	 *
@@ -54,6 +58,9 @@ public:
 	 *   Length that the data array.
 	 */
 	void SetRawData (unsigned char*, int&);
+
+	void SetInAvailable(int&);
+	void SetOutAvailable(int&);
 
 	/**
 	 * Retrieve the value of the variable.
@@ -92,12 +99,15 @@ private:
 	unsigned char* rawData;					//!<  Pointer to an array containing raw data.
 	int length;								//!<  Length of the rawData array.
 
+	int inAvailable;
+	int outAvailable;
+
 	std::map<int, int>* variables;			//!<  Map to store device variables.
 
 };
 
 typedef void (wxEvtHandler::*deviceEventFunction) (DeviceEvent&);
-\
+
 
 #define EVT_DEVICE_EVENT(func)										\
 	DECLARE_EVENT_TABLE_ENTRY(										\

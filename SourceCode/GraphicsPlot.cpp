@@ -105,7 +105,13 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 		//information->ClearMeasurements();
 	}
 
-	measurements.push_back (rawEvent.Clone());
+	int a, b;
+	rawEvent.GetInAvailable(a);
+	rawEvent.GetOutAvailable(b);	
+	information->SetBufferInfo(a, b);
+
+ 	measurements.push_back (rawEvent.Clone());
+
 
 	// Remove 'layer' from display if there.
 	plot->DelLayer (layer);
@@ -113,6 +119,7 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	UnpackEvent (rawEvent);
 	delete[] rawCount;
 	rawCount = NULL;
+
 
 	//create a subset of the data to plot, based on the plot size on the screen in pixels
 //	MinMaxDec(&ct[0], &cs[0], &cl);

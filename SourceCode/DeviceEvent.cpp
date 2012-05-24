@@ -26,6 +26,9 @@ DeviceEvent::DeviceEvent()
 	rawData = new unsigned char[length];
 	rawData[0] = 0;
 
+	inAvailable = 1;
+	outAvailable = 1;
+
 	variables = new std::map<int, int>();
 }
 
@@ -35,6 +38,8 @@ DeviceEvent::DeviceEvent (const DeviceEvent* original)
 
 	rawData = original->GetRawData (length);
 	variables = original->CopyVariables();
+	original->GetInAvailable(inAvailable);
+	original->GetOutAvailable(outAvailable);
 }
 
 DeviceEvent::~DeviceEvent()
@@ -57,7 +62,7 @@ std::map<int, int>* DeviceEvent::CopyVariables() const
 }
 
 unsigned char* DeviceEvent::GetRawData (int& dataLength) const
-{
+{         
 	dataLength = length;
 
 	unsigned char* data = new unsigned char[dataLength];
@@ -67,6 +72,18 @@ unsigned char* DeviceEvent::GetRawData (int& dataLength) const
 	return &data[0];
 }
 
+void DeviceEvent::GetInAvailable(int& a) const
+{
+//	return inAvailable;
+	a = inAvailable;
+}
+
+void DeviceEvent::GetOutAvailable(int& a) const
+{
+//	return outAvailable;
+	a = outAvailable;
+}
+
 void DeviceEvent::SetRawData (unsigned char* data, int& dataLength)
 {
 	length = dataLength;
@@ -74,6 +91,17 @@ void DeviceEvent::SetRawData (unsigned char* data, int& dataLength)
 	delete[] rawData;
 	rawData = data;
 }
+
+
+void DeviceEvent::SetInAvailable(int& buffInAvailable)
+{
+	inAvailable = buffInAvailable*100/2048;
+}
+
+void DeviceEvent::SetOutAvailable(int& buffOutAvailable)
+{
+	outAvailable = buffOutAvailable*100/2048;
+ }
 
 void DeviceEvent::GetVariable (Command::CommandID variable, int& value)
 {

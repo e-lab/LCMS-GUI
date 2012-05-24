@@ -491,10 +491,16 @@ void DeviceInterface::TransferData () {
 		 * can currently be sent to device.  Send in no more then
 		 * inAvailable data words via pipeIn (0x80).
 		 */
+
+		int inAvailablePrev=2046;
 		xem->UpdateWireOuts();
 		int inAvailable = (int) (2 * xem->GetWireOutValue (0x20));
 
-		::wxLogMessage (wxT ("free profile buffer size: %i"), inAvailable);
+		if (inAvailable == 0 && inAvailablePrev==0) {
+			return;//bugfix?
+		}
+
+		//::wxLogMessage (wxT ("free profile buffer size: %i"), inAvailable);
 		if (inAvailable >= 2046) {
 			::wxLogMessage (wxT ("profile buffer underrun! (ignore this if immediately after start)\n"));
 		}
@@ -505,6 +511,7 @@ void DeviceInterface::TransferData () {
 			xem->WriteToPipeIn (0x80, inAvailable, rawDataInPtr);
 			rawDataInPtrLength = rawDataInPtrLength - inAvailable;
 			rawDataInPtr = &rawDataInPtr[inAvailable];
+			inAvailablePrev=inAvailable;
 		} else {
 
 			Command::packet packet;
@@ -530,7 +537,7 @@ void DeviceInterface::TransferData () {
 				ProcessCommand (packet);
 				break;
 			} else {
-				// With no command to process, rap round profile.
+				// With no command to process, wrap around profile.   // this code needs to be fixed, it crashes!
 				unsigned char *rapProfile = new unsigned char[inAvailable];
 
 				for (int xx = 0; xx < rawDataInPtrLength; xx++) {
@@ -546,9 +553,7 @@ void DeviceInterface::TransferData () {
 				xem->WriteToPipeIn (0x80, inAvailable, &rapProfile[0]);
 				rawDataInPtrLength = rawDataInLength - newProfileLength;
 				rawDataInPtr = &rawDataIn[newProfileLength];
-
-				delete[] rapProfile;
-				rapProfile = NULL;
+				delete[]  rapProfile;
 			}
 		}
 
@@ -556,7 +561,7 @@ void DeviceInterface::TransferData () {
 		// Poll the xem, asking if there is data to collect.
 		xem->UpdateWireOuts();
 		int outAvailable = (int) (2 * xem->GetWireOutValue (0x21));
-		::wxLogMessage (wxT ("measurement data to collect: %i"), outAvailable/2);
+		//::wxLogMessage (wxT ("measurement data to collect: %i"), outAvailable/2); //for debug
 		if (outAvailable >= 2038) { // not *2 here
 			::wxLogMessage (wxT ("measurement buffer overrun!\n"));
 		}
@@ -568,6 +573,8 @@ void DeviceInterface::TransferData () {
 
 			// Raw data array from the pipe transfer is given to the rawEvent
 			rawEvent->SetRawData (rawData, outAvailable);
+			rawEvent->SetInAvailable(inAvailable);
+			rawEvent->SetOutAvailable(outAvailable);
 
 			// Send a reference for the object rawEvent to display.
 			wxPostEvent (display, (*rawEvent));

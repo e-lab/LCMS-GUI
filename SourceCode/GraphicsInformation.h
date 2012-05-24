@@ -29,8 +29,11 @@ public:
 	 */
 	void SetMovieFrames (int);
 
+	void SetBufferInfo(int, int);
+
 private:
 	wxStaticText*	textMovie;
+	wxStaticText*	textMovie2;
 
 };
 

@@ -88,6 +88,7 @@ private:
 	float *cs;
 	float *ct;
 
+	
 	mpWindow*		plot;
 	GraphicsInformation*	information;
 	GraphicsPlotData*	layer;
