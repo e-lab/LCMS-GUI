@@ -75,7 +75,8 @@ wxThread::ExitCode DeviceInterface::Entry()
 		// Transfer data to/from device
 		if (pollDevice && (NULL != xem)) {
 			TransferData();
-
+		} else {
+			wxThread::Sleep(100);
 		}
 	}
 	return (wxThread::ExitCode) 0;
