@@ -320,9 +320,42 @@ void DeviceInterface::SetCommand (Command::packet packet) {
 
 			// ControlConfiguration
 		case Command::LCMS_CAPSELECT :
-			xem->SetWireInValue (0x01, packet.commandValue<<5, 0x0020);
+			if (packet.commandValue == 0) {  //1 pf
+				xem->SetWireInValue (0x01, 1<<5, 0x0020);
+				xem->UpdateWireIns();
+				xem->SetWireInValue (0x01, 1<<10, 0x0400);
+				xem->UpdateWireIns();
+			}
+			else if (packet.commandValue == 1) { // 100 fF
+				xem->SetWireInValue (0x01, 1<<5, 0x0020);
+				xem->UpdateWireIns();
+				xem->SetWireInValue (0x01, 0<<10, 0x0400);
+				xem->UpdateWireIns();
+			}
+			else if (packet.commandValue == 2) {  //none
+				xem->SetWireInValue (0x01, 0<<5, 0x0020);
+				xem->UpdateWireIns();
+				xem->SetWireInValue (0x01, 0<<10, 0x0400);
+				xem->UpdateWireIns();
+			}
+			break;
+
+		case Command::LCMS_RES_SELECT :
+			xem->SetWireInValue(0x01, packet.commandValue<<11, 0x0800);
 			xem->UpdateWireIns();
 			break;
+
+		case Command::LCMS_BYPASS_CDS :
+			xem->SetWireInValue(0x01, packet.commandValue<<12, 0x1000);
+			xem->UpdateWireIns();
+			break;
+
+		case Command::LCMS_INFILTER_SELN :
+			xem->SetWireInValue(0x01, packet.commandValue<<13, 0x2000);
+			xem->UpdateWireIns();
+			break;
+
+
 		case Command::LCMS_POSTGAINSELECT :
 			xem->SetWireInValue (0x01, packet.commandValue<<6, 0x0040);
 			xem->UpdateWireIns();
@@ -333,57 +366,33 @@ void DeviceInterface::SetCommand (Command::packet packet) {
 			break;
 		case Command::LCMS_CHANNEL_SEL :
 			switch (packet.commandValue) {
+				case 0:
+					xem->SetWireInValue	(0x01, 0x0000, 0x000E);
+					break;
 				case 1:
-					xem->SetWireInValue (0x01, 0x0000, 0x001E);
+					xem->SetWireInValue (0x01, 0x0002, 0x000E);
 					break;
 				case 2:
-					xem->SetWireInValue (0x01, 0x0002, 0x001E);
+					xem->SetWireInValue (0x01, 0x0004, 0x000E);
 					break;
 				case 3:
-					xem->SetWireInValue (0x01, 0x0004, 0x001E);
+					xem->SetWireInValue (0x01, 0x0006, 0x000E);
 					break;
 				case 4:
-					xem->SetWireInValue (0x01, 0x0006, 0x001E);
+					xem->SetWireInValue (0x01, 0x0008, 0x000E);
 					break;
 				case 5:
-					xem->SetWireInValue (0x01, 0x0008, 0x001E);
+					xem->SetWireInValue (0x01, 0x000A, 0x000E);
 					break;
 				case 6:
-					xem->SetWireInValue (0x01, 0x000A, 0x001E);
+					xem->SetWireInValue (0x01, 0x000C, 0x000E);
 					break;
 				case 7:
-					xem->SetWireInValue (0x01, 0x000C, 0x001E);
-					break;
-				case 8:
-					xem->SetWireInValue (0x01, 0x000E, 0x001E);
-					break;
-				case 9:
-					xem->SetWireInValue (0x01, 0x0010, 0x001E);
-					break;
-				case 10:
-					xem->SetWireInValue (0x01, 0x0012, 0x001E);
-					break;
-				case 11:
-					xem->SetWireInValue (0x01, 0x0014, 0x001E);
-					break;
-				case 12:
-					xem->SetWireInValue (0x01, 0x0016, 0x001E);
-					break;
-				case 13:
-					xem->SetWireInValue (0x01, 0x0018, 0x001E);
-					break;
-				case 14:
-					xem->SetWireInValue (0x01, 0x001A, 0x001E);
-					break;
-				case 15:
-					xem->SetWireInValue (0x01, 0x001C, 0x001E);
-					break;
-				case 16:
-					xem->SetWireInValue (0x01, 0x001E, 0x001E);
+					xem->SetWireInValue (0x01, 0x000E, 0x000E);
 					break;
 				default:
-					xem->SetWireInValue (0x01, 0x0000, 0x001E);
-					break;
+					xem->SetWireInValue (0x01, 0x0000, 0x000E);
+				break;
 			}
 			xem->UpdateWireIns();
 			break;
@@ -416,6 +425,31 @@ void DeviceInterface::SetCommand (Command::packet packet) {
 		case Command::LCMS_CDS_TIME2 :
 			xem->SetWireInValue (0x13, packet.commandValue, 0xFFFF);
 			xem->UpdateWireIns();
+			break;
+		case Command::LCMS_CDS_PULSE_WIDTH :
+			xem->SetWireInValue (0x14, packet.commandValue, 0xFFFF);
+			xem->UpdateWireIns();
+			break;
+
+		case Command::LCMS_MODE :
+			if (packet.commandValue == 0) {  //V mode, for debugging = {mode,mode2}={0,0}
+				xem->SetWireInValue (0x01, 0<<9, 0x0200);
+				xem->UpdateWireIns();
+				xem->SetWireInValue (0x01, 0<<14, 0x4000);
+				xem->UpdateWireIns();
+			}
+			else if (packet.commandValue == 1) { //hw cds mode = {mode,mode2}={0,1}
+				xem->SetWireInValue (0x01, 0<<9, 0x0200);
+				xem->UpdateWireIns();
+				xem->SetWireInValue (0x01, 1<<14, 0x4000);
+				xem->UpdateWireIns();
+			}
+			else if (packet.commandValue == 2) {  //digital (sw) cds mode, = {mode,mode2}={1,0}
+				xem->SetWireInValue (0x01, 1<<9, 0x0200);
+				xem->UpdateWireIns();
+				xem->SetWireInValue (0x01, 0<<14, 0x4000);
+				xem->UpdateWireIns();
+			}
 			break;
 
 			// Default case

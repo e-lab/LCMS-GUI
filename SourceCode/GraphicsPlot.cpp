@@ -139,17 +139,24 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 //	double deltaVplus = ( (double) (voltPlus - voltRef)) * 3.3 / 255.0;
 //	double deltaVminus = ( (double) (voltMinus - voltRef)) * 3.3 / 255.0;
 	double dt = double (rawEvent.GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE) /1000.0);
-	double capSel = double (rawEvent.GetVariable (Command::LCMS_CAPSELECT));
+	int capSel = rawEvent.GetVariable (Command::LCMS_CAPSELECT);
+	int cdst1 =  rawEvent.GetVariable(Command::LCMS_CDS_TIME1);
+	int cdst2 =  rawEvent.GetVariable(Command::LCMS_CDS_TIME2);
+	double gain = double (rawEvent.GetVariable(Command::LCMS_GAIN)/100.0);
+
 	double C;
-	if (0 == capSel) // 100 fF
-		C=1E-12;
-	else	//1 pF
-		C=1E-15;
+	if (0 == capSel) // 1pF
+		C=1.0E-12f;
+	else if (1== capSel)	//100 fF
+		C=0.1E-12f;
+	else C = 0; //no C!
+
+	int mode = rawEvent.GetVariable(Command::LCMS_MODE);
 
 
 	int rawLength; // Length of the rawData array.
 	unsigned char* rawData = rawEvent.GetRawData (rawLength);
-
+	
 	length = (rawLength / 2);
 	rawCount = new int[length];
 	spectrum = new float[length];
@@ -196,7 +203,33 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 		//	::wxLogMessage(wxT("Raw Data 3:  %i"), (int) ( (rawData[i * 4])));
 		//	::wxLogMessage(wxT("Raw Data 4:  %i"), (int) ( (rawData[i * 4 + 1])));
 		//}
-		spectrum[i] = ( ( (float) raw_count) / (float) 65535) * 3.3f;
+
+		if (mode == 1) // hardware cds mode
+		{
+			float cds_time = (cdst2-cdst1)*1E-6;
+			spectrum[i] = ( ( (float) raw_count) / (float) 65535) * 3.3f;
+			spectrum[i] = spectrum[i] - 1.65;
+			spectrum[i]=(C/cds_time)*(spectrum[i])/1E-12;
+			//lets figure out the real value for 100E-6 while we adjust the cds sampling times
+			//spectrum[i]=spectrum[i]*.711;
+			//spectrum[i]=spectrum[i]-95;
+			spectrum[i]=spectrum[i]*gain;
+			//fix the axes --- do we reallly need this in the loop?
+		}
+
+
+		//how about trying if raw_counter < 0?
+		
+		else 
+			spectrum[i] = ( ( (float) raw_count) / (float) 65535) * 3.3f;
+	//	if (mode == 2) //sw cds mode
+	//	{
+	//		if (spectrum[i] > 1.65)
+	//			spectrum[i] = 3.3 - spectrum[i];
+	//	}
+
+			
+
 		time[i] = (float) i * dt;  // Constant time
 
 		continuousSpectrum[i+prevContinuousLength]=spectrum[i];
@@ -212,6 +245,11 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 	delete[] time;
 
 	rawData = NULL;
+
+	if(mode==1) {
+		yScale->SetName (wxT ("Current (pA)"));  
+//		plot->Fit(-200, 3200, -600, 600, NULL, NULL);  //sets the view from -200 to 3200 ms and -600 to 600 pA
+	}
 }
 
 void GraphicsPlot::SetCommandString (Command::CommandID command, wxString string)

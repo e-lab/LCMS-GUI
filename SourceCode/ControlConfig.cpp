@@ -27,15 +27,29 @@ ControlConfig::ControlConfig (wxWindow* owner, DeviceController* device) : Contr
 
 	//Create Box for CAPSELECT
 	wxSizer* sizerConfig = new wxBoxSizer (wxVERTICAL);
-	wxStaticBoxSizer* sizerBox= new wxStaticBoxSizer (wxVERTICAL, this, wxT ("Feedback Capacitor For Integrator:"));
-	wxFlexGridSizer* sizerBoxInner= new wxFlexGridSizer (2,2,0);
+	wxStaticBoxSizer* sizerBox= new wxStaticBoxSizer (wxVERTICAL, this, wxT ("Feedback Capacitor For Integrator (ch0-3):")); //note: for ch 4-7, choose "none" for 100fF and "100fF" for 1pF
+	wxFlexGridSizer* sizerBoxInner= new wxFlexGridSizer (3,3,0);
 	//create Feedback Capacitor Radio Buttons
-	capSelect0 = new wxRadioButton (this, CAPSELECT0, wxT ("1pF"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	capSelect1 = new wxRadioButton (this, CAPSELECT1, wxT ("100fF"));
+	capSelect0 = new wxRadioButton (this, CAPSELECT0, wxT ("1 pF"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	capSelect1 = new wxRadioButton (this, CAPSELECT1, wxT ("100 fF"));
+	capSelect2 = new wxRadioButton (this, CAPSELECT2, wxT ("none"));
 	sizerBoxInner->Add (capSelect0);
 	sizerBoxInner->Add (capSelect1);
+	sizerBoxInner->Add (capSelect2);
 	sizerBox->Add (sizerBoxInner);
 	sizerConfig->Add (sizerBox, 0, wxALL | wxEXPAND | wxALIGN_CENTER, 10);
+
+	//Create box for RES_SELECT
+	wxStaticBoxSizer* sizerBox3= new wxStaticBoxSizer (wxVERTICAL, this, wxT ("Feedback Resistor For Amp:"));
+	wxFlexGridSizer* sizerBox3Inner= new wxFlexGridSizer (3,3,0);
+	//create Feedback Capacitor Radio Buttons
+	resSelect0 = new wxRadioButton (this, RES_SELECT0, wxT ("none"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	resSelect1 = new wxRadioButton (this, RES_SELECT1, wxT ("25 Kohms"));
+	sizerBox3Inner->Add (resSelect0);
+	sizerBox3Inner->Add (resSelect1);
+	sizerBox3->Add (sizerBox3Inner);
+	sizerConfig->Add (sizerBox3, 0, wxALL | wxEXPAND | wxALIGN_CENTER, 10);
+
 
 	//Create Box for BYPASSPOST and POSTGAINSELECT
 	wxStaticBoxSizer* sizerBox2= new wxStaticBoxSizer (wxVERTICAL, this, wxT ("Post Amp Configuration:"));
@@ -53,45 +67,52 @@ ControlConfig::ControlConfig (wxWindow* owner, DeviceController* device) : Contr
 
 	sizerBox2->Add (sizerBox2Inner);
 	sizerConfig->Add (sizerBox2, 0, wxEXPAND | wxALL | wxALIGN_CENTER, 10);
+	
+	//Create box for CDS enabled or bypassed
+	wxStaticBoxSizer* sizerBox7= new wxStaticBoxSizer (wxVERTICAL, this, wxT ("On-chip CDS (channels 0-3 only):"));
+	wxFlexGridSizer* sizerBox7Inner= new wxFlexGridSizer (3,3,0);
+	//create Feedback Capacitor Radio Buttons
+	bypassCDS0 = new wxRadioButton (this, BYPASS_CDS0, wxT ("Enabled"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	bypassCDS1 = new wxRadioButton (this, BYPASS_CDS1, wxT ("Bypassed"));
+	sizerBox7Inner->Add (bypassCDS0);
+	sizerBox7Inner->Add (bypassCDS1);
+	sizerBox7->Add (sizerBox7Inner);
+	sizerConfig->Add (sizerBox7, 0, wxALL | wxEXPAND | wxALIGN_CENTER, 10);
+
+	//Create box for Input Filter Select
+	wxStaticBoxSizer* sizerBox6= new wxStaticBoxSizer (wxVERTICAL, this, wxT ("Vcmd Input Filter Configuration:"));
+	wxFlexGridSizer* sizerBox6Inner= new wxFlexGridSizer (3,3,0);
+	//create Feedback Capacitor Radio Buttons
+	inFiltSelN0 = new wxRadioButton (this, INFILTER_SELN0, wxT ("Enabled"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	inFiltSelN1 = new wxRadioButton (this, INFILTER_SELN1, wxT ("Bypassed"));
+	sizerBox6Inner->Add (inFiltSelN0);
+	sizerBox6Inner->Add (inFiltSelN1);
+	sizerBox6->Add (sizerBox6Inner);
+	sizerConfig->Add (sizerBox6, 0, wxALL | wxEXPAND | wxALIGN_CENTER, 10);
+
 
 	//Create Box for CHANNEL SELECTION
 	wxStaticBoxSizer* sizerBox4= new wxStaticBoxSizer (wxVERTICAL, this, wxT ("Input Channel Selection:"));
 	wxFlexGridSizer* sizerBox4Inner= new wxFlexGridSizer (2,2,10);
 	////create ChannelSelect Radio Buttons
-	channel1Sel  = new wxRadioButton (this, CHANNEL1_SEL,  wxT ("Channel 1"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	channel9Sel  = new wxRadioButton (this, CHANNEL9_SEL,  wxT ("Channel 2"));
-	channel5Sel  = new wxRadioButton (this, CHANNEL5_SEL,  wxT ("Channel 3"));
-	channel13Sel = new wxRadioButton (this, CHANNEL13_SEL, wxT ("Channel 4"));
-	channel3Sel  = new wxRadioButton (this, CHANNEL3_SEL,  wxT ("Channel 5"));
-	channel11Sel = new wxRadioButton (this, CHANNEL11_SEL, wxT ("Channel 6"));
-	channel7Sel  = new wxRadioButton (this, CHANNEL7_SEL,  wxT ("Channel 7"));
-	channel15Sel = new wxRadioButton (this, CHANNEL15_SEL, wxT ("Channel 8"));
-	channel2Sel  = new wxRadioButton (this, CHANNEL2_SEL,  wxT ("Channel 9"));
-	channel10Sel = new wxRadioButton (this, CHANNEL10_SEL, wxT ("Channel 10"));
-	channel6Sel  = new wxRadioButton (this, CHANNEL6_SEL,  wxT ("Channel 11"));
-	channel14Sel = new wxRadioButton (this, CHANNEL14_SEL, wxT ("Channel 12"));
-	channel4Sel  = new wxRadioButton (this, CHANNEL4_SEL,  wxT ("Channel 13"));
-	channel12Sel = new wxRadioButton (this, CHANNEL12_SEL, wxT ("Channel 14"));
-	channel8Sel  = new wxRadioButton (this, CHANNEL8_SEL,  wxT ("Channel 15"));
-	channel16Sel = new wxRadioButton (this, CHANNEL16_SEL, wxT ("Channel 16"));
-
+	channel0Sel = new wxRadioButton (this, CHANNEL0_SEL, wxT ("Channel 0"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	channel1Sel = new wxRadioButton (this, CHANNEL1_SEL, wxT ("Channel 1"));
+	channel2Sel = new wxRadioButton (this, CHANNEL2_SEL, wxT ("Channel 2"));
+	channel3Sel = new wxRadioButton (this, CHANNEL3_SEL, wxT ("Channel 3"));
+	channel4Sel = new wxRadioButton (this, CHANNEL4_SEL, wxT ("Channel 4"));
+	channel5Sel = new wxRadioButton (this, CHANNEL5_SEL, wxT ("Channel 5"));
+	channel6Sel = new wxRadioButton (this, CHANNEL6_SEL, wxT ("Channel 6"));
+	channel7Sel = new wxRadioButton (this, CHANNEL7_SEL, wxT ("Channel 7"));
+	
+	sizerBox4Inner->Add (channel0Sel);
 	sizerBox4Inner->Add (channel1Sel);
-	sizerBox4Inner->Add (channel9Sel);
-	sizerBox4Inner->Add (channel5Sel);
-	sizerBox4Inner->Add (channel13Sel);
-	sizerBox4Inner->Add (channel3Sel);
-	sizerBox4Inner->Add (channel11Sel);
-	sizerBox4Inner->Add (channel7Sel);
-	sizerBox4Inner->Add (channel15Sel);
 	sizerBox4Inner->Add (channel2Sel);
-	sizerBox4Inner->Add (channel10Sel);
-	sizerBox4Inner->Add (channel6Sel);
-	sizerBox4Inner->Add (channel14Sel);
+	sizerBox4Inner->Add (channel3Sel);
 	sizerBox4Inner->Add (channel4Sel);
-	sizerBox4Inner->Add (channel12Sel);
-	sizerBox4Inner->Add (channel8Sel);
-	sizerBox4Inner->Add (channel16Sel);
-
+	sizerBox4Inner->Add (channel5Sel);
+	sizerBox4Inner->Add (channel6Sel);
+	sizerBox4Inner->Add (channel7Sel);
+	
 	sizerBox4->Add (sizerBox4Inner);
 	sizerConfig->Add (sizerBox4, 0, wxEXPAND | wxALL | wxALIGN_CENTER, 10);
 
@@ -122,12 +143,24 @@ ControlConfig::ControlConfig (wxWindow* owner, DeviceController* device) : Contr
 	//connect radio buttons
 	Connect (CAPSELECT0, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnCapSelect0));
 	Connect (CAPSELECT1, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnCapSelect1));
+	Connect (CAPSELECT2, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnCapSelect2));
+
+	Connect (RES_SELECT0, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnResSelect0));
+	Connect (RES_SELECT1, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnResSelect1));
+
 	Connect (BYPASSPOST0, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnBypassPost0));
 	Connect (BYPASSPOST1, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnBypassPost1));
 
 	Connect (POSTGAINSELECT0, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnPostGainSelect0));
 	Connect (POSTGAINSELECT1, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnPostGainSelect1));
 
+	Connect (BYPASS_CDS0, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnBypassCDS0));
+	Connect (BYPASS_CDS1, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnBypassCDS1));
+
+	Connect (INFILTER_SELN0, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnInFiltNSel0));
+	Connect (INFILTER_SELN1, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnInFiltNSel1));
+
+	Connect (CHANNEL0_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel0Sel));
 	Connect (CHANNEL1_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel1Sel));
 	Connect (CHANNEL2_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel2Sel));
 	Connect (CHANNEL3_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel3Sel));
@@ -135,15 +168,6 @@ ControlConfig::ControlConfig (wxWindow* owner, DeviceController* device) : Contr
 	Connect (CHANNEL5_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel5Sel));
 	Connect (CHANNEL6_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel6Sel));
 	Connect (CHANNEL7_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel7Sel));
-	Connect (CHANNEL8_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel8Sel));
-	Connect (CHANNEL9_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel9Sel));
-	Connect (CHANNEL10_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel10Sel));
-	Connect (CHANNEL11_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel11Sel));
-	Connect (CHANNEL12_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel12Sel));
-	Connect (CHANNEL13_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel13Sel));
-	Connect (CHANNEL14_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel14Sel));
-	Connect (CHANNEL15_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel15Sel));
-	Connect (CHANNEL16_SEL, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlConfig::OnChannel16Sel));
 
 	//connect spin ctrls
 	Connect (GAIN, wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEventHandler (ControlConfig::OnSpinGain));
@@ -157,14 +181,32 @@ ControlConfig::~ControlConfig()
 void ControlConfig::OnCapSelect0 (wxCommandEvent& evt)
 {
 	::wxLogMessage (wxT ("OnCapSelect0 value:  0"));
-	xemDeviceCtrl->SetCommand (Command::LCMS_CAPSELECT, 1);
+	xemDeviceCtrl->SetCommand (Command::LCMS_CAPSELECT, 0);
 }
 
 void ControlConfig::OnCapSelect1 (wxCommandEvent& evt)
 {
 	::wxLogMessage (wxT ("OnCapSelect1 value:  1"));
-	xemDeviceCtrl->SetCommand (Command::LCMS_CAPSELECT, 0);
+	xemDeviceCtrl->SetCommand (Command::LCMS_CAPSELECT, 1);
 }
+void ControlConfig::OnCapSelect2 (wxCommandEvent& evt)
+{
+	::wxLogMessage (wxT ("OnCapSelect1 value:  2"));
+	xemDeviceCtrl->SetCommand (Command::LCMS_CAPSELECT, 2);
+}
+
+void ControlConfig::OnResSelect0 (wxCommandEvent& evt)
+{
+	::wxLogMessage (wxT ("OnResSelect0 value:  0"));
+	xemDeviceCtrl->SetCommand (Command::LCMS_RES_SELECT, 0);
+}
+
+void ControlConfig::OnResSelect1 (wxCommandEvent& evt)
+{
+	::wxLogMessage (wxT ("OnResSelect1 value:  1"));
+	xemDeviceCtrl->SetCommand (Command::LCMS_RES_SELECT, 01);
+}
+
 void ControlConfig::OnBypassPost0 (wxCommandEvent& evt)
 {
 	::wxLogMessage (wxT ("BypassPost0 value:  0"));
@@ -177,6 +219,18 @@ void ControlConfig::OnBypassPost1 (wxCommandEvent& evt)
 	xemDeviceCtrl->SetCommand (Command::LCMS_BYPASSPOST, 1);
 }
 
+void ControlConfig::OnBypassCDS0 (wxCommandEvent& evt)
+{
+	::wxLogMessage (wxT ("BypassCDS0 value:  0"));
+	xemDeviceCtrl->SetCommand (Command::LCMS_BYPASS_CDS, 0);
+}
+
+void ControlConfig::OnBypassCDS1 (wxCommandEvent& evt)
+{
+	::wxLogMessage (wxT ("BypassCDS1 value:  1"));
+	xemDeviceCtrl->SetCommand (Command::LCMS_BYPASS_CDS, 1);
+}
+
 void ControlConfig::OnPostGainSelect0 (wxCommandEvent& evt)
 {
 	::wxLogMessage (wxT ("postGainSelect0 value:  0"));
@@ -187,6 +241,24 @@ void ControlConfig::OnPostGainSelect1 (wxCommandEvent& evt)
 {
 	::wxLogMessage (wxT ("postGainSelect1 value:  1"));
 	xemDeviceCtrl->SetCommand (Command::LCMS_POSTGAINSELECT, 1);
+}
+
+void ControlConfig::OnInFiltNSel0 (wxCommandEvent& evt)
+{
+	::wxLogMessage (wxT ("InFiltSelN value:  0"));
+	xemDeviceCtrl->SetCommand (Command::LCMS_INFILTER_SELN, 0);
+}
+
+void ControlConfig::OnInFiltNSel1 (wxCommandEvent& evt)
+{
+	::wxLogMessage (wxT ("InFiltSelN value:  1"));
+	xemDeviceCtrl->SetCommand (Command::LCMS_INFILTER_SELN, 1);
+}
+
+void ControlConfig::OnChannel0Sel (wxCommandEvent& evt)
+{
+	::wxLogMessage (wxT ("OnChannel0Sel value:  1"));
+	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 0);
 }
 
 void ControlConfig::OnChannel1Sel (wxCommandEvent& evt)
@@ -224,57 +296,12 @@ void ControlConfig::OnChannel7Sel (wxCommandEvent& evt)
 	::wxLogMessage (wxT ("OnChannel7Sel value:  1"));
 	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 7);
 }
-void ControlConfig::OnChannel8Sel (wxCommandEvent& evt)
-{
-	::wxLogMessage (wxT ("OnChannel8Sel value:  1"));
-	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 8);
-}
-void ControlConfig::OnChannel9Sel (wxCommandEvent& evt)
-{
-	::wxLogMessage (wxT ("OnChannel9Sel value:  1"));
-	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 9);
-}
-void ControlConfig::OnChannel10Sel (wxCommandEvent& evt)
-{
-	::wxLogMessage (wxT ("OnChannel10Sel value:  1"));
-	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 10);
-}
-void ControlConfig::OnChannel11Sel (wxCommandEvent& evt)
-{
-	::wxLogMessage (wxT ("OnChannel11Sel value:  1"));
-	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 11);
-}
-void ControlConfig::OnChannel12Sel (wxCommandEvent& evt)
-{
-	::wxLogMessage (wxT ("OnChannel2Sel value:  1"));
-	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 12);
-}
-void ControlConfig::OnChannel13Sel (wxCommandEvent& evt)
-{
-	::wxLogMessage (wxT ("OnChannel13Sel value:  1"));
-	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 13);
-}
-void ControlConfig::OnChannel14Sel (wxCommandEvent& evt)
-{
-	::wxLogMessage (wxT ("OnChannel14Sel value:  1"));
-	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 14);
-}
-void ControlConfig::OnChannel15Sel (wxCommandEvent& evt)
-{
-	::wxLogMessage (wxT ("OnChannel15Sel value:  1"));
-	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 15);
-}
-void ControlConfig::OnChannel16Sel (wxCommandEvent& evt)
-{
-	::wxLogMessage (wxT ("OnChannel16Sel value:  1"));
-	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 16);
-}
 
 
 void ControlConfig::OnSpinGain (wxSpinEvent& evt)
 {
-	//int value = spinGain->GetValue();
-	//graphicsPlot->SetGain ( (double) value/100.0);
+	int value = spinGain->GetValue();
+	xemDeviceCtrl->SetCommand (Command::LCMS_GAIN, value);
 }
 
 void ControlConfig::Reset (void)
@@ -282,12 +309,18 @@ void ControlConfig::Reset (void)
 //	float vMax = 3.3f;
 //	float sliderMax = 65535.0f;
 
-	bool defaultcapSelect=true;//1pF
+
 	bool defaultbypassPost=true;//disabled
 	bool defaultPostGainSelect=true;//10
 
-	bool defaultChannelSel=true;//ch1
+	bool defaultChannelSel=true;//ch0
 
+	
+	bool defaultresSelect=false; //no feedback resistor
+	bool defaultbypassCDS=false; //bypass the cds
+	bool defaultinFilt=true; //bypass the input filter
+
+	int defaultGain = 100;
 
 	//float defaultVthpV=1.8f;
 	//float defaultVthmV=1.5f;
@@ -302,8 +335,8 @@ void ControlConfig::Reset (void)
 
 	//int defaultCounterClock=2; //20 mhz
 
-	capSelect0->SetValue (defaultcapSelect);
-	capSelect1->SetValue (!defaultcapSelect);
+	capSelect0->SetValue (1);
+	capSelect1->SetValue (0);
 
 	bypassPost0->SetValue (!defaultbypassPost);
 	bypassPost1->SetValue (defaultbypassPost);
@@ -311,32 +344,34 @@ void ControlConfig::Reset (void)
 	postGainSelect0->SetValue (!defaultPostGainSelect);
 	postGainSelect1->SetValue (defaultPostGainSelect);
 
-	channel1Sel->SetValue (defaultChannelSel);
+	resSelect0->SetValue(!defaultresSelect);
+	resSelect1->SetValue(defaultresSelect);
+	
+	bypassCDS0->SetValue(!defaultbypassCDS);
+	bypassCDS1->SetValue(defaultbypassCDS);
+
+	inFiltSelN0->SetValue(!defaultinFilt);
+	inFiltSelN1->SetValue(defaultinFilt);
+
+	channel0Sel->SetValue (defaultChannelSel);
+	channel1Sel->SetValue (!defaultChannelSel);
 	channel2Sel->SetValue (!defaultChannelSel);
 	channel3Sel->SetValue (!defaultChannelSel);
 	channel4Sel->SetValue (!defaultChannelSel);
 	channel5Sel->SetValue (!defaultChannelSel);
 	channel6Sel->SetValue (!defaultChannelSel);
 	channel7Sel->SetValue (!defaultChannelSel);
-	channel8Sel->SetValue (!defaultChannelSel);
-	channel9Sel->SetValue (!defaultChannelSel);
-	channel10Sel->SetValue (!defaultChannelSel);
-	channel11Sel->SetValue (!defaultChannelSel);
-	channel12Sel->SetValue (!defaultChannelSel);
-	channel13Sel->SetValue (!defaultChannelSel);
-	channel14Sel->SetValue (!defaultChannelSel);
-	channel15Sel->SetValue (!defaultChannelSel);
-	channel16Sel->SetValue (!defaultChannelSel);
 
-	spinGain->SetValue (100);
+	spinGain->SetValue (defaultGain);
 
 
 //	char str[20] = "";
-
-	xemDeviceCtrl->SetCommand (Command::LCMS_CAPSELECT, defaultcapSelect);
-	xemDeviceCtrl->SetCommand (Command::LCMS_POSTGAINSELECT, defaultcapSelect);
+	xemDeviceCtrl->SetCommand (Command::LCMS_CAPSELECT, 0);
+	xemDeviceCtrl->SetCommand (Command::LCMS_POSTGAINSELECT, defaultPostGainSelect);
 	xemDeviceCtrl->SetCommand (Command::LCMS_BYPASSPOST, defaultbypassPost);
-	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 1);
+	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 0);
+	xemDeviceCtrl->SetCommand (Command::LCMS_INFILTER_SELN, 1);
+	xemDeviceCtrl->SetCommand (Command::LCMS_GAIN, 100);
 }
 
 void ControlConfig::ResetControls (wxCommandEvent& evt)

@@ -17,7 +17,11 @@ enum {
 	POSTRESETDURATION,
 	CDSTIME1,
 	CDSTIME2,
+	CDSPULSEWIDTH,
 	VOLTAGESAMPLINGRATE,
+	MODE0,
+	MODE1,
+	MODE2
 };
 
 /**
@@ -56,6 +60,11 @@ public:
 	void OnChoicePostResetDuration (wxCommandEvent& evt);
 	void OnChoiceCDSTime1 (wxCommandEvent& evt);
 	void OnChoiceCDSTime2 (wxCommandEvent& evt);
+	void OnChoiceCDSPulseWidth (wxCommandEvent& evt);
+
+	void OnMode0(wxCommandEvent& evt);
+	void OnMode1(wxCommandEvent& evt);
+	void OnMode2(wxCommandEvent& evt);
 	/**
 	 * Reset the controls.
 	 *
@@ -103,6 +112,13 @@ private:
 
 	int			defaultValueCDSTime2;
 	wxChoice*		choiceCDSTime2;
+
+	int			defaultValueCDSPulseWidth;
+	wxChoice*		choiceCDSPulseWidth;
+
+	wxRadioButton*		mode0;
+	wxRadioButton*		mode1;
+	wxRadioButton*		mode2;
 
 };
 

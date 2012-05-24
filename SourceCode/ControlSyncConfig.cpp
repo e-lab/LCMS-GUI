@@ -113,6 +113,8 @@ ControlSyncConfig::ControlSyncConfig (wxWindow* owner, DeviceController* control
 
 	//these values are needed for the filter, add them as appropriate to the list above
 	stringsCDSTime.Add (wxT ("2us"));
+	stringsCDSTime.Add (wxT ("5us"));
+	stringsCDSTime.Add (wxT ("10us"));
 	stringsCDSTime.Add (wxT ("30us"));
 	stringsCDSTime.Add (wxT ("40us"));
 	stringsCDSTime.Add (wxT ("45us"));
@@ -150,7 +152,38 @@ ControlSyncConfig::ControlSyncConfig (wxWindow* owner, DeviceController* control
 	row->Add (new wxStaticText (this, -1, wxT ("CDSTime2 Delay"), wxDefaultPosition, wxSize (120, 20), wxALIGN_LEFT));
 	row->Add (choiceCDSTime2, 0, wxTOP, 5);
 	sizerBox2->Add (row);
+	
+	//create choice for CDS pulse width:
+	row = new wxBoxSizer (wxHORIZONTAL);
+	wxArrayString stringsCDSPulseWidth;
+
+	//these values are needed for the filter, add them as appropriate to the list above
+	stringsCDSPulseWidth.Add (wxT ("1 us"));
+	stringsCDSPulseWidth.Add (wxT ("2 us"));
+	stringsCDSPulseWidth.Add (wxT ("3 us"));
+	stringsCDSPulseWidth.Add (wxT ("4 us"));
+	stringsCDSPulseWidth.Add (wxT ("5 us"));
+
+	choiceCDSPulseWidth = new wxChoice (this, CDSPULSEWIDTH, wxDefaultPosition, wxDefaultSize, stringsCDSPulseWidth);
+	row->Add (new wxStaticText (this, -1, wxT ("CDS Pulse Width"), wxDefaultPosition, wxSize (120, 20), wxALIGN_LEFT));
+	row->Add (choiceCDSPulseWidth, 0, wxTOP, 5);
+	sizerBox2->Add (row);
 	sizerConfig->Add (sizerBox2, 0, wxEXPAND | wxALL | wxALIGN_CENTER, 10);
+
+	//Create Box for Mode
+	wxStaticBoxSizer* sizerBox3 = new wxStaticBoxSizer (wxVERTICAL, this, wxT ("Data Collection Mode:"));
+	wxFlexGridSizer* sizerBox3Inner= new wxFlexGridSizer (1,3,10);
+	//create Mode Radio Buttons
+	mode0 = new wxRadioButton (this, MODE0, wxT ("Sync V Mode (debug)"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	mode1 = new wxRadioButton (this, MODE1, wxT ("HW CDS Mode (Ch 0-3 only)"));
+	mode2 = new wxRadioButton (this, MODE2, wxT ("Digital (SW) CDS Mode (Ch 4-7 only)"));
+	sizerBox3Inner->Add (mode0);
+	sizerBox3Inner->Add (mode1);
+	sizerBox3Inner->Add (mode2);
+	sizerBox3->Add (sizerBox3Inner);
+	sizerConfig->Add (sizerBox3, 0, wxEXPAND | wxALL | wxALIGN_CENTER, 10);
+
+
 
 	//Create reset button
 	wxButton* buttonReset =  new wxButton (this, RESET_SYNC_CONFIG, wxT ("Reset"), wxDefaultPosition, wxDefaultSize, 0);
@@ -171,6 +204,10 @@ ControlSyncConfig::ControlSyncConfig (wxWindow* owner, DeviceController* control
 	Connect (BYPASS_LPF0, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlSyncConfig::OnBypass_lpf0));
 	Connect (BYPASS_LPF1, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlSyncConfig::OnBypass_lpf1));
 
+	Connect (MODE0, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlSyncConfig::OnMode0));
+	Connect (MODE1, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlSyncConfig::OnMode1));
+	Connect (MODE2, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler (ControlSyncConfig::OnMode2));
+
 	//connect choices
 	Connect (VOLTAGESAMPLINGRATE, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler (ControlSyncConfig::OnChoiceVoltageSamplingRate));
 	Connect (RESETPERIOD, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler (ControlSyncConfig::OnChoiceResetPeriod));
@@ -178,6 +215,7 @@ ControlSyncConfig::ControlSyncConfig (wxWindow* owner, DeviceController* control
 	Connect (POSTRESETDURATION, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler (ControlSyncConfig::OnChoicePostResetDuration));
 	Connect (CDSTIME1, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler (ControlSyncConfig::OnChoiceCDSTime1));
 	Connect (CDSTIME2, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler (ControlSyncConfig::OnChoiceCDSTime2));
+	Connect (CDSPULSEWIDTH, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ControlSyncConfig::OnChoiceCDSPulseWidth));
 
 }
 
@@ -399,34 +437,39 @@ void ControlSyncConfig::OnChoiceCDSTime1 (wxCommandEvent& evt)
 		case 0: //2us
 			out_value = 2;
 			break;
-		case 1: //30us
+		case 1: //5us
+			out_value=5;
+			break;
+		case 2: //10us
+			out_value=10;
+		case 3: //30us
 			out_value = 30;
 			break;
-		case 2: //40us
+		case 4: //40us
 			out_value = 40;
 			break;
-		case 3: //45us
+		case 5: //45us
 			out_value = 45;
 			break;
-		case 4: //50us
+		case 6: //50us
 			out_value = 50;
 			break;
-		case 5: //60us
+		case 7: //60us
 			out_value = 60;
 			break;
-		case 6: //90us
+		case 8: //90us
 			out_value = 90;
 			break;
-		case 7: //190us
+		case 9: //190us
 			out_value = 190;
 			break;
-		case 8: //220us
+		case 10: //220us
 			out_value = 220;
 			break;
-		case 9: //940us
+		case 11: //940us
 			out_value = 940;
 			break;
-		case 10: //990us
+		case 12: //990us
 			out_value = 990;
 			break;
 		default:  //use 2us as default value
@@ -526,6 +569,55 @@ void ControlSyncConfig::OnChoiceCDSTime2 (wxCommandEvent& evt)
 	xemDeviceCtrl->SetCommand (Command::LCMS_CDS_TIME2,out_value);
 }
 
+void ControlSyncConfig::OnChoiceCDSPulseWidth (wxCommandEvent& evt)
+{
+	int in_value = evt.GetSelection();
+	::wxLogMessage (wxT ("OnChoiceCDSPulseWidth in value:  %i"), in_value);
+	int out_value;
+
+	switch (in_value) {
+		case 0: //1
+			out_value = 1;  //1us
+			break;
+		case 1: //2
+			out_value = 2;  //2us
+			break;
+		case 2: //3
+			out_value = 3; //3us
+			break;
+		case 3: //7
+			out_value = 4; //4us
+			break;
+		case 4: //10
+			out_value = 5; //5us
+			break;
+		default:  //use 2us as default value
+			out_value = 2; //2us
+			break;
+	}
+	::wxLogMessage (wxT ("OnChoiceCDSPulseWidth out value:  %i"), out_value);
+	xemDeviceCtrl->SetCommand (Command::LCMS_CDS_PULSE_WIDTH,out_value);
+}
+
+void ControlSyncConfig::OnMode0 (wxCommandEvent& evt)
+{
+	::wxLogMessage (wxT ("mode value: 0"));
+	xemDeviceCtrl->SetCommand (Command::LCMS_MODE, 0);
+}
+void ControlSyncConfig::OnMode1 (wxCommandEvent& evt)
+{
+	::wxLogMessage (wxT ("mode value: 1"));
+	xemDeviceCtrl->SetCommand (Command::LCMS_MODE, 1);
+}
+void ControlSyncConfig::OnMode2 (wxCommandEvent& evt)
+{
+	::wxLogMessage (wxT ("mode value: 2"));
+	xemDeviceCtrl->SetCommand (Command::LCMS_MODE, 2);
+}
+
+
+
+
 void ControlSyncConfig::Reset (void)
 {
 	//float vMax = 3.3f;
@@ -536,22 +628,24 @@ void ControlSyncConfig::Reset (void)
 
 	int defaultVoltageSamplingRate=100; //100 us, 10kHz
 	int defaultResetPeriod=100; //100us
-	int defaultIntResetDuration = 2;
+	int defaultIntResetDuration = 10;
 	int defaultPostResetDuration= 2;
 	int defaultCDSTime1=2;
 	int defaultCDSTime2=90;
+	int defaultCDSPulseWidth=2;
 
 	bypass_lpf0->SetValue (!defaultbypass_lpf);
 	bypass_lpf1->SetValue (defaultbypass_lpf);
 
 	choiceVoltageSamplingRate->SetStringSelection (wxT ("10KHz (100us)"));
 	choiceResetPeriod->SetStringSelection (wxT ("10KHz (100us)"));
-	choiceIntResetDuration->SetStringSelection (wxT ("2us"));
+	choiceIntResetDuration->SetStringSelection (wxT ("10us"));
 	choicePostResetDuration->SetStringSelection (wxT ("2us"));
 
 
 	choiceCDSTime1->SetStringSelection (wxT ("2us"));
 	choiceCDSTime2->SetStringSelection (wxT ("90us"));
+	choiceCDSPulseWidth->SetStringSelection (wxT ("2 us"));
 
 	//char str[20] = "";
 
@@ -562,6 +656,7 @@ void ControlSyncConfig::Reset (void)
 	xemDeviceCtrl->SetCommand (Command::LCMS_POST_RESET_DURATION, defaultPostResetDuration);
 	xemDeviceCtrl->SetCommand (Command::LCMS_CDS_TIME1, defaultCDSTime1);
 	xemDeviceCtrl->SetCommand (Command::LCMS_CDS_TIME2, defaultCDSTime2);
+	xemDeviceCtrl->SetCommand (Command::LCMS_CDS_PULSE_WIDTH, defaultCDSPulseWidth);
 }
 
 
