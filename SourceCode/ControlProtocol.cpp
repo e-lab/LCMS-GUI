@@ -232,12 +232,12 @@ void ControlProtocol::ResetProtocolValues()
 {
 	//SetSamplingIncrement (20);
 
-	SetPeak1Height (200);
-	SetPeak2Height (-200);
-	SetLeadTime (10);
-	SetPeak1Duration (10);
-	SetPeak2Duration (10);
-	SetInterval (50);
+	SetPeak1Height (300);
+	SetPeak2Height (-300);
+	SetLeadTime (500);
+	SetPeak1Duration (500);
+	SetPeak2Duration (500);
+	SetInterval (2000);
 
 	//SetPeak1Height (200);
 	//SetPeak2Height (0);
