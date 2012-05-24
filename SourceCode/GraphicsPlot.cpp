@@ -46,7 +46,7 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	plot->AddLayer (xScale);
 	plot->AddLayer (yScale);
 
-	plot->Fit(-200, 3200, -0.3, 3.3, NULL, NULL);  //sets the view from -200 to 3200 ms and -.3 to 3.3 V 
+	plot->Fit(-200, 10000, -0.3, 3.3, NULL, NULL);  //sets the view from -200 to 3200 ms and -.3 to 3.3 V 
 	xScale->SetName (wxT ("Time (ms)"));
 	yScale->SetName (wxT ("Voltage (V)"));
 
@@ -135,8 +135,15 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	float* tmp2_spectrum = new float[lengthBuffer];
 	float* tmp2_time = new float[lengthBuffer];
 
-	memcpy(tmp2_spectrum, tmp1_spectrum, lengthBuffer);
-	memcpy(tmp2_time, tmp1_time, lengthBuffer);
+	//memcpy(tmp2_spectrum, tmp1_spectrum, lengthBuffer);
+	//memcpy(tmp2_time, tmp1_time, lengthBuffer);
+
+	for (int xx = 0; xx < lengthBuffer; xx++) {
+		tmp2_spectrum[xx] = tmp1_spectrum[xx];
+		tmp2_time[xx] = tmp1_time[xx];
+	}
+
+	//plot->Fit(tmp2_time[0], tmp2_time[lengthBuffer-1], -0.3, 3.3, NULL, NULL);
 
 	layer->SetData (&tmp2_time[0], &tmp2_spectrum[0], lengthBuffer);
 
@@ -232,7 +239,7 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 		time[i] = lastTime + ((float) i * dt);  // Constant time
 		timeBuffer->PushToBuffer(time[i]);
 	}
-	lastTime = time[length];
+	lastTime = time[length-1];
 
 	delete[] rawData;
 	delete[] spectrum;
