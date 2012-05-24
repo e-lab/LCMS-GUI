@@ -6,7 +6,7 @@ class SimpleCircularBuffer
 {
 public:
 	SimpleCircularBuffer (int size) {
-		rapped = false;
+		wrapped = false;
 
 		size_full = 2*size;
 		size_part = size;
@@ -35,7 +35,7 @@ public:
 		part2_current++;
 
 		if (size_part == part1_current) {
-			rapped = true;
+			wrapped = true;
 			part1_current = 0;
 			part2_current = size_part;
 		}
@@ -43,7 +43,7 @@ public:
 
 	T *GetBuffer () {
 
-		if (rapped) {
+		if (wrapped) {
 			return &buffer[part1_current];
 		}
 
@@ -51,7 +51,7 @@ public:
 	}
 
 private:
-	bool rapped;
+	bool wrapped;
 
 	int size_full;
 	int size_part;
