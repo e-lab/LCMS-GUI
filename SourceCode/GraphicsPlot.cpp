@@ -20,8 +20,11 @@
 
 GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 {
-	spectrumBuffer = new SimpleCircularBuffer<float>(30000);
-	timeBuffer = new SimpleCircularBuffer<float>(30000);
+	dt = 10;
+	max_size_buffer = 100000;
+	max_view_size = 5000;  //how many miliseconds to display
+	spectrumBuffer = new SimpleCircularBuffer<float>(max_size_buffer);
+	timeBuffer = new SimpleCircularBuffer<float>(max_size_buffer);
 	lengthBuffer = 0;
 	lastTime = 0;
 
@@ -44,7 +47,7 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	plot->AddLayer (xScale);
 	plot->AddLayer (yScale);
 
-	plot->Fit(0, 3200, -0.3, 3.3, NULL, NULL);  //sets the view from -200 to 3200 ms and -.3 to 3.3 V 
+	plot->Fit(0, max_view_size+200, -0.3, 3.3, NULL, NULL);  //sets the view
 
 	mypen = new wxPen (wxT ("RED"), 1, wxSOLID);
 
@@ -113,7 +116,6 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 
  	measurements.push_back (rawEvent.Clone());
 
-
 	// Remove 'layer' from display if there.
 	plot->DelLayer (layer);
 
@@ -134,8 +136,9 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	memcpy(tmp2_spectrum, tmp1_spectrum, lengthBuffer*sizeof(float));
 	memcpy(tmp2_time, tmp1_time, lengthBuffer*sizeof(float));
 
-	if (30000 == lengthBuffer) {  //time to scroll tbhe window!
-		plot->Fit(	tmp2_time[0], \
+	int mx = (max_view_size/dt);
+	if (lengthBuffer > mx) {  //time to scroll tbhe window!
+		plot->Fit(	tmp2_time[lengthBuffer-mx], \
 					tmp2_time[lengthBuffer-1]+200, \
 					plot->GetDesiredYmin(), \
 					plot->GetDesiredYmax(), NULL, NULL);
@@ -151,7 +154,7 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 
 void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 {
-	double dt = double (rawEvent.GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE) /1000.0);
+	dt = double (rawEvent.GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE) /1000.0);
 	int capSel = rawEvent.GetVariable (Command::LCMS_CAPSELECT);
 	int cdst1 =  rawEvent.GetVariable(Command::LCMS_CDS_TIME1);
 	int cdst2 =  rawEvent.GetVariable(Command::LCMS_CDS_TIME2);
@@ -173,25 +176,17 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 	rawCount = new int[length];
 	spectrum = new float[length];
 	time = new float[length];
-	if (lengthBuffer < 30000) {
+	if (lengthBuffer < max_size_buffer) {
 		lengthBuffer = lengthBuffer + length;
 
-		if (lengthBuffer > 30000) {
-			lengthBuffer = 30000;
+		if (lengthBuffer > max_size_buffer) {
+			lengthBuffer = max_size_buffer;
 		}
 	}
 
 	for (int i = 0; i < length; i++) {
 		double raw_count = (double) ( (rawData[i * 2 + 1] & 0xFF) << 8) + (rawData[i * 2] & 0xFF);
 		rawCount[i] = (int) raw_count;
-
-		//if ( i < 10) {
-		//	::wxLogMessage(wxT("Raw Count:  %i"), (int) raw_count);
-		//	::wxLogMessage(wxT("Raw Data 1:  %i"), (int) (rawData[i * 4 + 2]));
-		//	::wxLogMessage(wxT("Raw Data 2:  %i"), (int) ( (rawData[i * 4 + 3])));
-		//	::wxLogMessage(wxT("Raw Data 3:  %i"), (int) ( (rawData[i * 4])));
-		//	::wxLogMessage(wxT("Raw Data 4:  %i"), (int) ( (rawData[i * 4 + 1])));
-		//}
 
 		if (mode == 1) // hardware cds mode
 		{
@@ -213,10 +208,10 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 	//		if (spectrum[i] > 1.65)
 	//			spectrum[i] = 3.3 - spectrum[i];
 	//	}
-
 		time[i] = lastTime + ((float) i * dt);  // Constant time, keep track of time from last measurement
 		timeBuffer->PushToBuffer(time[i]); //add the results to the circular time buffer used for plotting
 	}
+
 	lastTime = time[length-1]; //keep track of time from last measurement
 
 	if(mode==1) {
