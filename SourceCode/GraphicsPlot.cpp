@@ -134,11 +134,11 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	float* tmp2_spectrum = new float[lengthDisplay];
 	float* tmp2_time = new float[lengthDisplay];
 
-	memcpy(tmp2_spectrum, tmp1_spectrum, lengthDisplay*sizeof(float));
-	memcpy(tmp2_time, tmp1_time, lengthDisplay*sizeof(float));
+	memcpy(tmp2_spectrum, &tmp1_spectrum[lengthBuffer-lengthDisplay], lengthDisplay*sizeof(float));
+	memcpy(tmp2_time, &tmp1_time[lengthBuffer-lengthDisplay], lengthDisplay*sizeof(float));
 
-	if (lengthDisplay > max_view_size) {  //time to scroll the window!
-		plot->Fit(	tmp2_time[lengthDisplay-max_view_size], \
+	if (lengthDisplay >= max_view_size) {  //time to scroll the window!
+		plot->Fit(	tmp2_time[0], \
 					tmp2_time[lengthDisplay-1]+200, \
 					plot->GetDesiredYmin(), \
 					plot->GetDesiredYmax(), NULL, NULL);
