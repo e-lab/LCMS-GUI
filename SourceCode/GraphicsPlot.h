@@ -94,10 +94,11 @@ private:
 	SimpleCircularBuffer<float> *spectrumBuffer;
 	SimpleCircularBuffer<float> *timeBuffer;
 	int			lengthBuffer;
-	float		lastTime;
+	int			lengthDisplay;
+	float			lastTime;
 	int			max_size_buffer;
 	int			max_view_size;
-	double		dt;
+	float			max_view_millisec;
 
 	/**
 	 * Vector for raw events.

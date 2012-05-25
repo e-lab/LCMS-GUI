@@ -20,12 +20,13 @@
 
 GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 {
-	dt = 10;
 	max_size_buffer = 100000;
-	max_view_size = 5000;  //how many miliseconds to display
+	max_view_millisec = 5000;  //how many miliseconds to display
+	max_view_size = 50000;  //how many points to display
 	spectrumBuffer = new SimpleCircularBuffer<float>(max_size_buffer);
 	timeBuffer = new SimpleCircularBuffer<float>(max_size_buffer);
 	lengthBuffer = 0;
+	lengthDisplay = 0;
 	lastTime = 0;
 
 	wxBoxSizer* sizerPlot = new wxBoxSizer (wxVERTICAL);
@@ -47,7 +48,7 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	plot->AddLayer (xScale);
 	plot->AddLayer (yScale);
 
-	plot->Fit(0, max_view_size+200, -0.3, 3.3, NULL, NULL);  //sets the view
+	plot->Fit(0, max_view_millisec+200, -0.3, 3.3, NULL, NULL);  //sets the view
 
 	mypen = new wxPen (wxT ("RED"), 1, wxSOLID);
 
@@ -130,21 +131,20 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	float* tmp1_spectrum = spectrumBuffer->GetBuffer();
 	float* tmp1_time = timeBuffer->GetBuffer();
 
-	float* tmp2_spectrum = new float[lengthBuffer];
-	float* tmp2_time = new float[lengthBuffer];
+	float* tmp2_spectrum = new float[lengthDisplay];
+	float* tmp2_time = new float[lengthDisplay];
 
-	memcpy(tmp2_spectrum, tmp1_spectrum, lengthBuffer*sizeof(float));
-	memcpy(tmp2_time, tmp1_time, lengthBuffer*sizeof(float));
+	memcpy(tmp2_spectrum, tmp1_spectrum, lengthDisplay*sizeof(float));
+	memcpy(tmp2_time, tmp1_time, lengthDisplay*sizeof(float));
 
-	int mx = (max_view_size/dt);
-	if (lengthBuffer > mx) {  //time to scroll tbhe window!
-		plot->Fit(	tmp2_time[lengthBuffer-mx], \
-					tmp2_time[lengthBuffer-1]+200, \
+	if (lengthDisplay > max_view_size) {  //time to scroll the window!
+		plot->Fit(	tmp2_time[lengthDisplay-max_view_size], \
+					tmp2_time[lengthDisplay-1]+200, \
 					plot->GetDesiredYmin(), \
 					plot->GetDesiredYmax(), NULL, NULL);
 	}
 
-	layer->SetData (&tmp2_time[0], &tmp2_spectrum[0], lengthBuffer);  //plot the data
+	layer->SetData (&tmp2_time[0], &tmp2_spectrum[0], lengthDisplay);  //plot the data
 
 	layer->SetPen (*mypen);
 	layer->SetContinuity (true);
@@ -154,7 +154,8 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 
 void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 {
-	dt = double (rawEvent.GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE) /1000.0);
+	float dt = float (rawEvent.GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE) /1000.0);
+	max_view_size = (max_view_millisec/dt);
 	int capSel = rawEvent.GetVariable (Command::LCMS_CAPSELECT);
 	int cdst1 =  rawEvent.GetVariable(Command::LCMS_CDS_TIME1);
 	int cdst2 =  rawEvent.GetVariable(Command::LCMS_CDS_TIME2);
@@ -183,6 +184,13 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 			lengthBuffer = max_size_buffer;
 		}
 	}
+
+	if (lengthBuffer < max_view_size) {
+		lengthDisplay = lengthBuffer;
+	} else {
+		lengthDisplay = max_view_size;
+	}
+
 
 	for (int i = 0; i < length; i++) {
 		double raw_count = (double) ( (rawData[i * 2 + 1] & 0xFF) << 8) + (rawData[i * 2] & 0xFF);
