@@ -214,6 +214,8 @@ void DeviceInterface::Start() {
 }
 
 void DeviceInterface::Stop() {
+	// send dummy event to say we are stopping.
+
 	pollDevice = false;
 
 	if (NULL == xem)
@@ -493,13 +495,8 @@ void DeviceInterface::TransferData () {
 		 * inAvailable data words via pipeIn (0x80).
 		 */
 
-		int inAvailablePrev=2046;
 		xem->UpdateWireOuts();
 		int inAvailable = (int) (2 * xem->GetWireOutValue (0x20));
-
-		if (inAvailable == 0 && inAvailablePrev==0) {
-			return;//bugfix?
-		}
 
 		//::wxLogMessage (wxT ("free profile buffer size: %i"), inAvailable);
 		if (inAvailable >= 2046) {
@@ -512,7 +509,6 @@ void DeviceInterface::TransferData () {
 			xem->WriteToPipeIn (0x80, inAvailable, rawDataInPtr);
 			rawDataInPtrLength = rawDataInPtrLength - inAvailable;
 			rawDataInPtr = &rawDataInPtr[inAvailable];
-			inAvailablePrev=inAvailable;
 		} else {
 
 			Command::packet packet;
@@ -539,22 +535,25 @@ void DeviceInterface::TransferData () {
 				break;
 			} else {
 				// With no command to process, wrap around profile.   // this code needs to be fixed, it crashes!
-				unsigned char *rapProfile = new unsigned char[inAvailable];
+				unsigned char *wrapProfile = new unsigned char[inAvailable];
 
 				for (int xx = 0; xx < rawDataInPtrLength; xx++) {
-					rapProfile[xx] = rawDataInPtr[xx];
+					wrapProfile[xx] = rawDataInPtr[xx];
 				}
 
 				int newProfileLength = inAvailable-rawDataInPtrLength;
-
-				for (int xx = 0; xx < newProfileLength; xx++) {
-					rapProfile[rawDataInPtrLength + xx] = rawDataIn[xx];
+				if (newProfileLength > rawDataInLength) {
+					newProfileLength = rawDataInLength;
 				}
 
-				xem->WriteToPipeIn (0x80, inAvailable, &rapProfile[0]);
+				for (int xx = 0; xx < newProfileLength; xx++) {
+					wrapProfile[rawDataInPtrLength + xx] = rawDataIn[xx];
+				}
+
+				xem->WriteToPipeIn (0x80, inAvailable, &wrapProfile[0]);
 				rawDataInPtrLength = rawDataInLength - newProfileLength;
 				rawDataInPtr = &rawDataIn[newProfileLength];
-				delete[]  rapProfile;
+				delete[]  wrapProfile;
 			}
 		}
 
