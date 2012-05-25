@@ -37,18 +37,14 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 
 	plot->SetScaleX (1);
 	plot->SetScaleY (1);
-//	plot->SetPos (0.03, 1);
 
-
-	xScale = new mpScaleX;
-	yScale = new mpScaleY;
+	xScale = new mpScaleX(wxT("Time (ms)"), mpALIGN_BORDER_BOTTOM, true);
+	yScale = new mpScaleY(wxT("Voltage (V)"), mpALIGN_BORDER_LEFT, true);
 
 	plot->AddLayer (xScale);
 	plot->AddLayer (yScale);
 
-	plot->Fit(-200, 10000, -0.3, 3.3, NULL, NULL);  //sets the view from -200 to 3200 ms and -.3 to 3.3 V 
-	xScale->SetName (wxT ("Time (ms)"));
-	yScale->SetName (wxT ("Voltage (V)"));
+	plot->Fit(0, 3200, -0.3, 3.3, NULL, NULL);  //sets the view from -200 to 3200 ms and -.3 to 3.3 V 
 
 	mypen = new wxPen (wxT ("RED"), 1, wxSOLID);
 
@@ -135,34 +131,26 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	float* tmp2_spectrum = new float[lengthBuffer];
 	float* tmp2_time = new float[lengthBuffer];
 
-	//memcpy(tmp2_spectrum, tmp1_spectrum, lengthBuffer);
-	//memcpy(tmp2_time, tmp1_time, lengthBuffer);
+	memcpy(tmp2_spectrum, tmp1_spectrum, lengthBuffer*sizeof(float));
+	memcpy(tmp2_time, tmp1_time, lengthBuffer*sizeof(float));
 
-	for (int xx = 0; xx < lengthBuffer; xx++) {
-		tmp2_spectrum[xx] = tmp1_spectrum[xx];
-		tmp2_time[xx] = tmp1_time[xx];
+	if (30000 == lengthBuffer) {  //time to scroll tbhe window!
+		plot->Fit(	tmp2_time[0], \
+					tmp2_time[lengthBuffer-1]+200, \
+					plot->GetDesiredYmin(), \
+					plot->GetDesiredYmax(), NULL, NULL);
 	}
 
-	//plot->Fit(tmp2_time[0], tmp2_time[lengthBuffer-1], -0.3, 3.3, NULL, NULL);
-
-	layer->SetData (&tmp2_time[0], &tmp2_spectrum[0], lengthBuffer);
+	layer->SetData (&tmp2_time[0], &tmp2_spectrum[0], lengthBuffer);  //plot the data
 
 	layer->SetPen (*mypen);
 	layer->SetContinuity (true);
 
 	plot->AddLayer (layer);
-	//information->AddNumOfMeasurements (length);
 }
 
 void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 {
-//	int voltMinus = rawEvent.GetVariable (Command::PA_VOLT_M);  //whose code is this?
-//	int voltPlus = rawEvent.GetVariable (Command::PA_VOLT_P);
-//	int voltRef = rawEvent.GetVariable (Command::PA_VOLT_REF);
-//	int capFlag = rawEvent.GetVariable (Command::PA_CAPACITANCE);
-
-//	double deltaVplus = ( (double) (voltPlus - voltRef)) * 3.3 / 255.0;
-//	double deltaVminus = ( (double) (voltMinus - voltRef)) * 3.3 / 255.0;
 	double dt = double (rawEvent.GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE) /1000.0);
 	int capSel = rawEvent.GetVariable (Command::LCMS_CAPSELECT);
 	int cdst1 =  rawEvent.GetVariable(Command::LCMS_CDS_TIME1);
@@ -177,7 +165,6 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 	else C = 0; //no C!
 
 	int mode = rawEvent.GetVariable(Command::LCMS_MODE);
-
 
 	int rawLength; // Length of the rawData array.
 	unsigned char* rawData = rawEvent.GetRawData (rawLength);
@@ -211,46 +198,39 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 			float cds_time = (cdst2-cdst1)*1E-6;
 			spectrum[i] = ( ( (float) raw_count) / (float) 65535) * 3.3f;
 			spectrum[i] = spectrum[i] - 1.65;
-			spectrum[i]=(C/cds_time)*(spectrum[i])/1E-12;
-			//lets figure out the real value for 100E-6 while we adjust the cds sampling times
-			//spectrum[i]=spectrum[i]*.711;
-			//spectrum[i]=spectrum[i]-95;
-			spectrum[i]=spectrum[i]*gain;
-			//fix the axes --- do we reallly need this in the loop?
-			spectrumBuffer->PushToBuffer(spectrum[i]);
+			spectrum[i]= (C/cds_time)*(spectrum[i])/1E-12;
+			spectrum[i]= spectrum[i]*gain;
+			spectrumBuffer->PushToBuffer(spectrum[i]);  //add the results to the circular spectrum buffer used for plotting
 		}
 
-
-		//how about trying if raw_counter < 0?
-		
 		else {
 			spectrum[i] = ( ( (float) raw_count) / (float) 65535) * 3.3f;
 			spectrumBuffer->PushToBuffer(spectrum[i]);
 		}
 
-	//	if (mode == 2) //sw cds mode
+	//	if (mode == 2) //sw cds mode not yet implemented
 	//	{
 	//		if (spectrum[i] > 1.65)
 	//			spectrum[i] = 3.3 - spectrum[i];
 	//	}
 
-			
-
-		time[i] = lastTime + ((float) i * dt);  // Constant time
-		timeBuffer->PushToBuffer(time[i]);
+		time[i] = lastTime + ((float) i * dt);  // Constant time, keep track of time from last measurement
+		timeBuffer->PushToBuffer(time[i]); //add the results to the circular time buffer used for plotting
 	}
-	lastTime = time[length-1];
+	lastTime = time[length-1]; //keep track of time from last measurement
+
+	if(mode==1) {
+		yScale->SetName (wxT ("Current (pA)"));
+	}
+	if(mode==0) {
+		yScale->SetName (wxT ("Voltage (V)"));
+	}
 
 	delete[] rawData;
 	delete[] spectrum;
 	delete[] time;
 
 	rawData = NULL;
-
-	if(mode==1) {
-		yScale->SetName (wxT ("Current (pA)"));  
-//		plot->Fit(-200, 3200, -600, 600, NULL, NULL);  //sets the view from -200 to 3200 ms and -600 to 600 pA
-	}
 }
 
 void GraphicsPlot::SetCommandString (Command::CommandID command, wxString string)
@@ -317,82 +297,3 @@ void GraphicsPlot::SaveData (wxString outputFile)
 	fileOut.Write();
 	fileOut.Close();	
 }
-
-
-/*void GraphicsPlot::SaveData_old (wxString outputFile)	
-{
-	unsigned int ii = 0;
-
-	while (ii < measurements.size()) {
-		wxFileName fileName = wxFileName (outputFile);
-
-		if (!fileName.HasExt()) {
-			fileName.SetExt (wxT ("dat"));
-		}
-
-		if (1 != (measurements.at (ii))->GetVariable (Command::PA_SAVE_TYPE)) {
-			fileName.SetName (fileName.GetName() << wxT ("_") << ii);
-		}
-
-		if (fileName.FileExists()) {
-			::wxMessageBox (wxT ("A file with the current save name already exists.\n\n"
-			                     "File Name:  ") + fileName.GetFullName(),
-			                wxT ("Save Aborted"));
-
-			return;
-		}
-
-		wxTextFile fileOut;
-
-		if (!fileOut.Create (fileName.GetFullPath())) {
-			::wxMessageBox (wxT ("The file could not be created.\n"),
-			                wxT ("File Creation Failed"));
-			return;
-		}
-
-
-		wxString timeStamp = wxT ("# ");
-
-		timeStamp << wxNow();
-		fileOut.AddLine (timeStamp);
-
-		UnpackEvent (*measurements.at (ii));
-		delete[] spectrum;
-		spectrum = NULL;
-		delete[] time;
-		time = NULL;
-
-		int voltMinus = (*measurements.at (ii)).GetVariable (Command::PA_VOLT_M);
-		int voltPlus = (*measurements.at (ii)).GetVariable (Command::PA_VOLT_P);
-		int voltRef = (*measurements.at (ii)).GetVariable (Command::PA_VOLT_REF);
-		int voltPUP = (*measurements.at (ii)).GetVariable (Command::PA_VOLT_PUP);
-		int capFlag = (*measurements.at (ii)).GetVariable (Command::PA_CAPACITANCE);
-
-		fileOut.AddLine (wxString::Format (wxT ("# Bias Volt Minus:\t%.2f"), ( ( (double) voltMinus) * 3.3 / 255.0)));
-		fileOut.AddLine (wxString::Format (wxT ("# Bias Volt Plus :\t%.2f"), ( ( (double) voltPlus) * 3.3 / 255.0)));
-		fileOut.AddLine (wxString::Format (wxT ("# Bias Volt Ref  :\t%.2f"), ( ( (double) voltRef) * 3.3 / 255.0)));
-		fileOut.AddLine (wxString::Format (wxT ("# Bias Volt PUP  :\t%.2f"), ( ( (double) voltPUP) * 3.3 / 255.0)));
-
-		if (1 == capFlag) {
-			fileOut.AddLine (wxString::Format (wxT ("# Capacitance: High")));
-		} else {
-			fileOut.AddLine (wxString::Format (wxT ("# Capacitance: Low")));
-		}
-
-		//int missedCycles = (*measurements.at (ii)).GetVariable (Command::PA_MISSED_CYCLES);
-		//fileOut.AddLine (wxString::Format (wxT ("# Missed Cycles  :\t%i\n"), missedCycles));
-
-		for (int xx = 0; xx < length; xx++) {
-			fileOut.AddLine (wxString::Format (wxT ("%i\t\t%i"), xx, rawCount[xx]));
-		}
-
-		delete[] rawCount;
-
-		rawCount = NULL;
-
-		fileOut.Write();
-		fileOut.Close();
-		ii++;
-	}
-}
-*/
