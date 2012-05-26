@@ -1,6 +1,8 @@
 #ifndef DEVICE_INTERFACE_H
 #define DEVICE_INTERFACE_H
 
+#define DEVICE_BUFFER_SIZE 2038
+
 #include <wx/wx.h>
 #include "SimpleQueue.h"
 #include "Command.h"

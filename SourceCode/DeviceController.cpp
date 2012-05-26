@@ -87,23 +87,52 @@ void DeviceController::BuildProfile ()
 		//::wxLogMessage (wxT ("profile[%i]=%i"), xx, value);
 	}
 
-	//SetProfile()
-	struct Command::packet packet;
-	packet.commandID = Command::PROFILE;
-	packet.commandValue = transfer_profile_length*2;
-	packet.profile = transfer_profile;
-
-	xemDevice->GetQueue().Post (packet);
-
 	delete[] profile_array;
+
+	SetProfile(&transfer_profile[0], transfer_profile_length*2);
 }
 
 void DeviceController::SetProfile (unsigned char *profile, int length)
 {
+	int w_length; // wrap profile length
+	int n_length; // new length of (pristine/concat) profile length
+
+	// determine wrap profile array length
+	if (length >= DEVICE_BUFFER_SIZE ) {
+		w_length = length+DEVICE_BUFFER_SIZE;
+		n_length = length;
+	} else {
+		w_length = 2*DEVICE_BUFFER_SIZE;
+		n_length = DEVICE_BUFFER_SIZE;
+	}
+
+	// alloc wrap profile array and populate first segment
+	unsigned char *w_profile = new unsigned char[w_length];
+	memcpy(&w_profile[0], &profile[0], length*sizeof(profile[0]));
+
+	delete[] profile;
+	profile = NULL;
+
+	// fill wrap round portion of wrap profile array
+	int profile_ptr = length;
+	int segment_length;
+
+	while (w_length > profile_ptr) {
+
+		segment_length = (w_length-profile_ptr);
+		if (segment_length > profile_ptr) {
+			segment_length = profile_ptr;
+		}
+
+		memcpy(&w_profile[profile_ptr], &w_profile[0],  segment_length*sizeof(w_profile[0]));
+
+		profile_ptr = profile_ptr + segment_length;
+	}
+
 	struct Command::packet packet;
 	packet.commandID = Command::PROFILE;
-	packet.commandValue = length;
-	packet.profile = profile;
+	packet.commandValue = n_length;
+	packet.profile = w_profile;
 
 	xemDevice->GetQueue().Post (packet);
 }

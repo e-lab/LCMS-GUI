@@ -534,26 +534,11 @@ void DeviceInterface::TransferData () {
 				ProcessCommand (packet);
 				break;
 			} else {
-				// With no command to process, wrap around profile.   // this code needs to be fixed, it crashes!
-				unsigned char *wrapProfile = new unsigned char[inAvailable];
-
-				for (int xx = 0; xx < rawDataInPtrLength; xx++) {
-					wrapProfile[xx] = rawDataInPtr[xx];
-				}
-
-				int newProfileLength = inAvailable-rawDataInPtrLength;
-				if (newProfileLength > rawDataInLength) {
-					newProfileLength = rawDataInLength;
-				}
-
-				for (int xx = 0; xx < newProfileLength; xx++) {
-					wrapProfile[rawDataInPtrLength + xx] = rawDataIn[xx];
-				}
-
-				xem->WriteToPipeIn (0x80, inAvailable, &wrapProfile[0]);
-				rawDataInPtrLength = rawDataInLength - newProfileLength;
-				rawDataInPtr = &rawDataIn[newProfileLength];
-				delete[]  wrapProfile;
+				// With no command to process, wrap around profile.
+				xem->WriteToPipeIn (0x80, inAvailable, rawDataInPtr);
+				int wrapProfilePtrLength = (inAvailable - rawDataInPtrLength);
+				rawDataInPtrLength = rawDataInLength - wrapProfilePtrLength;
+				rawDataInPtr = &rawDataIn[wrapProfilePtrLength];
 			}
 		}
 
@@ -562,7 +547,7 @@ void DeviceInterface::TransferData () {
 		xem->UpdateWireOuts();
 		int outAvailable = (int) (2 * xem->GetWireOutValue (0x21));
 		//::wxLogMessage (wxT ("measurement data to collect: %i"), outAvailable/2); //for debug
-		if (outAvailable >= 2038) { // not *2 here
+		if (outAvailable >= DEVICE_BUFFER_SIZE) {
 			::wxLogMessage (wxT ("measurement buffer overrun!\n"));
 		}
 		if (outAvailable > 0) {
