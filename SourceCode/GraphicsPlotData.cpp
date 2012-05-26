@@ -66,10 +66,8 @@ GraphicsPlotData* GraphicsPlotData::Clone()
 	float* time = new float[signalSize];
 	float* spectrum = new float[signalSize];
 
-	for (int ii = 0; ii < signalSize; ii++) {
-		time[ii] = array_x[ii];
-		spectrum[ii] = array_y[ii];
-	}
+	memcpy(time, array_x, signalSize*sizeof(array_x[0]));
+	memcpy(spectrum, array_y, signalSize*sizeof(array_y[0]));
 
 	GraphicsPlotData* clone = new GraphicsPlotData();
 

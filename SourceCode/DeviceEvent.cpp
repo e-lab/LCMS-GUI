@@ -66,9 +66,8 @@ unsigned char* DeviceEvent::GetRawData (int& dataLength) const
 	dataLength = length;
 
 	unsigned char* data = new unsigned char[dataLength];
-	for (int xx = 0; xx < dataLength; xx++) {
-		data[xx] = rawData[xx];
-	}
+	memcpy(data, rawData, dataLength*sizeof(rawData[0]));
+
 	return &data[0];
 }
 
