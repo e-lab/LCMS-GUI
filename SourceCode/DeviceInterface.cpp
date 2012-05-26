@@ -231,7 +231,7 @@ void DeviceInterface::Stop() {
 	//xem->SetWireInValue (0x00, 0, 0x0001);  //no need for this
 	//xem->UpdateWireIns();
 
-	int rawDataLength = 1;
+	int rawDataLength = 2;
 	unsigned char *rawData = new unsigned char[rawDataLength];
 	rawEvent->SetRawData (rawData, rawDataLength);
 	rawEvent->SetVariable (Command::DEV_STOP, 1);

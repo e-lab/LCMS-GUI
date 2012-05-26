@@ -36,6 +36,8 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	plot = new mpWindow (this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
 	sizerPlot->Add (plot, 1, wxEXPAND | wxALIGN_CENTER | wxTOP, 10);
 
+	plot->SetMPScrollbars(true);
+
 	information = new GraphicsInformation (this);
 	sizerPlot->Add (information, 0, wxALIGN_CENTER);
 
@@ -149,20 +151,20 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 					plot->GetDesiredYmin(), \
 					plot->GetDesiredYmax(), NULL, NULL);
 		}
-	}
-	else {
+		layer->SetData (&tmp2_time[0], &tmp2_spectrum[0], lengthDisplay);  //plot the data
+	} else {
 		tmp2_spectrum = new float[lengthBuffer];	//we finished getting data so allow the user to scroll back
 		tmp2_time = new float[lengthBuffer];
 		memcpy(tmp2_spectrum, &tmp1_spectrum[0], lengthBuffer*sizeof(float));
 		memcpy(tmp2_time, &tmp1_time[0], lengthBuffer*sizeof(float));
-		plot->Fit(	tmp2_time[lengthBuffer-lengthDisplay-1], \
-					tmp2_time[lengthDisplay-1]+(white_space_pct/100.0)*max_view_millisec, \
-					plot->GetDesiredYmin(), \
-					plot->GetDesiredYmax(), NULL, NULL);
+		if (lengthBuffer > lengthDisplay) {
+			plot->Fit(	tmp2_time[lengthBuffer-lengthDisplay-1], \
+						tmp2_time[lengthBuffer-1]+(white_space_pct/100.0)*max_view_millisec, \
+						plot->GetDesiredYmin(), \
+						plot->GetDesiredYmax(), NULL, NULL);
+		}
+		layer->SetData (&tmp2_time[0], &tmp2_spectrum[0], lengthBuffer);  //plot the data
 	}
-
-
-	layer->SetData (&tmp2_time[0], &tmp2_spectrum[0], lengthDisplay);  //plot the data
 
 	layer->SetPen (*mypen);
 	layer->SetContinuity (true);
