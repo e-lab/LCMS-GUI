@@ -99,11 +99,12 @@ void DeviceController::SetProfile (unsigned char *profile, int length)
 
 	// determine wrap profile array length
 	if (length >= DEVICE_BUFFER_SIZE ) {
-		w_length = length+DEVICE_BUFFER_SIZE;
 		n_length = length;
+		w_length = length+DEVICE_BUFFER_SIZE;
 	} else {
-		w_length = 2*DEVICE_BUFFER_SIZE;
-		n_length = DEVICE_BUFFER_SIZE;
+		int lengths_in_buf = ((int) DEVICE_BUFFER_SIZE / length);
+		n_length = length+(lengths_in_buf*length);
+		w_length = n_length+DEVICE_BUFFER_SIZE;
 	}
 
 	// alloc wrap profile array and populate first segment
