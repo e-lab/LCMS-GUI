@@ -28,6 +28,8 @@ DeviceInterface::DeviceInterface (wxEvtHandler* displayTmp) : wxThread (wxTHREAD
 	rawDataIn[1] = 0;
 
 	rawEvent = new DeviceEvent();
+	//rawEvent->SetVariable (Command::DEV_START, 1);
+	rawEvent->SetVariable (Command::DEV_STOP, 0);
 
 	xem = (okCFrontPanel*) NULL;
 	pll = (okCPLL22393*) NULL;
@@ -228,6 +230,14 @@ void DeviceInterface::Stop() {
 	::wxLogMessage (wxT ("Stop!"));
 	//xem->SetWireInValue (0x00, 0, 0x0001);  //no need for this
 	//xem->UpdateWireIns();
+
+	int rawDataLength = 1;
+	unsigned char *rawData = new unsigned char[rawDataLength];
+	rawEvent->SetRawData (rawData, rawDataLength);
+	rawEvent->SetVariable (Command::DEV_STOP, 1);
+
+	wxPostEvent (display, (*rawEvent));
+	rawEvent->SetVariable (Command::DEV_STOP, 0);
 }
 
 void DeviceInterface::SetCommand (Command::packet packet) {
