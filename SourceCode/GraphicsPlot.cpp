@@ -23,6 +23,8 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	max_size_buffer = 100000;
 	max_view_millisec = 5000;  //how many miliseconds to display
 	max_view_size = 50000;  //how many points to display
+	white_space_pct = 5; //5 percent white space to make the scrolling look nice
+
 	spectrumBuffer = new SimpleCircularBuffer<float>(max_size_buffer);
 	timeBuffer = new SimpleCircularBuffer<float>(max_size_buffer);
 	lengthBuffer = 0;
@@ -48,7 +50,7 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	plot->AddLayer (xScale);
 	plot->AddLayer (yScale);
 
-	plot->Fit(0, max_view_millisec+200, -0.3, 3.3, NULL, NULL);  //sets the view
+	plot->Fit(0, max_view_millisec+(white_space_pct/100.0*max_view_millisec), -0.3, 3.3, NULL, NULL);  //sets the view
 
 	mypen = new wxPen (wxT ("RED"), 1, wxSOLID);
 
@@ -120,7 +122,9 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	// Remove 'layer' from display if there.
 	plot->DelLayer (layer);
 
-	UnpackEvent (rawEvent);
+	int last_data = rawEvent.GetVariable(Command::LAST_DATA);
+	if (0 == last_data)
+		UnpackEvent (rawEvent);		//only do the unpack if this was not a dummy stop event
 	delete[] rawCount;
 	rawCount = NULL;
 
@@ -131,18 +135,32 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	float* tmp1_spectrum = spectrumBuffer->GetBuffer();
 	float* tmp1_time = timeBuffer->GetBuffer();
 
-	float* tmp2_spectrum = new float[lengthDisplay];
-	float* tmp2_time = new float[lengthDisplay];
+	float* tmp2_spectrum;
+	float* tmp2_time;
 
-	memcpy(tmp2_spectrum, &tmp1_spectrum[lengthBuffer-lengthDisplay], lengthDisplay*sizeof(float));
-	memcpy(tmp2_time, &tmp1_time[lengthBuffer-lengthDisplay], lengthDisplay*sizeof(float));
-
-	if (lengthDisplay >= max_view_size) {  //time to scroll the window!
+	if (0 == last_data) {	//more data coming, plot what we have for scrolling
+		tmp2_spectrum = new float[lengthDisplay];
+		tmp2_time = new float[lengthDisplay];
+		memcpy(tmp2_spectrum, &tmp1_spectrum[lengthBuffer-lengthDisplay], lengthDisplay*sizeof(float));
+		memcpy(tmp2_time, &tmp1_time[lengthBuffer-lengthDisplay], lengthDisplay*sizeof(float));
+		if (lengthDisplay >= max_view_size) {  //time to scroll the window!
 		plot->Fit(	tmp2_time[0], \
-					tmp2_time[lengthDisplay-1]+200, \
+					tmp2_time[lengthDisplay-1]+(white_space_pct/100.0)*max_view_millisec, \
+					plot->GetDesiredYmin(), \
+					plot->GetDesiredYmax(), NULL, NULL);
+		}
+	}
+	else {
+		tmp2_spectrum = new float[lengthBuffer];	//we finished getting data so allow the user to scroll back
+		tmp2_time = new float[lengthBuffer];
+		memcpy(tmp2_spectrum, &tmp1_spectrum[0], lengthBuffer*sizeof(float));
+		memcpy(tmp2_time, &tmp1_time[0], lengthBuffer*sizeof(float));
+		plot->Fit(	tmp2_time[lengthBuffer-lengthDisplay-1], \
+					tmp2_time[lengthDisplay-1]+(white_space_pct/100.0)*max_view_millisec, \
 					plot->GetDesiredYmin(), \
 					plot->GetDesiredYmax(), NULL, NULL);
 	}
+
 
 	layer->SetData (&tmp2_time[0], &tmp2_spectrum[0], lengthDisplay);  //plot the data
 

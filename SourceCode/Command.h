@@ -40,6 +40,7 @@ public:
 
 		SAVE_DATA,			//!<  write the data to a file.
 		CLEAR,				//!<  discard the recorded data
+		LAST_DATA,			//!<  the last measurement data from the device after the use says stop
 
 		// ControlProtocol
 		LCMS_SELECTPROTOCOL,

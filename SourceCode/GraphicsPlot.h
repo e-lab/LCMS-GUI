@@ -95,10 +95,11 @@ private:
 	SimpleCircularBuffer<float> *timeBuffer;
 	int			lengthBuffer;
 	int			lengthDisplay;
-	float			lastTime;
+	float		lastTime;
 	int			max_size_buffer;
 	int			max_view_size;
-	float			max_view_millisec;
+	float		max_view_millisec;
+	int			white_space_pct; // percent of white space while plotting to make the scrolling look nice
 
 	/**
 	 * Vector for raw events.
