@@ -77,7 +77,6 @@ public:
 
 private:
 
-	int* rawCount;
 	float* spectrum;
 	float* time;
 	int length;	//!<  Length of both the spectrum and time arrays.

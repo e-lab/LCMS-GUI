@@ -127,8 +127,6 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	int last_data = rawEvent.GetVariable(Command::DEV_STOP);
 	if (0 == last_data)
 		UnpackEvent (rawEvent);		//only do the unpack if this was not a dummy stop event
-	delete[] rawCount;
-	rawCount = NULL;
 
 	// Ownership of the 'time' and 'spectrum' arrays have been passed to
 	// the GraphicsPlotData object, therefore, the arrays memory will be
@@ -194,7 +192,6 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 	unsigned char* rawData = rawEvent.GetRawData (rawLength);
 	
 	length = (rawLength / 2);
-	rawCount = new int[length];
 	spectrum = new float[length];
 	time = new float[length];
 	if (lengthBuffer < max_size_buffer) {
@@ -214,7 +211,6 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 
 	for (int i = 0; i < length; i++) {
 		double raw_count = (double) ( (rawData[i * 2 + 1] & 0xFF) << 8) + (rawData[i * 2] & 0xFF);
-		rawCount[i] = (int) raw_count;
 
 		if (mode == 1) // hardware cds mode
 		{
