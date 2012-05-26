@@ -122,7 +122,7 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	// Remove 'layer' from display if there.
 	plot->DelLayer (layer);
 
-	int last_data = rawEvent.GetVariable(Command::LAST_DATA);
+	int last_data = rawEvent.GetVariable(Command::DEV_STOP);
 	if (0 == last_data)
 		UnpackEvent (rawEvent);		//only do the unpack if this was not a dummy stop event
 	delete[] rawCount;
