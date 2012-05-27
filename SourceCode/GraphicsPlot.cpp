@@ -20,9 +20,7 @@
 
 GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 {
-
-	saveToFile = new GraphicsSaveData();
-
+	//saveToFile = new GraphicsSaveData();
 
 	max_size_buffer = 100000;
 	max_view_millisec = 5000;  //how many miliseconds to display
@@ -277,6 +275,7 @@ void GraphicsPlot::Clear(void)
 		delete[] data->spectrum;
 		delete[] data->time;
 
+		delete data;
 		save_data_store.pop_back();
 	}
 }

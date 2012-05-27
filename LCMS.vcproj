@@ -224,6 +224,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SourceCode\GraphicsSaveData.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceCode\Logging.cpp"
 				>
 			</File>
@@ -303,6 +307,10 @@
 			</File>
 			<File
 				RelativePath=".\SourceCode\GraphicsPlotData.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SourceCode\GraphicsSaveData.h"
 				>
 			</File>
 			<File
