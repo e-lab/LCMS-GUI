@@ -262,7 +262,7 @@ void GraphicsPlot::Clear(void)
 
 void GraphicsPlot::SaveData (wxString outputFile)
 {
-	if (save_data_store.size() == 0) {
+	if (0 == save_data_store.size()) {
 		wxMessageBox( wxT("No measurements to record") );
 		return;
 	}
@@ -304,11 +304,10 @@ void GraphicsPlot::SaveData (wxString outputFile)
 
 		for (int xx = 0; xx < data->length; xx++) {
 			wxString dataLine= wxT ("");
-			tileLine << data->time[xx] << wxT ("\t") << data->spectrum[xx];
-			fileOut.AddLine (tileLine);
+			dataLine << data->time[xx] << wxT ("\t") << data->spectrum[xx];
+			fileOut.AddLine (dataLine);
 		}
 	}
-
 
 	fileOut.Write();
 	fileOut.Close();	
