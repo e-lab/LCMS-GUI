@@ -24,6 +24,7 @@ SOURCE = \
 	main.cpp \
 	GraphicsPlot.cpp \
 	GraphicsPlotData.cpp \
+	GraphicsSaveData.cpp \
 	mathplot.cpp \
 	okFrontPanelDLL.cpp
 

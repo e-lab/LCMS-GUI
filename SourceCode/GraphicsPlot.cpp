@@ -20,6 +20,10 @@
 
 GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 {
+
+	saveToFile = new GraphicsSaveData();
+
+
 	max_size_buffer = 100000;
 	max_view_millisec = 5000;  //how many miliseconds to display
 	max_view_size = 50000;  //how many points to display

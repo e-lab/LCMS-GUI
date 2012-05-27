@@ -17,6 +17,7 @@
 #include "GraphicsPlotData.h"
 #include "GraphicsInformation.h"
 #include "SimpleCircularBuffer.h"
+#include "GraphicsSaveData.h"
 
 class DeviceEvent;
 
@@ -107,6 +108,7 @@ private:
 	int			max_view_size;
 	float		max_view_millisec;
 	int			white_space_pct; // percent of white space while plotting to make the scrolling look nice
+	GraphicsSaveData*	saveToFile;
 
 	/**
 	 * Vector for save_data struct.
