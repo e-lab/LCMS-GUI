@@ -87,39 +87,15 @@ GraphicsPlot::~GraphicsPlot()
 	delete information;
 	information = (GraphicsInformation*) NULL;
 
-	while (measurements.size() > 0) {
-		delete (measurements.back());
-		measurements.pop_back();
-	}
+	Clear();
 }
 
 void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 {
-	// Clears previous data events from the continuous save 'measurements' vector.
-	int saveType = rawEvent.GetVariable (Command::PA_SAVE_TYPE);
-
-//	if ( (1 == saveType) // True when the "Save Type" radio button is set to "Continues".
-	if ( ( 0 == saveType) //for now always do this code, since we do not have a "Save Type" radio button
-	                || ( (measurements.size() > 0) && (saveType != (measurements.at (0))->GetVariable (Command::PA_SAVE_TYPE)))
-	                // True if there is a raw data event saved in the measurements vector AND if the first raw data event in the measurements vector
-	                // 	has a different PA_SAVE_TYPE to the current raw data event.  This will only be so for the first frame after the
-	                //	"Save Type" radio button is changed, thus preventing data events with different save types being in the same measurements.
-	                || (1 == rawEvent.GetVariable (Command::PA_FIRST_MEAS))) {
-		// True if this is the first measurement after the 'start' button has been pressed.
-		while (measurements.size() > 0) {
-			delete (measurements.back());
-			measurements.pop_back();
-		}
-
-		//information->ClearMeasurements();
-	}
-
 	int a, b;
 	rawEvent.GetInAvailable(a);
 	rawEvent.GetOutAvailable(b);	
 	information->SetBufferInfo(a, b);
-
- 	measurements.push_back (rawEvent.Clone());
 
 	// Remove 'layer' from display if there.
 	plot->DelLayer (layer);
@@ -127,6 +103,7 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 	int last_data = rawEvent.GetVariable(Command::DEV_STOP);
 	if (0 == last_data)
 		UnpackEvent (rawEvent);		//only do the unpack if this was not a dummy stop event
+
 
 	// Ownership of the 'time' and 'spectrum' arrays have been passed to
 	// the GraphicsPlotData object, therefore, the arrays memory will be
@@ -238,17 +215,24 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 
 	lastTime = time[length-1]; //keep track of time from last measurement
 
+	struct save_data *data = new struct save_data;
+	data->spectrum	= &spectrum[0];
+	data->time	= &time[0];
+	data->length 	= length;
+	data->tile_time	= wxT("Time (ms)");
+
 	if(mode==1) {
 		yScale->SetName (wxT ("Current (pA)"));
+		data->tile_spectrum = wxT ("Current (pA)");
 	}
 	if(mode==0) {
 		yScale->SetName (wxT ("Voltage (V)"));
+		data->tile_spectrum = wxT ("Voltage (V)");
 	}
 
-	delete[] rawData;
-	delete[] spectrum;
-	delete[] time;
+	save_data_store.push_back (data);
 
+	delete[] rawData;
 	rawData = NULL;
 }
 
@@ -267,14 +251,22 @@ void GraphicsPlot::SetCommandString (Command::CommandID command, wxString string
 
 void GraphicsPlot::Clear(void)
 {
-	while (measurements.size() > 0) {
-		delete (measurements.back());
-		measurements.pop_back();
+	while (save_data_store.size() > 0) {
+		struct save_data *data = save_data_store.back();
+		delete[] data->spectrum;
+		delete[] data->time;
+
+		save_data_store.pop_back();
 	}
 }
 
 void GraphicsPlot::SaveData (wxString outputFile)
 {
+	if (save_data_store.size() == 0) {
+		wxMessageBox( wxT("No measurements to record") );
+		return;
+	}
+
 	wxFileName fileName = wxFileName (outputFile);
 
 	if (!fileName.HasExt()) {
@@ -289,6 +281,7 @@ void GraphicsPlot::SaveData (wxString outputFile)
 		return;
 	}
 
+	// wxTextFile should not be used for files > 1 Meg
 	wxTextFile fileOut;
 
 	if (!fileOut.Create (fileName.GetFullPath())) {
@@ -298,21 +291,26 @@ void GraphicsPlot::SaveData (wxString outputFile)
 	}
 
 	wxString timeStamp = wxT ("# ");
-
 	timeStamp << wxNow();
 	fileOut.AddLine (timeStamp);
-	fileOut.AddLine(wxString::Format( wxT("time (ms)\tADC (V)")));
-
-	if (measurements.size() == 0) {
-		wxMessageBox( wxT("No measurements to record") );
-		return;
-	}
 	
-	while (measurements.size() > 0) {
-		delete (measurements.back());
-		measurements.pop_back();
+	struct save_data *first_save_data = save_data_store.at(0);
+	wxString tileLine = wxT ("# ");
+	tileLine << first_save_data->tile_time << wxT ("\t") << first_save_data->tile_spectrum;
+	fileOut.AddLine (tileLine);
+
+	for (unsigned int ii = 0; ii < save_data_store.size(); ii++) {
+		struct save_data *data = save_data_store.at(ii);
+
+		for (int xx = 0; xx < data->length; xx++) {
+			wxString dataLine= wxT ("");
+			tileLine << data->time[xx] << wxT ("\t") << data->spectrum[xx];
+			fileOut.AddLine (tileLine);
+		}
 	}
+
 
 	fileOut.Write();
 	fileOut.Close();	
+	Clear();
 }

@@ -20,6 +20,14 @@
 
 class DeviceEvent;
 
+struct save_data {
+	float*		spectrum;
+	float*		time;
+	int 		length;
+	wxString	tile_spectrum;
+	wxString	tile_time;
+};
+
 
 /**
  * Receives and displays data from the device.
@@ -101,12 +109,12 @@ private:
 	int			white_space_pct; // percent of white space while plotting to make the scrolling look nice
 
 	/**
-	 * Vector for raw events.
+	 * Vector for save_data struct.
 	 *
-	 * This vector is used to save multiple image data events which will be used to
-	 * make a measurement.
+	 * This vector is used to save multiple processed save_data structs
+	 * and is used to save data to disk.
 	 */
-	std::vector<DeviceEvent*> measurements;
+	std::vector<struct save_data*> save_data_store;
 
 	/**
 	 * Translate raw data to a usable form.
