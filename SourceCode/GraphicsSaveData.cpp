@@ -33,7 +33,9 @@ wxThread::ExitCode GraphicsSaveData::Entry()
 	while (1) {
 
 		// Process messages
-		if (wxMSGQUEUE_NO_ERROR == messageQueue.Receive (current_message)) {
+		wxMessageQueueError result = messageQueue.ReceiveTimeout (10, current_message);
+
+		if (wxMSGQUEUE_NO_ERROR == result) {
 
 			switch (current_message.type) {
 				case GraphicsSaveData::FILENAME :
@@ -46,6 +48,9 @@ wxThread::ExitCode GraphicsSaveData::Entry()
 				default :
 					break;
 			}
+
+		} else if (wxMSGQUEUE_TIMEOUT == result) {
+			wxThread::Sleep(100);
 		}
 	}
 	return (wxThread::ExitCode) 0;
