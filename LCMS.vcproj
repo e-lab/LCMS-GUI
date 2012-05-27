@@ -330,6 +330,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SourceCode\SimpleCircularBuffer.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SourceCode\SimpleQueue.h"
 				>
 			</File>

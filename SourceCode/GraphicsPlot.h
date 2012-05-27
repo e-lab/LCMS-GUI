@@ -139,6 +139,7 @@ private:
 	 */
 	void SaveData (wxString);
 	void Clear(void);
+	void ResetView(void);
 
 
 };

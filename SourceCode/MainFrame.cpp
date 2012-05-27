@@ -114,7 +114,6 @@ void MainFrame::OnSave (wxCommandEvent& event)
 
 void MainFrame::OnClear(wxCommandEvent &  event)
 {
-	xemDeviceCtrl->Stop();
 	display->SetCommandString (Command::CLEAR, wxT("1"));
 }
 

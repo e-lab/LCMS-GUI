@@ -26,6 +26,12 @@ public:
 		buffer = NULL;
 	}
 
+	void ResetBuffer()  {
+		wrapped = false;
+		part1_current = 0;
+		part2_current = size_part;
+	}
+
 	void PushToBuffer (T value) {
 
 		buffer[part1_current] = value;

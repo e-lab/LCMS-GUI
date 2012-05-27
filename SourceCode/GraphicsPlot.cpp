@@ -52,7 +52,7 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	plot->AddLayer (xScale);
 	plot->AddLayer (yScale);
 
-	plot->Fit(0, max_view_millisec+(white_space_pct/100.0*max_view_millisec), -0.3, 3.3, NULL, NULL);  //sets the view
+	plot->Fit(0, max_view_millisec+(white_space_pct/100.0*max_view_millisec), -0.3, 3.3, NULL, NULL);  //sets the default view
 
 	mypen = new wxPen (wxT ("RED"), 1, wxSOLID);
 
@@ -121,7 +121,7 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 		memcpy(tmp2_spectrum, &tmp1_spectrum[lengthBuffer-lengthDisplay], lengthDisplay*sizeof(float));
 		memcpy(tmp2_time, &tmp1_time[lengthBuffer-lengthDisplay], lengthDisplay*sizeof(float));
 		if (lengthDisplay >= max_view_size) {  //time to scroll the window!
-		plot->Fit(	tmp2_time[0], \
+			plot->Fit(	tmp2_time[0], \
 					tmp2_time[lengthDisplay-1]+(white_space_pct/100.0)*max_view_millisec, \
 					plot->GetDesiredYmin(), \
 					plot->GetDesiredYmax(), NULL, NULL);
@@ -139,6 +139,8 @@ void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
 						plot->GetDesiredYmax(), NULL, NULL);
 		}
 		layer->SetData (&tmp2_time[0], &tmp2_spectrum[0], lengthBuffer);  //plot the data
+		if (lengthBuffer > 0 )
+			plot->SetMPScrollbars(true); //shows the scrollbar when stopped if there is data available to scroll through
 	}
 
 	layer->SetPen (*mypen);
@@ -244,10 +246,25 @@ void GraphicsPlot::SetCommandString (Command::CommandID command, wxString string
 			break;
 		case Command::CLEAR :
 			Clear();
+			ResetView();
+			break;
 		default :
 			break;
 	}
 }
+
+void GraphicsPlot::ResetView(void)
+{
+	lastTime=0.0;
+	lengthDisplay=0;
+	lengthBuffer=0;
+	spectrumBuffer->ResetBuffer();
+	timeBuffer->ResetBuffer();
+	plot->DelLayer (layer);
+	plot->Fit(0, max_view_millisec+(white_space_pct/100.0*max_view_millisec), -0.3, 3.3, NULL, NULL);  //sets the default view
+	plot->SetMPScrollbars(false);  //removes the scrollbar when there is no data to display
+}
+
 
 void GraphicsPlot::Clear(void)
 {
@@ -312,4 +329,5 @@ void GraphicsPlot::SaveData (wxString outputFile)
 	fileOut.Write();
 	fileOut.Close();	
 	Clear();
+	ResetView();
 }
