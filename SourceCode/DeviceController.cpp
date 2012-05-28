@@ -38,41 +38,21 @@ DeviceController::~DeviceController()
 
 void DeviceController::BuildProfile ()
 {
-	int PC5_LEAD_TIME               = GetVariable (Command::PC5_LEAD_TIME);
-	int PC5_PEAK_1_DUR              = GetVariable (Command::PC5_PEAK_1_DUR);
-	int PC5_PEAK_1_HEIGHT           = GetVariable (Command::PC5_PEAK_1_HEIGHT);
-	int PC5_PEAK_2_DUR              = GetVariable (Command::PC5_PEAK_2_DUR);
-	int PC5_PEAK_2_HEIGHT           = GetVariable (Command::PC5_PEAK_2_HEIGHT);
-	int PC5_INTERVAL                = GetVariable (Command::PC5_INTERVAL);
-	int PC5_V_CMD_OFFSET            = GetVariable (Command::PC5_V_CMD_OFFSET);
+	int PC5_INTERVAL = GetVariable (Command::PC5_INTERVAL);
 	int LCMS_VOLTAGESAMPLINGRATE	= GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE);
-
 	double scaling = ( (double) (1000.0 / LCMS_VOLTAGESAMPLINGRATE));
-	float *profile_array;
 	int length = PC5_INTERVAL * scaling;
+	float *profile_array;
 	profile_array = new float[length];
 
-	int lead_time = PC5_LEAD_TIME * scaling;
-	float p0_height = PC5_V_CMD_OFFSET;
-	for (int xx = 0; xx < lead_time; xx++) {
-		profile_array[xx] = p0_height;
+	if (GetVariable(Command::LCMS_PROFILE_TYPE) == 0) {
+		BuildProfileSquare(&profile_array[0]);
+	} else if (GetVariable(Command::LCMS_PROFILE_TYPE) ==  1) {
+		BuildProfileTriangle(&profile_array[0]);
 	}
-
-	int p1_dur = PC5_PEAK_1_DUR * scaling;
-	int p1_height = PC5_PEAK_1_HEIGHT;
-	for (int xx = lead_time; xx < (lead_time + p1_dur); xx++) {
-		profile_array[xx] = (float) p0_height + (float) p1_height;
-	}
-
-	int p2_dur = PC5_PEAK_2_DUR * scaling;
-	int p2_height = PC5_PEAK_2_HEIGHT;
-	for (int xx = (lead_time + p1_dur); xx < (lead_time + p1_dur + p2_dur); xx++) {
-		profile_array[xx] = (float) p0_height + (float) p2_height;
-	}
-
-	int p3_height = p0_height;
-	for (int xx = (lead_time + p1_dur + p2_dur); xx < length; xx++) {
-		profile_array[xx] = (float) p3_height;
+	else {
+		BuildProfileFile();
+		//read from file not yet implemented
 	}
 
 	long int transfer_profile_length =length;
@@ -90,6 +70,87 @@ void DeviceController::BuildProfile ()
 	delete[] profile_array;
 
 	SetProfile(&transfer_profile[0], transfer_profile_length*2);
+}
+
+void DeviceController::BuildProfileSquare(float *profile_array)
+{
+	int PC5_LEAD_TIME               = GetVariable (Command::PC5_LEAD_TIME);
+	int PC5_PEAK_1_DUR              = GetVariable (Command::PC5_PEAK_1_DUR);
+	int PC5_PEAK_1_HEIGHT           = GetVariable (Command::PC5_PEAK_1_HEIGHT);
+	int PC5_PEAK_2_DUR              = GetVariable (Command::PC5_PEAK_2_DUR);
+	int PC5_PEAK_2_HEIGHT           = GetVariable (Command::PC5_PEAK_2_HEIGHT);
+	int PC5_INTERVAL                = GetVariable (Command::PC5_INTERVAL);
+	int PC5_V_CMD_OFFSET            = GetVariable (Command::PC5_V_CMD_OFFSET);
+	int LCMS_VOLTAGESAMPLINGRATE	= GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE);
+	int LCMS_PROFILE_TYPE			= GetVariable (Command::LCMS_PROFILE_TYPE);
+	double scaling = ( (double) (1000.0 / LCMS_VOLTAGESAMPLINGRATE));
+	int length = PC5_INTERVAL * scaling;
+
+	int lead_time = PC5_LEAD_TIME * scaling;
+	float p0_height = PC5_V_CMD_OFFSET;
+	int p1_dur = PC5_PEAK_1_DUR * scaling;
+	int p1_height = PC5_PEAK_1_HEIGHT;
+	int p2_dur = PC5_PEAK_2_DUR * scaling;
+	int p2_height = PC5_PEAK_2_HEIGHT;
+	int p3_height = p0_height;
+
+	for (int xx = 0; xx < lead_time; xx++) {		//lead time
+		profile_array[xx] = p0_height;
+	}
+	for (int xx = lead_time; xx < (lead_time + p1_dur); xx++) {		//peak 1
+		profile_array[xx] = (float) p0_height + (float) p1_height;
+	}
+	for (int xx = (lead_time + p1_dur); xx < (lead_time + p1_dur + p2_dur); xx++) {	//peak 2
+		profile_array[xx] = (float) p0_height + (float) p2_height;
+	}
+	for (int xx = (lead_time + p1_dur + p2_dur); xx < length; xx++) {	//rest of the interval
+		profile_array[xx] = (float) p3_height;
+	}
+}
+
+void DeviceController::BuildProfileTriangle(float *profile_array)
+{
+	int PC5_LEAD_TIME               = GetVariable (Command::PC5_LEAD_TIME);
+	int PC5_PEAK_1_DUR              = GetVariable (Command::PC5_PEAK_1_DUR);
+	int PC5_PEAK_1_HEIGHT           = GetVariable (Command::PC5_PEAK_1_HEIGHT);
+	int PC5_PEAK_2_DUR              = GetVariable (Command::PC5_PEAK_2_DUR);
+	int PC5_PEAK_2_HEIGHT           = GetVariable (Command::PC5_PEAK_2_HEIGHT);
+	int PC5_INTERVAL                = GetVariable (Command::PC5_INTERVAL);
+	int PC5_V_CMD_OFFSET            = GetVariable (Command::PC5_V_CMD_OFFSET);
+	int LCMS_VOLTAGESAMPLINGRATE	= GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE);
+	int LCMS_PROFILE_TYPE			= GetVariable (Command::LCMS_PROFILE_TYPE);
+	double scaling = ( (double) (1000.0 / LCMS_VOLTAGESAMPLINGRATE));
+	int length = PC5_INTERVAL * scaling;
+
+	int lead_time = PC5_LEAD_TIME * scaling;
+	float p0_height = PC5_V_CMD_OFFSET;
+	int p1_dur = PC5_PEAK_1_DUR * scaling;
+	int p1_height = PC5_PEAK_1_HEIGHT;
+	int p2_dur = PC5_PEAK_2_DUR * scaling;
+	int p2_height = PC5_PEAK_2_HEIGHT;
+	int p3_height = p0_height;
+
+	for (int xx = 0; xx < lead_time; xx++) {	//lead time
+		profile_array[xx] = p0_height;
+	}
+	for (int xx = lead_time; xx < (lead_time + (p1_dur/2)); xx++) { //peak 1 ramp up
+		profile_array[xx] = profile_array[xx-1] + float((float)p1_height*2.0/(float)p1_dur);
+	}
+	for (int xx = (lead_time + (p1_dur/2)); xx < (lead_time + p1_dur); xx++) { //peak 1 ramp down
+		profile_array[xx] = profile_array[xx-1] - float((float)p1_height*2.0/(float)p1_dur);
+	}
+	for (int xx = (lead_time + p1_dur); xx < (lead_time + p1_dur + (p2_dur/2)); xx++) { //peak 2 ramp up
+		profile_array[xx] = profile_array[xx-1] + float((float)p2_height*2.0/(float)p2_dur);
+	}
+	for (int xx = (lead_time + p1_dur + (p2_dur/2)); xx < (lead_time + p1_dur + p2_dur); xx++) { //peak 2 ramp down
+		profile_array[xx] = profile_array[xx-1] - float((float)p2_height*2.0/(float)p2_dur);
+	}
+	for (int xx = (lead_time + p1_dur + p2_dur); xx < length; xx++) {	//rest of the interval
+		profile_array[xx] = (float) p3_height;
+	}
+}
+void DeviceController::BuildProfileFile(void)
+{
 }
 
 void DeviceController::SetProfile (unsigned char *profile, int length)

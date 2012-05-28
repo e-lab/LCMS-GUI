@@ -22,6 +22,7 @@ const int PEAK_1_STEP =		207;
 const int NUM_OF_STEPS =	208;
 const int AVERAGE_OVER =	209;
 const int PROTOCOL_CONFIG =	210;
+const int PROFILE_TYPE    = 211;
 
 //const int PROTOCOL_LIVE =	252;
 //const int PROTOCOL_MEAS =	253;
@@ -108,6 +109,8 @@ public:
 	 */
 	void OnConfigList (wxCommandEvent&);
 
+	void OnProfileType(wxCommandEvent&);
+
 	/**
 	 * Save the current protocol configuration to file.
 	 *
@@ -117,6 +120,7 @@ public:
 	 * @param filename
 	 *   Filename and path.
 	 */
+
 	void SaveCurrentConfig (wxString);
 
 	/**
@@ -193,8 +197,11 @@ private:
 	wxRadioButton*	protoLive;
 	wxRadioButton*	protoMeasure;
 
-	wxChoice*	configList;
+	wxChoice*		configList;
 	wxArrayString*	fileList;
+
+	wxChoice*		profileType;
+	wxArrayString*	profileTypeList;
 
 
 	/**

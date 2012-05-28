@@ -49,6 +49,7 @@ public:
 		PC5_INTERVAL,		//!<  Change the measurement interval.
 		PC5_PEAK_1_DUR,		//!<  Change the peak 1 duration.
 		PC5_PEAK_2_DUR,		//!<  Change the peak 2 duration.
+		LCMS_PROFILE_TYPE,  //!<  specify square or triangle or file
 
 		// ControlBiases
 		LCMS_INT_GBT,

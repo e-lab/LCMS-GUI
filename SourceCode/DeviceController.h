@@ -39,6 +39,11 @@ public:
 	 * Build the profile array based on protocol variables
 	 */
 	void BuildProfile (void);
+
+	void BuildProfileSquare(float *profile_array);
+	void BuildProfileTriangle(float *profile_array);
+	void BuildProfileFile(void);
+
 	/**
 	 * Send profile array to DeviceInterface.
 	 *
@@ -47,6 +52,7 @@ public:
 	 * @param value
 	 *   Integer value of the variable.
 	 */
+
 	void SetProfile (unsigned char *, int);
 	/**
 	 * Set the value of the variable.
