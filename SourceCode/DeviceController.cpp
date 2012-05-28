@@ -82,7 +82,6 @@ void DeviceController::BuildProfileSquare(float *profile_array)
 	int PC5_INTERVAL                = GetVariable (Command::PC5_INTERVAL);
 	int PC5_V_CMD_OFFSET            = GetVariable (Command::PC5_V_CMD_OFFSET);
 	int LCMS_VOLTAGESAMPLINGRATE	= GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE);
-	int LCMS_PROFILE_TYPE			= GetVariable (Command::LCMS_PROFILE_TYPE);
 	double scaling = ( (double) (1000.0 / LCMS_VOLTAGESAMPLINGRATE));
 	int length = PC5_INTERVAL * scaling;
 
@@ -118,7 +117,6 @@ void DeviceController::BuildProfileTriangle(float *profile_array)
 	int PC5_INTERVAL                = GetVariable (Command::PC5_INTERVAL);
 	int PC5_V_CMD_OFFSET            = GetVariable (Command::PC5_V_CMD_OFFSET);
 	int LCMS_VOLTAGESAMPLINGRATE	= GetVariable (Command::LCMS_VOLTAGESAMPLINGRATE);
-	int LCMS_PROFILE_TYPE			= GetVariable (Command::LCMS_PROFILE_TYPE);
 	double scaling = ( (double) (1000.0 / LCMS_VOLTAGESAMPLINGRATE));
 	int length = PC5_INTERVAL * scaling;
 
