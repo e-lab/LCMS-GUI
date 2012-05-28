@@ -268,7 +268,7 @@ void GraphicsPlot::ResetView(void)
 	spectrumBuffer->ResetBuffer();
 	timeBuffer->ResetBuffer();
 	plot->DelLayer (layer);
-	plot->Fit(0, max_view_millisec+(white_space_pct/100.0*max_view_millisec), -0.3, 3.3, NULL, NULL);  //sets the default view
+	plot->Fit(0, max_view_millisec+(white_space_pct/100.0*max_view_millisec), plot->GetDesiredYmin(), plot->GetDesiredYmax(), NULL, NULL);  //sets the default view
 	plot->SetMPScrollbars(false);  //removes the scrollbar when there is no data to display
 }
 
