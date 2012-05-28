@@ -96,6 +96,7 @@ ControlProtocol::ControlProtocol (wxWindow *owner, DeviceController *controller)
 ControlProtocol::~ControlProtocol()
 {
 	delete fileList;
+	delete profileTypeList;
 	fileList = (wxArrayString*) NULL;
 }
 
