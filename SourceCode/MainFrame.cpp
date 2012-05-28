@@ -187,8 +187,8 @@ void MainFrame::CreateMenuBar()
 	fileMenu->Append (SAVE_CONFIG, wxT ("&Save Protocol"), wxT ("Save the protocol configuration file"));
 	fileMenu->Append (RELOAD_CONFIGS, wxT ("&Reload Protocols"), wxT ("Reload the protocol configuration files"));
 	fileMenu->AppendSeparator();
-	fileMenu->Append (wxID_SAVE, wxT ("&Save.."), wxT ("Save currently displayed data"));
-	fileMenu->Append (CONFIGURATION, wxT ("&Config FPGA.."), wxT ("Load the XEM configuration bit file"));
+	fileMenu->Append (wxID_SAVE, wxT ("&Save Measured Data..."), wxT ("Save measured data"));
+	fileMenu->Append (CONFIGURATION, wxT ("&Config FPGA..."), wxT ("Load the XEM configuration bit file"));
 	fileMenu->AppendSeparator();
 	fileMenu->Append (wxID_EXIT, wxT ("E&xit\tAlt-X"), wxT ("Quit this program"));
 
