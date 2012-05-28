@@ -22,6 +22,7 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 {
 	saveToFile = new GraphicsSaveData();
 	saveToFile->Create();
+	saveToFile->SetPriority(WXTHREAD_MIN_PRIORITY);  // saving is a low priority thread
 	saveToFile->Run();
 
 	max_size_buffer = 100000;

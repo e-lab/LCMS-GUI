@@ -23,6 +23,7 @@ DeviceController::DeviceController (wxEvtHandler* display)
 
 	xemDevice = new DeviceInterface (display);
 	xemDevice->Create();
+	xemDevice->SetPriority(WXTHREAD_MAX_PRIORITY); //getting data is highest priority
 	xemDevice->Run();
 }
 
