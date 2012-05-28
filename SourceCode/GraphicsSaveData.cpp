@@ -19,11 +19,24 @@
 GraphicsSaveData::GraphicsSaveData () : wxThread (wxTHREAD_JOINABLE)
 {
 	//display = displayTmp;
+	nb_points = 0;
+	nb_files = 0;
+	start_new = true;
+
+	default_filename = wxT ("tmp_save_file_");
+
+	tmp_filename = new wxFileName(wxFileName::GetTempDir (), default_filename + wxT ("0"), wxT ("dat"));
+
+	tmp_file = new wxFFile (tmp_filename->GetFullPath (), wxT("w"));
 }
 
 GraphicsSaveData::~GraphicsSaveData()
 {
+	delete tmp_filename;
+	tmp_filename = (wxFileName*) NULL;
 
+	delete tmp_file;
+	tmp_file = (wxFFile*) NULL;
 }
 
 wxThread::ExitCode GraphicsSaveData::Entry()
@@ -38,12 +51,14 @@ wxThread::ExitCode GraphicsSaveData::Entry()
 		if (wxMSGQUEUE_NO_ERROR == result) {
 
 			switch (current_message.type) {
-				case GraphicsSaveData::FILENAME :
+				case GraphicsSaveData::SAVE :
+					SaveData ();
 					break;
-				case GraphicsSaveData::FINALIZE :
+				case GraphicsSaveData::DELETE :
+					DeleteData ();
 					break;
 				case GraphicsSaveData::DATA :
-					SaveData ();
+					WriteData ();
 					break;
 				default :
 					break;
@@ -64,5 +79,94 @@ SimpleQueue<struct GraphicsSaveData::save_data>& GraphicsSaveData::GetQueue ()
 
 void GraphicsSaveData::SaveData ()
 {
+	// close temp file that is being written to
+	tmp_file->Flush ();
+	tmp_file->Close ();
+	delete tmp_file;
+	tmp_file = (wxFFile*) NULL;
 
+	// move temp file to save file dir with new name
+	wxArrayString *fileList = new wxArrayString();
+	fileList->Clear();
+	wxDir::GetAllFiles (tmp_filename->GetPath (), fileList, wxT ("*.dat"), wxDIR_FILES);
+	for (unsigned int xx = 0; xx < fileList->GetCount(); xx++) {
+		::wxLogMessage(wxT("file %i:\t%s"), xx, (fileList->Item (xx)).GetData () );
+
+		// make new name
+		// move to new dir with new name
+	}
+	delete fileList;
+	fileList = (wxArrayString*) NULL;
+
+	// open new temp file
+	nb_files = 0;
+	tmp_filename->SetName (default_filename + nb_files);
+	tmp_file = new wxFFile (tmp_filename->GetFullPath (), wxT("w"));
+	start_new = true;
+}
+
+void GraphicsSaveData::DeleteData ()
+{
+	// close temp file that is being written to
+	delete tmp_file;
+	tmp_file = (wxFFile*) NULL;
+
+	// delete all tmp file in tmp dir.
+	wxArrayString *fileList = new wxArrayString();
+	fileList->Clear();
+	wxDir::GetAllFiles (tmp_filename->GetPath (), fileList, wxT ("*.dat"), wxDIR_FILES);
+	for (unsigned int xx = 0; xx < fileList->GetCount(); xx++) {
+		::wxLogMessage(wxT("file %i:\t%s"), xx, (fileList->Item (xx)).GetData () );
+
+		// delete fles.
+	}
+	delete fileList;
+	fileList = (wxArrayString*) NULL;
+
+	// open new temp file
+	nb_files = 0;
+	tmp_filename->SetName (default_filename + nb_files);
+	tmp_file = new wxFFile (tmp_filename->GetFullPath (), wxT("w"));
+	start_new = true;
+}
+
+void GraphicsSaveData::WriteData ()
+{
+	// timestap new file
+	if (start_new) {
+		wxString timeStamp = wxT ("# ");
+		timeStamp << wxNow();
+		tmp_file->Write (timeStamp);
+
+		wxString tileLine = wxT ("# ");
+		//tileLine << data->tile_time << wxT ("\t") << data->tile_spectrum;
+		tmp_file->Write (tileLine);
+
+		start_new = false;
+	}
+
+/*
+	// write to temp data file
+	for (int xx = 0; xx < data->length; xx++) {
+		wxString dataLine = wxT ("");
+		//dataLine << data->time[xx] << wxT ("\t") << data->spectrum[xx];
+		tmp_file->Write (dataLine);
+		nb_points++;
+	}
+*/
+
+	// if file is 1,000,000 lines, start new file.
+	if (nb_points_max <= nb_points) {
+		tmp_file->Flush ();
+		tmp_file->Close ();
+		delete tmp_file;
+		tmp_file = (wxFFile*) NULL;
+
+		nb_points = 0;
+
+		nb_files++;
+		tmp_filename->SetName (default_filename + nb_files);
+		tmp_file = new wxFFile (tmp_filename->GetFullPath (), wxT("w"));
+		start_new = true;
+	}
 }

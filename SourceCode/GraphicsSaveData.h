@@ -2,6 +2,9 @@
 #define GRAPHICS_SAVE_DATA_H
 
 #include <wx/wx.h>
+#include <wx/ffile.h>
+#include <wx/filename.h>
+#include <wx/dir.h>
 #include "SimpleQueue.h"
 
 
@@ -17,8 +20,8 @@ class GraphicsSaveData : public wxThread
 public:
 
 	enum save_data_type {
-		FILENAME,   	// root filename to use
-		FINALIZE,	// no more data will be sent
+		SAVE,   	// save filename and dir
+		DELETE,   	// delete temp save files
 		DATA       	// contains data
 	};
 
@@ -59,6 +62,15 @@ public:
 	SimpleQueue<struct GraphicsSaveData::save_data>& GetQueue ();
 
 private:
+	wxString		default_filename;
+	wxFFile 		*tmp_file;
+	wxFileName 		*tmp_filename;
+
+	static const int	nb_points_max = 1000000;
+	int			nb_points;
+	int			nb_files;
+	bool			start_new;
+
 	SimpleQueue<struct GraphicsSaveData::save_data> messageQueue;
 
 	//wxEvtHandler* display; //!< Pointer to the GraphicsPanel object sending data.
@@ -66,9 +78,19 @@ private:
 	struct save_data current_message;
 
 	/**
-	 * Sava data to the disk.
+	 * Move tmp data files to save dir and rename files.
 	 */
 	void SaveData ();
+
+	/**
+	 * Delete tmp data files.
+	 */
+	void DeleteData ();
+
+	/**
+	 * Write data to the file.
+	 */
+	void WriteData ();
 };
 
 #endif /* GRAPHICS_SAVE_DATA_H */
