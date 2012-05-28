@@ -51,13 +51,13 @@ wxThread::ExitCode GraphicsSaveData::Entry()
 		if (wxMSGQUEUE_NO_ERROR == result) {
 
 			switch (current_message.type) {
-				case GraphicsSaveData::SAVE :
+				case GraphicsSaveData::GSD_SAVE :
 					SaveData ();
 					break;
-				case GraphicsSaveData::DELETE :
+				case GraphicsSaveData::GSD_DELETE :
 					DeleteData ();
 					break;
-				case GraphicsSaveData::DATA :
+				case GraphicsSaveData::GSD_DATA :
 					WriteData ();
 					break;
 				default :
@@ -100,7 +100,7 @@ void GraphicsSaveData::SaveData ()
 
 	// open new temp file
 	nb_files = 0;
-	tmp_filename->SetName (default_filename + nb_files);
+	tmp_filename->SetName (default_filename.Append(nb_files));
 	tmp_file = new wxFFile (tmp_filename->GetFullPath (), wxT("w"));
 	start_new = true;
 }
@@ -125,7 +125,7 @@ void GraphicsSaveData::DeleteData ()
 
 	// open new temp file
 	nb_files = 0;
-	tmp_filename->SetName (default_filename + nb_files);
+	tmp_filename->SetName (default_filename.Append(nb_files));
 	tmp_file = new wxFFile (tmp_filename->GetFullPath (), wxT("w"));
 	start_new = true;
 }
@@ -165,7 +165,7 @@ void GraphicsSaveData::WriteData ()
 		nb_points = 0;
 
 		nb_files++;
-		tmp_filename->SetName (default_filename + nb_files);
+		tmp_filename->SetName (default_filename.Append(nb_files));
 		tmp_file = new wxFFile (tmp_filename->GetFullPath (), wxT("w"));
 		start_new = true;
 	}

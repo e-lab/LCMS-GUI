@@ -20,9 +20,9 @@ class GraphicsSaveData : public wxThread
 public:
 
 	enum save_data_type {
-		SAVE,   	// save filename and dir
-		DELETE,   	// delete temp save files
-		DATA       	// contains data
+		GSD_SAVE,	// save filename and dir
+		GSD_DELETE,	// delete temp save files
+		GSD_DATA	// contains data
 	};
 
 	struct save_data {
