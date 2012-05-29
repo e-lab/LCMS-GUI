@@ -64,8 +64,10 @@ MainFrame::MainFrame (const wxString& title, const wxSize& size) : wxFrame (NULL
 	Connect (SAVE_CONFIG, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnSaveProtocol));
 	Connect (RELOAD_CONFIGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnReloadConfigs));
 	Connect (CONFIGURATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::Configuration));
-	Connect (wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnQuit));
+	Connect (wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnMenuExit));
 	Connect (wxID_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnAbout));
+	Connect (-1, wxEVT_CLOSE_WINDOW, wxCloseEventHandler (MainFrame::OnQuit));  //ends threads when attempt to quit program
+
 }
 
 MainFrame::~MainFrame()
@@ -132,13 +134,19 @@ void MainFrame::Configuration (wxCommandEvent & event)
 	xemDeviceCtrl->Initialize (filename);
 }
 
-void MainFrame::OnQuit (wxCommandEvent& event)
+void MainFrame::OnMenuExit (wxCommandEvent& event)
+{
+	Close (true);
+}
+
+void MainFrame::OnQuit(wxCloseEvent& event)
 {
 	xemDeviceCtrl->Stop();
 	xemDeviceCtrl->OnQuit();
 	display->OnQuit();
-	Close (true);
+	this->Destroy();
 }
+
 
 void MainFrame::OnAbout (wxCommandEvent& event)
 {

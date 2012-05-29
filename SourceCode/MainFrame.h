@@ -130,15 +130,23 @@ private:
 	 */
 	void Configuration (wxCommandEvent&);
 	/**
+	 * When the user clicks the x to quit the program stop threads
+	 *
+	 */
+	void MainFrame::OnQuit(wxCloseEvent& event);
+
+	/**
 	 * Quit application and close the window.
 	 *
 	 * Handles the default ID exit event which is generated when the
 	 * 'Exit' menu item is selected or 'Alt-X' is pressed.
 	 *
-	 * @param event
+	 * @param events
 	 *   Reference to a wxCommandEvent.
 	 */
-	void OnQuit (wxCommandEvent&);
+	void OnMenuExit (wxCommandEvent&);
+
+
 	/**
 	 * Show the About window.
 	 *
