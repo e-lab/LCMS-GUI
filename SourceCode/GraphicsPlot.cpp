@@ -207,9 +207,7 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 			spectrum[i]= (C/cds_time)*(spectrum[i])/1E-12;
 			spectrum[i]= spectrum[i]*gain;
 			spectrumBuffer->PushToBuffer(spectrum[i]);  //add the results to the circular spectrum buffer used for plotting
-		}
-
-		else {
+		} else {
 			spectrum[i] = ( ( (float) raw_count) / (float) 65535) * 3.3f;
 			spectrumBuffer->PushToBuffer(spectrum[i]);
 		}
@@ -225,22 +223,23 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 
 	lastTime = time[length-1]; //keep track of time from last measurement
 
-	struct save_data *data = new struct save_data;
-	data->spectrum	= &spectrum[0];
-	data->time	= &time[0];
-	data->length 	= length;
-	data->tile_time	= wxT("Time (ms)");
+	struct GraphicsSaveData::save_data data;
+	data.type		= GraphicsSaveData::GSD_DATA;
+	data.spectrum	= &spectrum[0];
+	data.time		= &time[0];
+	data.length 	= length;
+	data.tile_time	= wxT("Time (ms)");
 
 	if(mode==1) {
 		yScale->SetName (wxT ("Current (pA)"));
-		data->tile_spectrum = wxT ("Current (pA)");
+		data.tile_spectrum = wxT ("Current (pA)");
 	}
 	if(mode==0) {
 		yScale->SetName (wxT ("Voltage (V)"));
-		data->tile_spectrum = wxT ("Voltage (V)");
+		data.tile_spectrum = wxT ("Voltage (V)");
 	}
 
-	save_data_store.push_back (data);
+	saveToFile->GetQueue().Post (data);
 
 	delete[] rawData;
 	rawData = NULL;
@@ -276,67 +275,17 @@ void GraphicsPlot::ResetView(void)
 
 void GraphicsPlot::Clear(void)
 {
-	while (save_data_store.size() > 0) {
-		struct save_data *data = save_data_store.back();
-		delete[] data->spectrum;
-		delete[] data->time;
+	struct GraphicsSaveData::save_data data;
+	data.type = GraphicsSaveData::GSD_DELETE;
 
-		delete data;
-		save_data_store.pop_back();
-	}
+	saveToFile->GetQueue().Post (data);
 }
 
 void GraphicsPlot::SaveData (wxString outputFile)
 {
-	if (0 == save_data_store.size()) {
-		wxMessageBox( wxT("No measurements to record") );
-		return;
-	}
+	struct GraphicsSaveData::save_data data;
+	data.type		= GraphicsSaveData::GSD_SAVE;
+	data.filename	= outputFile;
 
-	wxFileName fileName = wxFileName (outputFile);
-
-	if (!fileName.HasExt()) {
-		fileName.SetExt (wxT (".txt"));
-	}
-	
-	if (fileName.FileExists()) {
-		::wxMessageBox (wxT ("A file with the current save name already exists.\n\n"
-							 "File Name:  ") + fileName.GetFullName(),
-						wxT ("Save Aborted"));
-
-		return;
-	}
-
-	// wxTextFile should not be used for files > 1 Meg
-	wxTextFile fileOut;
-
-	if (!fileOut.Create (fileName.GetFullPath())) {
-		::wxMessageBox (wxT ("The file could not be created.\n"),
-						wxT ("File Creation Failed"));
-		return;
-	}
-
-	wxString timeStamp = wxT ("# ");
-	timeStamp << wxNow();
-	fileOut.AddLine (timeStamp);
-	
-	struct save_data *first_save_data = save_data_store.at(0);
-	wxString tileLine = wxT ("# ");
-	tileLine << first_save_data->tile_time << wxT ("\t") << first_save_data->tile_spectrum;
-	fileOut.AddLine (tileLine);
-
-	for (unsigned int ii = 0; ii < save_data_store.size(); ii++) {
-		struct save_data *data = save_data_store.at(ii);
-
-		for (int xx = 0; xx < data->length; xx++) {
-			wxString dataLine= wxT ("");
-			dataLine << data->time[xx] << wxT ("\t") << data->spectrum[xx];
-			fileOut.AddLine (dataLine);
-		}
-	}
-
-	fileOut.Write();
-	fileOut.Close();	
-	Clear();
-	ResetView();
+	saveToFile->GetQueue().Post (data);
 }
