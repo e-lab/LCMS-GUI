@@ -50,6 +50,8 @@ public:
 	 */
 	~GraphicsPlot();
 
+	void GraphicsPlot::OnQuit();
+
 	/**
 	 * Pass raw data from the device to this object.
 	 *

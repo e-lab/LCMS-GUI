@@ -29,12 +29,17 @@ DeviceController::DeviceController (wxEvtHandler* display)
 
 DeviceController::~DeviceController()
 {
-	//xemDevice->Wait();
 	delete xemDevice;
 	xemDevice = (DeviceInterface*) NULL;
 
 	delete variables;
 	variables = NULL;
+}
+
+void DeviceController::OnQuit()
+{
+	//xemDevice->Wait();
+	xemDevice->Delete(); //use wait to free resources but this doesn't work yet
 }
 
 void DeviceController::BuildProfile ()

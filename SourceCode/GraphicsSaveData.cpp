@@ -44,8 +44,8 @@ GraphicsSaveData::~GraphicsSaveData()
 wxThread::ExitCode GraphicsSaveData::Entry()
 {
 
-	//while (!TestDestroy()) {
-	while (1) {
+	while (!TestDestroy()) {
+	//while (1) {
 
 		// Process messages
 		wxMessageQueueError result = messageQueue.ReceiveTimeout (10, current_message);

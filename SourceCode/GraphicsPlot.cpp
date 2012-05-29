@@ -66,6 +66,12 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	SetSizerAndFit (sizerPlot);
 }
 
+void GraphicsPlot::OnQuit()
+{
+	saveToFile->Delete();
+	//saveToFile->Wait();  //use wait to free resources but this doesn't work yet
+}
+
 GraphicsPlot::~GraphicsPlot()
 {
 	delete saveToFile;

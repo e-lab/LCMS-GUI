@@ -35,6 +35,8 @@ public:
 	 */
 	virtual void OnDeviceEvent (DeviceEvent&) {};
 
+	virtual void OnQuit() {};
+
 	/**
 	 * Send a predefined command to the display.
 	 *

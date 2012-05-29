@@ -64,13 +64,13 @@ DeviceInterface::~DeviceInterface()
 wxThread::ExitCode DeviceInterface::Entry()
 {
 
-	//while (!TestDestroy()) {
-	while (1) {
+	while (!TestDestroy()) {
+	//while (1) {
 
 		Command::packet packet;
 
 		// Process commands
-		while (wxMSGQUEUE_NO_ERROR == commandQueue.ReceiveNoWait (packet)) {
+		while (wxMSGQUEUE_NO_ERROR == commandQueue.ReceiveTimeout (1, packet)) {
 			ProcessCommand (packet);
 		}
 

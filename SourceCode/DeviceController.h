@@ -35,6 +35,8 @@ public:
 	 */
 	~DeviceController();
 
+	void DeviceController::OnQuit();
+
 	/**
 	 * Build the profile array based on protocol variables
 	 */

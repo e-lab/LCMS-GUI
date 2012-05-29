@@ -135,6 +135,8 @@ void MainFrame::Configuration (wxCommandEvent & event)
 void MainFrame::OnQuit (wxCommandEvent& event)
 {
 	xemDeviceCtrl->Stop();
+	xemDeviceCtrl->OnQuit();
+	display->OnQuit();
 	Close (true);
 }
 
