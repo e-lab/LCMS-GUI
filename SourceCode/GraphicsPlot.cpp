@@ -94,8 +94,6 @@ GraphicsPlot::~GraphicsPlot()
 
 	delete information;
 	information = (GraphicsInformation*) NULL;
-
-	Clear();
 }
 
 void GraphicsPlot::OnDeviceEvent (DeviceEvent& rawEvent)
