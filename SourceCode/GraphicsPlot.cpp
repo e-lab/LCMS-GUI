@@ -53,7 +53,8 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 
 	xScale = new mpScaleX(wxT("Time (ms)"), mpALIGN_BORDER_BOTTOM, true);
 	yScale = new mpScaleY(wxT("Voltage (V)"), mpALIGN_BORDER_LEFT, true);
-
+	yScale->SetLabelFormat( wxT("%.3f")); // use 3 decimal places on Y-axis label
+	
 	plot->AddLayer (xScale);
 	plot->AddLayer (yScale);
 
