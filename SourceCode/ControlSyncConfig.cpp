@@ -628,9 +628,9 @@ void ControlSyncConfig::Reset (void)
 
 	int defaultVoltageSamplingRate=100; //100 us, 10kHz
 	int defaultResetPeriod=100; //100us
-	int defaultIntResetDuration = 10;
+	int defaultIntResetDuration = 2;
 	int defaultPostResetDuration= 2;
-	int defaultCDSTime1=2;
+	int defaultCDSTime1=5;
 	int defaultCDSTime2=90;
 	int defaultCDSPulseWidth=2;
 
@@ -639,11 +639,11 @@ void ControlSyncConfig::Reset (void)
 
 	choiceVoltageSamplingRate->SetStringSelection (wxT ("10KHz (100us)"));
 	choiceResetPeriod->SetStringSelection (wxT ("10KHz (100us)"));
-	choiceIntResetDuration->SetStringSelection (wxT ("10us"));
+	choiceIntResetDuration->SetStringSelection (wxT ("2us"));
 	choicePostResetDuration->SetStringSelection (wxT ("2us"));
 
 
-	choiceCDSTime1->SetStringSelection (wxT ("2us"));
+	choiceCDSTime1->SetStringSelection (wxT ("5us"));
 	choiceCDSTime2->SetStringSelection (wxT ("90us"));
 	choiceCDSPulseWidth->SetStringSelection (wxT ("2 us"));
 
