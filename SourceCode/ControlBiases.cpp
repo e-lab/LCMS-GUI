@@ -155,6 +155,7 @@ ControlBiases::ControlBiases (wxWindow* owner, DeviceController* controller) : C
 	Connect (OBuff_Vbp, wxEVT_COMMAND_SLIDER_UPDATED, wxScrollEventHandler (ControlBiases::OnSliderOBuff_Vbp));
 	Connect (Vref, wxEVT_COMMAND_SLIDER_UPDATED, wxScrollEventHandler (ControlBiases::OnSliderVref));
 	Connect (V_Cmd_Offset, wxEVT_COMMAND_SLIDER_UPDATED, wxScrollEventHandler (ControlBiases::OnSliderV_Cmd_Offset));
+	Connect (OffsetCorrection, wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEventHandler (ControlBiases::OnSpinOffsetCorrection));
 }
 
 ControlBiases::~ControlBiases()
@@ -280,6 +281,14 @@ void ControlBiases::OnSliderV_Cmd_Offset (wxScrollEvent& evt)
 	textV_Cmd_Offset->SetLabel (wxString (str, wxConvUTF8));
 }
 
+void ControlBiases::OnSpinOffsetCorrection (wxSpinEvent& evt)
+{
+	::wxLogMessage (wxT ("sliderOffsetCorrection value:  %i"), evt.GetPosition());
+	spinOffsetCorrection->SetRange (-3000, 3000);
+	xemDeviceCtrl->SetCommand (Command::LCMS_OFFSET_CORRECTION, evt.GetPosition());
+}
+
+
 void ControlBiases::Reset (void)
 {
 	float vMax = 3.3f;
@@ -301,6 +310,7 @@ void ControlBiases::Reset (void)
 
 	float defaultVrefV=1.65f;		 //1.65V
 	float defaultV_Cmd_OffsetV=1.65f;	 //1.65V
+	float defaultOffsetCorrection=1.65f;
 
 	int defaultInt_gbt= (defaultInt_gbtV/vMax) *sliderMax;
 	int defaultInt_Vbn= (defaultInt_VbnV/vMax) *sliderMax;
@@ -331,6 +341,7 @@ void ControlBiases::Reset (void)
 
 	sliderVref->SetValue (defaultVref);
 	sliderV_Cmd_Offset->SetValue (defaultV_Cmd_Offset);
+	spinOffsetCorrection->SetValue(defaultOffsetCorrection);
 
 	char str[20] = "";
 
@@ -371,6 +382,7 @@ void ControlBiases::Reset (void)
 	xemDeviceCtrl->SetCommand (Command::LCMS_OBUFF_VBP,defaultOBuff_Vbp);
 	xemDeviceCtrl->SetCommand (Command::LCMS_VREF,defaultVref);
 	xemDeviceCtrl->SetCommand (Command::PC5_V_CMD_OFFSET,defaultV_Cmd_Offset);
+	xemDeviceCtrl->SetCommand (Command::LCMS_OFFSET_CORRECTION,defaultOffsetCorrection);
 }
 
 void ControlBiases::ResetControls (wxCommandEvent& evt)

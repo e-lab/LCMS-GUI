@@ -3,6 +3,7 @@
 
 #include <wx/wx.h>
 #include "ControlPanel.h"
+#include <wx/spinctrl.h>
 
 class	DeviceController;
 
@@ -20,6 +21,7 @@ enum {
 	OBuff_Vbp,
 	Vref,
 	V_Cmd_Offset,
+	OffsetCorrection
 };
 
 /**
@@ -60,6 +62,7 @@ public:
 	void OnSliderOBuff_Vbp (wxScrollEvent& evt);
 	void OnSliderVref (wxScrollEvent& evt);
 	void OnSliderV_Cmd_Offset (wxScrollEvent& evt);
+	void OnSpinOffsetCorrection (wxSpinEvent& evt);
 
 	/**
 	 * Reset the controls.
@@ -131,6 +134,8 @@ private:
 	wxSlider*	sliderV_Cmd_Offset;
 	wxStaticText*	textV_Cmd_Offset;
 
+	int		defaultValueOffsetCorrection;
+	wxSpinCtrl*		spinOffsetCorrection;
 };
 
 

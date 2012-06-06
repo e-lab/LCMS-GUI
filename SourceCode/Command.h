@@ -63,6 +63,7 @@ public:
 		LCMS_OBUFF_VBP,
 		LCMS_VREF,
 		PC5_V_CMD_OFFSET,
+		LCMS_OFFSET_CORRECTION,
 
 		// ControlConfiguration
 		LCMS_CAPSELECT,

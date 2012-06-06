@@ -207,8 +207,10 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 		if (mode == 1) // hardware cds mode
 		{
 			float cds_time = (cdst2-cdst1)*1E-6;
+			float offset_correction = rawEvent.GetVariable(Command::LCMS_OFFSET_CORRECTION);
+			offset_correction = offset_correction / float(1000);
 			spectrum[i] = ( ( (float) raw_count) / (float) 65535) * 3.3f;
-			spectrum[i] = spectrum[i] - 1.65;
+			spectrum[i] = spectrum[i] - 1.65 - offset_correction;
 			spectrum[i]= (C/cds_time)*(spectrum[i])/1E-12;
 			spectrum[i]= spectrum[i]*gain;
 			spectrumBuffer->PushToBuffer(spectrum[i]);  //add the results to the circular spectrum buffer used for plotting
