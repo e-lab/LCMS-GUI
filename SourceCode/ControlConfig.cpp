@@ -335,8 +335,9 @@ void ControlConfig::Reset (void)
 
 	//int defaultCounterClock=2; //20 mhz
 
-	capSelect0->SetValue (1);
-	capSelect1->SetValue (0);
+	capSelect0->SetValue (0);
+	capSelect2->SetValue (0);
+	capSelect1->SetValue (1);
 
 	bypassPost0->SetValue (!defaultbypassPost);
 	bypassPost1->SetValue (defaultbypassPost);
@@ -366,7 +367,7 @@ void ControlConfig::Reset (void)
 
 
 //	char str[20] = "";
-	xemDeviceCtrl->SetCommand (Command::LCMS_CAPSELECT, 0);
+	xemDeviceCtrl->SetCommand (Command::LCMS_CAPSELECT, 1);
 	xemDeviceCtrl->SetCommand (Command::LCMS_POSTGAINSELECT, defaultPostGainSelect);
 	xemDeviceCtrl->SetCommand (Command::LCMS_BYPASSPOST, defaultbypassPost);
 	xemDeviceCtrl->SetCommand (Command::LCMS_CHANNEL_SEL, 0);

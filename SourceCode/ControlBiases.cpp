@@ -318,7 +318,7 @@ void ControlBiases::Reset (void)
 
 	float defaultVrefV=1.65f;		 //1.65V
 	float defaultV_Cmd_OffsetV=1.65f;	 //1.65V
-	float defaultOffsetCorrection=1.65f;
+	float defaultOffsetCorrection=150.0;
 
 	int defaultInt_gbt= (defaultInt_gbtV/vMax) *sliderMax;
 	int defaultInt_Vbn= (defaultInt_VbnV/vMax) *sliderMax;
@@ -349,6 +349,7 @@ void ControlBiases::Reset (void)
 
 	sliderVref->SetValue (defaultVref);
 	sliderV_Cmd_Offset->SetValue (defaultV_Cmd_Offset);
+	spinOffsetCorrection->SetRange (-3000, 3000);
 	spinOffsetCorrection->SetValue(defaultOffsetCorrection);
 
 	char str[20] = "";

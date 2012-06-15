@@ -109,6 +109,8 @@ void GraphicsSaveData::SaveData ()
 	tmp_filename->SetName (wxString::Format(wxT ("%s%i"), default_filename, nb_files));
 	tmp_file = new wxFFile (tmp_filename->GetFullPath (), wxT("w"));
 	start_new = true;
+	//delete[] new_full_path;
+	//new_full_path = NULL;
 }
 
 void GraphicsSaveData::DeleteData ()

@@ -623,16 +623,19 @@ void ControlSyncConfig::Reset (void)
 	//float vMax = 3.3f;
 	//float sliderMax = 65535.0f;
 
-	bool defaultbypass_lpf=true;//bypass
+	bool defaultbypass_lpf=false;//enable the lpf
 	//float defaultVoffsetB=0.0f;
 
 	int defaultVoltageSamplingRate=100; //100 us, 10kHz
 	int defaultResetPeriod=100; //100us
-	int defaultIntResetDuration = 2;
-	int defaultPostResetDuration= 2;
+	int defaultIntResetDuration = 2; //2 us
+	int defaultPostResetDuration= 0; //always reset
 	int defaultCDSTime1=5;
 	int defaultCDSTime2=90;
-	int defaultCDSPulseWidth=2;
+	int defaultCDSPulseWidth=1;
+	bool defaultMode0=false;
+	bool defaultMode1=true;  //hardware cds mode
+	bool defaultMode2=false;
 
 	bypass_lpf0->SetValue (!defaultbypass_lpf);
 	bypass_lpf1->SetValue (defaultbypass_lpf);
@@ -640,12 +643,16 @@ void ControlSyncConfig::Reset (void)
 	choiceVoltageSamplingRate->SetStringSelection (wxT ("10KHz (100us)"));
 	choiceResetPeriod->SetStringSelection (wxT ("10KHz (100us)"));
 	choiceIntResetDuration->SetStringSelection (wxT ("2us"));
-	choicePostResetDuration->SetStringSelection (wxT ("2us"));
+	choicePostResetDuration->SetStringSelection (wxT ("Always Reset"));
 
 
 	choiceCDSTime1->SetStringSelection (wxT ("5us"));
 	choiceCDSTime2->SetStringSelection (wxT ("90us"));
-	choiceCDSPulseWidth->SetStringSelection (wxT ("2 us"));
+	choiceCDSPulseWidth->SetStringSelection (wxT ("1 us"));
+
+	mode0->SetValue(defaultMode0);
+	mode1->SetValue(defaultMode1);
+	mode2->SetValue(defaultMode2);
 
 	//char str[20] = "";
 
@@ -657,6 +664,7 @@ void ControlSyncConfig::Reset (void)
 	xemDeviceCtrl->SetCommand (Command::LCMS_CDS_TIME1, defaultCDSTime1);
 	xemDeviceCtrl->SetCommand (Command::LCMS_CDS_TIME2, defaultCDSTime2);
 	xemDeviceCtrl->SetCommand (Command::LCMS_CDS_PULSE_WIDTH, defaultCDSPulseWidth);
+	xemDeviceCtrl->SetCommand (Command::LCMS_MODE, defaultMode1);
 }
 
 
