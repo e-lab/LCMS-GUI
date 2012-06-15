@@ -126,12 +126,12 @@ ControlBiases::ControlBiases (wxWindow* owner, DeviceController* controller) : C
 	row->Add (textV_Cmd_Offset);
 	sizerBox->Add (row, 0, wxTOP | wxLEFT | wxRIGHT | wxALIGN_CENTER, 1);
 
-	//create spin for OffsetCorrection
+	//create spin for Digital OffsetCorrection
 	row = new wxBoxSizer (wxHORIZONTAL);
-	row->Add (new wxStaticText (this, -1, wxT ("Offset Correction:")), 1, wxALIGN_LEFT);
-	spinOffsetCorrection = new wxSpinCtrl (this, OffsetCorrection, wxEmptyString, wxDefaultPosition, wxSize (80, wxDefaultCoord));
+	spinOffsetCorrection = new wxSpinCtrl (this, OffsetCorrection, wxEmptyString, wxDefaultPosition, wxSize (70, 20));
+	row->Add (new wxStaticText(this, -1, wxT("Digital Offset Correction: "), wxDefaultPosition, wxSize(130, 20), wxALIGN_LEFT));
 	row->Add (spinOffsetCorrection);
-	row->Add (new wxStaticText (this, -1, wxT ("mV")), 1, wxALIGN_LEFT);
+	row->Add (new wxStaticText (this, -1, wxT ("mV"), wxDefaultPosition, wxSize(85,20), wxALIGN_LEFT));
 	sizerBox->Add (row, 0, wxTOP | wxLEFT | wxRIGHT | wxALIGN_CENTER, 1);
 
 	//Create compensation reset button
