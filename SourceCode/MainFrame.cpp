@@ -62,7 +62,7 @@ MainFrame::MainFrame (const wxString& title, const wxSize& size) : wxFrame (NULL
 
 	Connect (wxID_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnSave));
 	Connect (SAVE_CONFIG, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnSaveProtocol));
-	Connect (RELOAD_CONFIGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnReloadConfigs));
+	//Connect (RELOAD_CONFIGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnReloadConfigs));
 	Connect (CONFIGURATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::Configuration));
 	Connect (wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnMenuExit));
 	Connect (wxID_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (MainFrame::OnAbout));
@@ -170,7 +170,7 @@ void MainFrame::OnSaveProtocol (wxCommandEvent& event)
 	protocol->SaveCurrentConfig (saveLocation.GetPath());
 }
 
-void MainFrame::OnReloadConfigs (wxCommandEvent& event)
+/*void MainFrame::OnReloadConfigs (wxCommandEvent& event)
 {
 	// Ask for the protocol configuration save directory from the user.
 	wxDirDialog saveDirectory (this, wxT ("Select the protocol configuration directory."), wxGetCwd());
@@ -180,7 +180,7 @@ void MainFrame::OnReloadConfigs (wxCommandEvent& event)
 	}
 
 	protocol->LoadConfigFiles (saveDirectory.GetPath());
-}
+}*/
 
 void MainFrame::SetIconResource()
 {

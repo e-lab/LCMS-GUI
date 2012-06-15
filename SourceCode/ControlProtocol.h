@@ -95,7 +95,7 @@ public:
 	 * @param path
 	 *   wxString containing the full path-name to a directory.
 	 */
-	void LoadConfigFiles (wxString);
+	//void LoadConfigFiles (wxString);
 
 	/**
 	 * Change the protocol configuration to a predefined setting.
@@ -107,7 +107,7 @@ public:
 	 * @param evt
 	 *   Reference to a wxCommandEvent.
 	 */
-	void OnConfigList (wxCommandEvent&);
+	//void OnConfigList (wxCommandEvent&);
 
 	void OnProfileType(wxCommandEvent&);
 
@@ -197,8 +197,8 @@ private:
 	wxRadioButton*	protoLive;
 	wxRadioButton*	protoMeasure;
 
-	wxChoice*		configList;
-	wxArrayString*	fileList;
+	//wxChoice*		configList;
+	//wxArrayString*	fileList;
 
 	wxChoice*		profileType;
 	wxArrayString*	profileTypeList;

@@ -28,15 +28,15 @@ ControlProtocol::ControlProtocol (wxWindow *owner, DeviceController *controller)
 	profileTypeList->Clear();
 	profileTypeList->Add (wxT ("Square"));
 	profileTypeList->Add (wxT ("Triangle"));
-	profileTypeList->Add (wxT ("From File"));
+	//profileTypeList->Add (wxT ("From File"));
 	profileType = new wxChoice (this, PROFILE_TYPE, wxDefaultPosition, wxSize (80, wxDefaultCoord), *profileTypeList);
 	profileType->SetSelection(0);
 	sizerGrid->Add(new wxStaticText (this, -1, wxT ("Stimulus Type:  ")), 1, wxALIGN_LEFT);
 	sizerGrid->Add(profileType);
 	sizerGrid->AddSpacer(1);
 
-	wxStaticBoxSizer* sizerBox2 = new wxStaticBoxSizer (wxVERTICAL, this, wxT ("Input"));
-	wxFlexGridSizer* sizerGrid2 = new wxFlexGridSizer (5, 3, 5, 5);
+	//wxStaticBoxSizer* sizerBox2 = new wxStaticBoxSizer (wxVERTICAL, this, wxT ("Input"));
+	//wxFlexGridSizer* sizerGrid2 = new wxFlexGridSizer (5, 3, 5, 5);
 
 	sizerGrid->Add (new wxStaticText (this, -1, wxT ("Peak 1 Height:")), 1, wxALIGN_LEFT);
 	peak1Height = new wxSpinCtrl (this, PEAK_1_HEIGHT, wxEmptyString, wxDefaultPosition, wxSize (80, wxDefaultCoord));
@@ -70,34 +70,34 @@ ControlProtocol::ControlProtocol (wxWindow *owner, DeviceController *controller)
 
 	sizerBox->Add (sizerGrid, 1, wxALIGN_CENTER | wxALL, 10);
 
-	configList = new wxChoice (this, PROTOCOL_CONFIG, wxDefaultPosition, wxSize (120, wxDefaultCoord), 0, wxCB_SORT);
-	wxBoxSizer* row2 = new wxBoxSizer (wxHORIZONTAL);
-	row2->Add (new wxStaticText (this, -1, wxT ("Predefined Configurations:  ")), 1, wxALIGN_LEFT);
-	row2->Add (configList);
+	//configList = new wxChoice (this, PROTOCOL_CONFIG, wxDefaultPosition, wxSize (120, wxDefaultCoord), 0, wxCB_SORT);
+	//wxBoxSizer* row2 = new wxBoxSizer (wxHORIZONTAL);
+	//row2->Add (new wxStaticText (this, -1, wxT ("Stimulus File:  ")), 1, wxALIGN_LEFT);
+	//row2->Add (configList);
 
-	sizerBox2->Add (row2, 0, wxALIGN_CENTER_HORIZONTAL | wxTOP | wxBOTTOM, 10);
-	sizerBox2->Add (sizerGrid2, 1, wxALIGN_CENTER | wxALL, 10);
+	//sizerBox2->Add (row2, 0, wxALIGN_CENTER_HORIZONTAL | wxTOP | wxBOTTOM, 10);
+	//sizerBox2->Add (sizerGrid2, 1, wxALIGN_CENTER | wxALL, 10);
 
-	fileList = new wxArrayString();
-	LoadConfigFiles (wxT ("C:\\LCMS2010\\LCMS2010_Software\\working_copy\\Application\\config"));
+	//fileList = new wxArrayString();
+	//LoadConfigFiles (wxT ("C:\\LCMS2010\\LCMS2010_Software\\working_copy\\Application\\config"));
 
 
 	sizerProtocol->Add (sizerBox, 0, wxALL | wxALIGN_CENTER, 10);
-	sizerProtocol->Add (sizerBox2, 0, wxALL | wxALIGN_CENTER, 10);
+	//sizerProtocol->Add (sizerBox2, 0, wxALL | wxALIGN_CENTER, 10);
 	this->SetSizerAndFit (sizerProtocol);
 
 	ResetProtocolValues();
 
 	Connect (wxID_ANY, wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEventHandler (ControlProtocol::ChangeProtocolValue));
-	Connect (PROTOCOL_CONFIG, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler (ControlProtocol::OnConfigList));
+	//Connect (PROTOCOL_CONFIG, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler (ControlProtocol::OnConfigList));
 	Connect (PROFILE_TYPE, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler (ControlProtocol::OnProfileType));
 }
 
 ControlProtocol::~ControlProtocol()
 {
-	delete fileList;
+	//delete fileList;
 	delete profileTypeList;
-	fileList = (wxArrayString*) NULL;
+	//fileList = (wxArrayString*) NULL;
 }
 
 void ControlProtocol::ChangeProtocolValue (wxSpinEvent& evt)
@@ -106,32 +106,32 @@ void ControlProtocol::ChangeProtocolValue (wxSpinEvent& evt)
 		case PEAK_1_HEIGHT :
 			SetPeak1Height (peak1Height->GetValue());
 			xemDeviceCtrl->SetCommand (Command::LCMS_SELECTPROTOCOL, 0);
-			configList->SetSelection (0);
+			//configList->SetSelection (0);
 			break;
 		case PEAK_2_HEIGHT :
 			SetPeak2Height (peak2Height->GetValue());
 			xemDeviceCtrl->SetCommand (Command::LCMS_SELECTPROTOCOL, 0);
-			configList->SetSelection (0);
+			//configList->SetSelection (0);
 			break;
 		case LEAD_TIME :
 			SetLeadTime (leadTime->GetValue());
 			xemDeviceCtrl->SetCommand (Command::LCMS_SELECTPROTOCOL, 0);
-			configList->SetSelection (0);
+			//configList->SetSelection (0);
 			break;
 		case PEAK_1_DUR :
 			SetPeak1Duration (peak1Duration->GetValue());
 			xemDeviceCtrl->SetCommand (Command::LCMS_SELECTPROTOCOL, 0);
-			configList->SetSelection (0);
+			//configList->SetSelection (0);
 			break;
 		case PEAK_2_DUR :
 			SetPeak2Duration (peak2Duration->GetValue());
 			xemDeviceCtrl->SetCommand (Command::LCMS_SELECTPROTOCOL, 0);
-			configList->SetSelection (0);
+			//configList->SetSelection (0);
 			break;
 		case INTERVAL :
 			SetInterval (interval->GetValue());
 			xemDeviceCtrl->SetCommand (Command::LCMS_SELECTPROTOCOL, 0);
-			configList->SetSelection (0);
+			//configList->SetSelection (0);
 			break;
 	}
 
@@ -243,7 +243,7 @@ void ControlProtocol::ResetControls (wxCommandEvent& evt)
 
 void ControlProtocol::ResetProtocolValues()
 {
-	configList->Disable();
+//	configList->Disable();
 	peak1Height->Enable();
 	peak2Height->Enable();
 	leadTime->Enable();
@@ -266,10 +266,10 @@ void ControlProtocol::ResetProtocolValues()
 	//SetPeak2Duration (0);
 	//SetInterval (100);
 
-	configList->SetStringSelection (wxT ("<USE PROTOCOL>"));
+//	configList->SetStringSelection (wxT ("<USE PROTOCOL>"));
 }
 
-void ControlProtocol::LoadConfigFiles (wxString path)
+/*void ControlProtocol::LoadConfigFiles (wxString path)
 {
 	configList->Clear();
 	configList->Append (wxT ("<USE PROTOCOL>"));
@@ -289,21 +289,21 @@ void ControlProtocol::LoadConfigFiles (wxString path)
 			configList->Append (file);
 		}
 	}
-}
+}*/
 
-void ControlProtocol::OnConfigList (wxCommandEvent& evt)
+/*void ControlProtocol::OnConfigList (wxCommandEvent& evt)
 {
 	int value = configList->GetSelection();
 	xemDeviceCtrl->SetCommand (Command::LCMS_SELECTPROTOCOL, value);
 	return;
-}
+}*/
 
 void ControlProtocol::OnProfileType(wxCommandEvent& evt)
 {
 	int value = profileType->GetSelection();
 	switch (value) {
 		case 0:
-			configList->Disable();
+			//configList->Disable();
 			peak1Height->Enable();
 			peak2Height->Enable();
 			leadTime->Enable();
@@ -313,7 +313,7 @@ void ControlProtocol::OnProfileType(wxCommandEvent& evt)
 			xemDeviceCtrl->SetCommand (Command::LCMS_PROFILE_TYPE, value);
 			break;
 		case 1:
-			configList->Disable();
+			//configList->Disable();
 			peak1Height->Enable();
 			peak2Height->Enable();
 			leadTime->Enable();
@@ -323,7 +323,7 @@ void ControlProtocol::OnProfileType(wxCommandEvent& evt)
 			xemDeviceCtrl->SetCommand (Command::LCMS_PROFILE_TYPE, value);
 			break;
 		case 2:
-			configList->Enable();
+			//configList->Enable();
 			peak1Height->Disable();
 			peak2Height->Disable();
 			leadTime->Disable();
@@ -353,7 +353,7 @@ void ControlProtocol::SaveCurrentConfig (wxString filename)
 
 void ControlProtocol::Start()
 {
-	configList->Disable();
+//	configList->Disable();
 	peak1Height->Enable();
 	peak2Height->Enable();
 	leadTime->Enable();
