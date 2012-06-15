@@ -103,6 +103,7 @@ private:
 	float		max_view_millisec;
 	int			white_space_pct; // percent of white space while plotting to make the scrolling look nice
 	GraphicsSaveData*	saveToFile;
+	int			prev_mode;	//keep track of the mode so we can detect if it changed
 
 	/**
 	 * Translate raw data to a usable form.

@@ -35,6 +35,7 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	lengthBuffer = 0;
 	lengthDisplay = 0;
 	lastTime = 0;
+	prev_mode = 3; //3 is an invalid mode so unpack will find a difference immediately
 
 	wxBoxSizer* sizerPlot = new wxBoxSizer (wxVERTICAL);
 
@@ -52,13 +53,13 @@ GraphicsPlot::GraphicsPlot (wxWindow* owner) : wxPanel (owner)
 	plot->SetScaleY (1);
 
 	xScale = new mpScaleX(wxT("Time (ms)"), mpALIGN_BORDER_BOTTOM, true);
-	yScale = new mpScaleY(wxT("Voltage (V)"), mpALIGN_BORDER_LEFT, true);
+	yScale = new mpScaleY(wxT("Current (pA)"), mpALIGN_BORDER_LEFT, true);
 	yScale->SetLabelFormat( wxT("%.3f")); // use 3 decimal places on Y-axis label
 	
 	plot->AddLayer (xScale);
 	plot->AddLayer (yScale);
 
-	plot->Fit(0, max_view_millisec+(white_space_pct/100.0*max_view_millisec), -0.3, 3.3, NULL, NULL);  //sets the default view
+	plot->Fit(0, max_view_millisec+(white_space_pct/100.0*max_view_millisec), -1000, 1000, NULL, NULL);  //sets the default view
 
 	mypen = new wxPen (wxT ("RED"), 1, wxSOLID);
 
@@ -237,15 +238,19 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 	data.length 	= length;
 	data.tile_time	= wxT("Time (ms)");
 
-	if(mode==1) {
-		yScale->SetName (wxT ("Current (pA)"));
-		data.tile_spectrum = wxT ("Current (pA)");
+	if (mode != prev_mode) {
+		prev_mode = mode;
+		if(mode==1) {
+			yScale->SetName (wxT ("Current (pA)"));
+			data.tile_spectrum = wxT ("Current (pA)");
+			plot->Fit(0, max_view_millisec+(white_space_pct/100.0*max_view_millisec), -1000, 1000, NULL, NULL);  //sets the default view
+		}
+		if(mode==0) {
+			yScale->SetName (wxT ("Voltage (V)"));
+			data.tile_spectrum = wxT ("Voltage (V)");
+			plot->Fit(0, max_view_millisec+(white_space_pct/100.0*max_view_millisec), -0.3, 3.3, NULL, NULL);  //sets the default view
+		}
 	}
-	if(mode==0) {
-		yScale->SetName (wxT ("Voltage (V)"));
-		data.tile_spectrum = wxT ("Voltage (V)");
-	}
-
 	saveToFile->GetQueue().Post (data);
 
 	delete[] rawData;
