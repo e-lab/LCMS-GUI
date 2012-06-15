@@ -3,6 +3,7 @@
  * Contains class that saves data to disk.
  */
 #include "GraphicsSaveData.h"
+#include <wx/stdpaths.h>  //for getting system temp directory
 
 // When debugging changes all calls to "new" to be calls to "DEBUG_NEW" allowing for memory leaks to
 // give you the file name and line number where it occurred.
@@ -24,7 +25,10 @@ GraphicsSaveData::GraphicsSaveData () : wxThread (wxTHREAD_JOINABLE)
 	start_new = true;
 	default_filename = wxT ("tmp_save_file_");
 
-	tmp_filename = new wxFileName(wxT ("tmp_save"), wxString::Format(wxT ("%s%i"), default_filename, 0), wxT ("txt"));
+	wxString systempdir = wxStandardPaths::Get().GetTempDir();	//gets the system temp directory
+	wxString tempsavedir = systempdir.Append(wxT("/tmp_save"));
+
+	tmp_filename = new wxFileName(tempsavedir, wxString::Format(wxT ("%s%i"), default_filename, 0), wxT ("txt"));
 	if (!tmp_filename->DirExists()) {
 		tmp_filename->Mkdir();
 	}
