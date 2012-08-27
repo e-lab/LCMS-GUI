@@ -88,6 +88,7 @@ ControlSyncConfig::ControlSyncConfig (wxWindow* owner, DeviceController* control
 	stringsResetDuration.Add (wxT ("40us"));
 	stringsResetDuration.Add (wxT ("50us"));
 	stringsResetDuration.Add (wxT ("Always Reset"));
+	stringsResetDuration.Add (wxT ("Never Reset"));
 	choiceIntResetDuration = new wxChoice (this, INTRESETDURATION, wxDefaultPosition, wxDefaultSize, stringsResetDuration);
 	row->Add (new wxStaticText (this, -1, wxT ("Int Reset Duration"), wxDefaultPosition, wxSize (120, 20), wxALIGN_LEFT));
 	row->Add (choiceIntResetDuration, 0, wxTOP, 5);
@@ -384,6 +385,9 @@ void ControlSyncConfig::OnChoiceIntResetDuration (wxCommandEvent& evt)
 			break;
 		case 9: //always reset
 			out_value = 0; //the verilog is setup to interpret 0 as always reset
+			break;
+		case 10: //never reset
+			out_value = 65535; //the verilog is setup to interpret 65535 as always reset
 			break;
 		default:  //use 2us as default value
 			out_value = 2; //2us
