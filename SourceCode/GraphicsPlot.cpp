@@ -215,16 +215,26 @@ void GraphicsPlot::UnpackEvent (DeviceEvent& rawEvent)
 			spectrum[i]= (C/cds_time)*(spectrum[i])/1E-12;
 			spectrum[i]= spectrum[i]*gain;
 			spectrumBuffer->PushToBuffer(spectrum[i]);  //add the results to the circular spectrum buffer used for plotting
-		} else {
+		} 
+		else if (mode == 2) //sw cds mode not yet implemented
+		{
+				
+			if (raw_count >= 32768 )
+				raw_count = raw_count-65535;
+			//spectrum[i] = raw_count;
+			float cds_time = (cdst2-cdst1)*1E-6;
+			float offset_correction = rawEvent.GetVariable(Command::LCMS_OFFSET_CORRECTION);
+			offset_correction = offset_correction / float(1000);
+			spectrum[i] = ( ( (float) raw_count) / (float) 65535) * 3.3f;
+			spectrum[i] = spectrum[i] - offset_correction;
+			spectrum[i]= (C/cds_time)*(spectrum[i])/1E-12;
+			spectrum[i]= spectrum[i]*gain;
+			spectrumBuffer->PushToBuffer(spectrum[i]);
+		}else { // voltage sync mode, for debug
 			spectrum[i] = ( ( (float) raw_count) / (float) 65535) * 3.3f;
 			spectrumBuffer->PushToBuffer(spectrum[i]);
 		}
 
-	//	if (mode == 2) //sw cds mode not yet implemented
-	//	{
-	//		if (spectrum[i] > 1.65)
-	//			spectrum[i] = 3.3 - spectrum[i];
-	//	}
 		time[i] = lastTime + ((float) i * dt);  // Constant time, keep track of time from last measurement
 		timeBuffer->PushToBuffer(time[i]); //add the results to the circular time buffer used for plotting
 	}
