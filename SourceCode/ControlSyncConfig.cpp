@@ -446,6 +446,7 @@ void ControlSyncConfig::OnChoiceCDSTime1 (wxCommandEvent& evt)
 			break;
 		case 2: //10us
 			out_value=10;
+			break;
 		case 3: //30us
 			out_value = 30;
 			break;
@@ -544,7 +545,7 @@ void ControlSyncConfig::OnChoiceCDSTime2 (wxCommandEvent& evt)
 			out_value = 190;
 			break;
 		case 4:
-			out_value = 90;
+			out_value = 90;  
 			break;
 		case 5:
 			out_value = 40;
